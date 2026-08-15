@@ -6,7 +6,7 @@
 
 이 저장소는 개인 소개(포트폴리오) 페이지 `index.html` 하나로 구성되어 있습니다. 외부 의존성, 빌드 도구, 패키지 매니저, 테스트 스위트 없이 HTML/CSS/JS만으로 작성된 단일 파일입니다.
 
-`mycareer.md`에는 이력서 원본(경력, 프로젝트, 학력/자격 등)이 들어 있으며, `index.html`의 콘텐츠는 이 파일을 기반으로 합니다. 단, 연락처(전화번호), 연봉 등 민감하거나 공개용으로 부적절한 정보는 페이지에 포함하지 않았습니다. `mycareer.md` 내용이 바뀌면 `index.html`의 관련 데이터(`skills`, `career`, `projects`, `education`)도 함께 갱신해야 합니다.
+`mycareer.md`에는 이력서 원본(포지셔닝, 강점, 협업 구조, 보유 툴, 경력, 프로젝트, 학력/자격 등)이 들어 있으며, `index.html`의 콘텐츠는 이 파일을 기반으로 합니다. 단, 전화번호·생년월일·주소·연봉 등 민감하거나 공개용으로 부적절한 정보는 페이지에 포함하지 않았습니다(이메일만 노출). `mycareer.md` 내용이 바뀌면 `index.html`의 관련 데이터(`strengths`, `skills`, `tools`, `collaboration`, `career`, `projects`, `education`)도 함께 갱신해야 합니다.
 
 ## 실행 방법
 
@@ -15,8 +15,9 @@
 ## 아키텍처
 
 - `index.html` 하나가 애플리케이션 전체입니다: 마크업, `<style>` 블록, `<script>` 블록이 모두 한 파일에 들어 있습니다.
-- 콘텐츠는 `<script>` 블록 상단의 JS 데이터(`skills` 배열, `career` 배열, `projects` 배열, `education` 객체)로 정의되어 있고, 스크립트가 이를 각 섹션의 DOM으로 렌더링합니다.
-- 페이지는 앵커 기반 섹션들(`#skills`, `#career`, `#projects`, `#education`)로 구성되며, 상단 sticky 네비게이션이 각 섹션으로 스크롤 이동합니다.
+- 콘텐츠는 `<script>` 블록 상단의 JS 데이터(`strengths` 배열, `skills` 배열, `tools` 객체, `collaboration` 배열, `career` 배열, `projects` 배열, `education` 객체)로 정의되어 있고, 스크립트가 이를 각 섹션의 DOM으로 렌더링합니다.
+- 페이지는 앵커 기반 섹션들(`#about`, `#skills`, `#tools`, `#collaboration`, `#career`, `#projects`, `#education`)로 구성되며, 상단 sticky 네비게이션이 각 섹션으로 스크롤 이동합니다.
+- 디자인 톤은 화이트/미니멀(`--bg: #fff`, 인디고 블루 accent)이며, `:root` 변수로 색상을 관리합니다.
 - 프로젝트 목록은 아코디언 형태로 렌더링되며, 각 `.project-toggle` 버튼 클릭 시 해당 `.project`에 `open` 클래스를 토글하여 상세 내용(주요 내용/성과)을 펼치고 접습니다.
 - 상태 관리 없이 모든 UI는 데이터 배열을 순회해 HTML 문자열을 생성하는 방식(`innerHTML` 조립)으로 렌더링됩니다.
 

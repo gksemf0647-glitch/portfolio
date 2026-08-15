@@ -1,3 +1,7 @@
+포지셔닝                                                     
+한 줄 소개		Bio-Tech 도메인 지식과 SW 역량의 결합으로 문제를 해결합니다.
+자기소개		바이오 R&D Workflow를 이해하고 요구사항을 제품 구조로 전환하는 PO, 김한들입니다.
+
 이력서                                                       
 성명	   		Handeul Kim
 연락처			+82-10-7388-0647
@@ -22,6 +26,23 @@ ChatGPT 활용 & 업무 자동화 과정 (2024.08)
 IT 프로젝트 관리 전문가를 위한 핵심 기술 (2023.08)
 ISO 13485: 의료기기 품질경영시스템 (2020.06)
 ISO 14971: 의료기기 위험관리 (2020.06)
+
+강점
+	바이오 제품 개발 프로세스 이해 : 분자진단 제품 개발 과정의 실험 계획, 결과정리, 데이터 분석, 문서화 흐름을 End-to-End로 분석하고 표준화했습니다. 표준 템플릿과 절차를 설계해 사내 표준 프로세스로 채택시켰습니다.
+	프로젝트 일정 관리 및 로드맵 수립 : AS-IS 프로세스를 단계별로 분해해 자동화 가능 영역을 정의하고 약 30% 수준의 자동화를 구현했습니다. 80% 자동화를 목표로 로드맵을 수립하고 WBS·유저스토리·백로그 기반으로 우선순위를 운영했습니다.
+	End-to-End 개발 및 운영 경험 : 요구사항 정의부터 IA, 사용자 흐름, 화면 설계, 정책서까지 기획을 주도하고 스프린트 단위로 구현을 검증했습니다. Help Desk를 운영하며 VOC를 수집·분석해 유지보수에 반영했습니다.
+
+협업 구조
+	Researcher : 사용자 인터뷰, 요구사항 구조화, 업무 흐름 정리/분석, VOC 수집
+	Developer, SI Vendor : 기획/설계 문서 전달, 개발 범위·일정·이슈 조율, 구현 난이도 조율, 스프린트 단위 검증
+	QA : 테스트 시나리오, 검증 기준, 결함 관리
+	Operation : Help Desk, VOC 관리, 개선 backlog 관리
+
+보유 툴
+	Collaboration : Notion, MS DevOps, Slack, Jira, Confluence
+	Programming : Python, Java, C
+	Design : Figma, Photoshop, Premiere, After Effects
+	Etc : TestRail, MS Excel, MS PowerPoint, MS Word
 
 핵심 역량                                                                      
 	실험실 workflow 분석 및 AS-IS/TO-BE 프로세스 설계
