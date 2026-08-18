@@ -587,8 +587,11 @@
     color: var(--text-primary);
     border-top: none;
     padding: 0;
-    transition: --page-bg 0.6s ease, --text-primary 0.6s ease, --text-secondary 0.6s ease,
-      --accent 0.6s ease, --line-color 0.6s ease, background-color 0.6s ease, color 0.6s ease;
+    /* No CSS transition here on purpose: background/text color are driven every
+       animation frame from the same scroll progress value that drives the 3D
+       node positions (see applyStageUI/computeStage in the script below), so
+       they must move in lockstep rather than run their own independent
+       timing/easing. */
   }
 
   .ps-wrap {
@@ -617,13 +620,14 @@
     justify-content: center;
     opacity: 0.55;
     transform: translateY(6px) scale(0.98);
-    transition: opacity 0.5s ease, transform 0.5s ease;
     padding-right: 24px;
+    /* opacity/transform are set inline every frame in sync with scroll progress
+       (see applyStageUI) — no CSS transition, so this never drifts from the
+       3D/background timing. */
   }
 
-  .ps-block.active {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  .ps-block.active .ps-block-title {
+    font-weight: 900;
   }
 
   .ps-block-label {
@@ -632,7 +636,6 @@
     font-weight: 700;
     letter-spacing: 1.6px;
     margin-bottom: 14px;
-    transition: color 0.5s ease;
   }
 
   .ps-block-title {
@@ -641,7 +644,6 @@
     letter-spacing: -0.3px;
     margin-bottom: 14px;
     max-width: 420px;
-    transition: color 0.5s ease;
   }
 
   .ps-block-desc {
@@ -649,7 +651,6 @@
     font-size: 0.92rem;
     line-height: 1.8;
     max-width: 400px;
-    transition: color 0.5s ease;
   }
 
   .ps-right { position: relative; }
@@ -658,11 +659,11 @@
     position: sticky;
     top: 72px;
     height: min(74vh, 640px);
-    border-radius: 16px;
     overflow: hidden;
-    background: var(--page-bg);
-    border: 1px solid var(--line-color);
-    transition: background-color 0.5s ease, border-color 0.5s ease;
+    background: transparent;
+    /* Intentionally no border/box-shadow/card background — the node network
+       and connecting lines should read as floating directly on the section's
+       own (scroll-synced) background, not inside a panel. */
   }
 
   @media (max-width: 899px) {
@@ -693,6 +694,14 @@
     padding: 10%;
   }
 
+  /* The class rule above (display:flex) has higher cascade priority than the
+     UA default for [hidden], so the `hidden` attribute on #psFallback2D would
+     otherwise be silently ignored and the 2D panels would show through behind
+     the canvas before/if the script runs. This restores hidden as authoritative. */
+  .ps-fallback-2d[hidden] {
+    display: none;
+  }
+
   .ps-fallback-2d svg {
     width: 100%;
     height: 100%;
@@ -707,8 +716,8 @@
     display: block;
   }
 
-  .ps-fallback-2d circle { fill: var(--accent); transition: fill 0.5s ease; }
-  .ps-fallback-2d line { stroke: var(--accent); stroke-width: 1.4; opacity: 0.55; transition: stroke 0.5s ease; }
+  .ps-fallback-2d circle { fill: var(--accent); }
+  .ps-fallback-2d line { stroke: var(--accent); stroke-width: 1.4; opacity: 0.55; }
   .ps-fallback-2d .ps-hub { fill: var(--accent); }
 
   .ps-error-fallback {
@@ -1696,9 +1705,11 @@
   var HIDDEN = { pos: [0, 0, 0], alpha: 0, scale: 0.4, label: '' };
 
   // Reusable data structure: node slots, per-state layout/connections/camera/theme.
-  // Node labels are intentionally minimal — the LEFT text rail carries the
-  // semantic detail (USER/DATA/RULE/...); the 3D/2D visual is a pure structuring
-  // metaphor, per the "minimize node labels" direction.
+  // Slot 8 is a persistent "hub" node present (visible, non-HIDDEN) in every
+  // state — it is the one node that carries that state's stage label
+  // (COMPLEXITY / STRUCTURE / REQUIREMENT / PRODUCT LIFECYCLE / DIGITAL
+  // PRODUCT), so the label always has a clear, single, connected node it
+  // belongs to rather than floating disconnected from the network.
   var STATE_DATA = [
     {
       key: 'complexity',
@@ -1706,9 +1717,10 @@
       camera: { pos: [0, 0.3, 8.8] },
       nodes: [
         n([-3.2, 1.6, 0.4]), n([2.8, -1.4, -0.6]), n([-1.0, -2.0, 1.2]), n([3.0, 1.8, -1.0]),
-        n([-2.6, -0.6, -1.4]), n([0.4, 2.2, 1.6]), n([1.6, 0.2, -1.8]), n([-0.6, -2.4, -0.2], 0.55), HIDDEN
+        n([-2.6, -0.6, -1.4]), n([0.4, 2.2, 1.6]), n([1.6, 0.2, -1.8]), n([-0.6, -2.4, -0.2], 0.55),
+        n([0, 0, 0], 0.95, 1.15, 'COMPLEXITY')
       ],
-      connections: [[0, 2], [1, 3], [4, 6], [2, 5], [0, 6], [1, 7]]
+      connections: [[0, 2], [1, 3], [4, 6], [2, 5], [0, 6], [1, 7], [2, 8], [6, 8]]
     },
     {
       key: 'structure',
@@ -1717,7 +1729,7 @@
       nodes: [
         n([0, 2.2, 0]), n([1.7, 0.8, 0.2]), n([0, 0.8, 0]), n([0, -0.6, 0]),
         n([-2.8, -1.4, -1.4], 0.14), n([2.8, -1.6, -1.4], 0.14), n([-2.4, 1.8, -1.6], 0.1), n([2.4, 2.0, -1.6], 0.1),
-        n([0, -2.0, 0.2], 0.6, 0.9)
+        n([0, -2.0, 0.2], 1, 1.15, 'STRUCTURE')
       ],
       connections: [[0, 2], [2, 1], [2, 3], [3, 8]]
     },
@@ -1738,9 +1750,9 @@
       camera: { pos: [0.6, 0, 8.4] },
       nodes: [
         n([0, 3.0, 0]), n([0.7, 1.8, 0.3]), n([0, 0.6, 0.6]), n([-0.7, -0.6, 0.3]), n([0, -1.8, 0]), n([0.7, -3.0, -0.3]),
-        HIDDEN, HIDDEN, HIDDEN
+        HIDDEN, HIDDEN, n([1.7, -0.6, -0.9], 0.9, 1.3, 'PRODUCT LIFECYCLE')
       ],
-      connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]]
+      connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [3, 8]]
     },
     {
       key: 'product',
@@ -1783,19 +1795,59 @@
     return clamp01(scrolled / total) * (STATE_COUNT - 1);
   }
 
-  var lastActive = -1;
-  function applyThemeAndText(p) {
-    var idx = Math.round(p);
-    if (idx === lastActive) return;
-    lastActive = idx;
-    blocks.forEach((el, i) => el.classList.toggle('active', i === idx));
-    var theme = STATE_DATA[idx].theme;
-    systemEl.style.setProperty('--page-bg', theme.bg);
-    systemEl.style.setProperty('--text-primary', theme.text);
-    systemEl.style.setProperty('--text-secondary', theme.textDim);
-    systemEl.style.setProperty('--accent', theme.accent);
-    systemEl.style.setProperty('--line-color', theme.line);
-    svgPanels.forEach((svg, i) => svg.classList.toggle('active', i === idx));
+  // ---- Single master stage controller -------------------------------------
+  // Every visual (3D node layout, background theme, stage text, node labels,
+  // 2D fallback panel) reads from the SAME p -> { seg, t, a, b } derived here,
+  // once per frame. Nothing keeps its own timer/transition, so nothing can
+  // drift out of sync with anything else.
+  function computeStage(p) {
+    var segCount = STATE_COUNT - 1;
+    var seg = Math.min(Math.max(Math.floor(p), 0), segCount - 1);
+    var t = easeInOutCubic(clamp01(p - seg));
+    return { seg: seg, t: t, a: STATE_DATA[seg], b: STATE_DATA[seg + 1] };
+  }
+
+  function hexToRgb(hex) {
+    var v = parseInt(hex.replace('#', ''), 16);
+    return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+  }
+  function lerpRgbCss(hexA, hexB, t) {
+    var ca = hexToRgb(hexA), cb = hexToRgb(hexB);
+    var r = Math.round(ca[0] + (cb[0] - ca[0]) * t);
+    var g = Math.round(ca[1] + (cb[1] - ca[1]) * t);
+    var b = Math.round(ca[2] + (cb[2] - ca[2]) * t);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  var lastActiveIdx = -1;
+  function applyStageUI(p, stage) {
+    var a = stage.a, b = stage.b, t = stage.t;
+
+    // theme colors: continuous per-frame interpolation, no CSS transition —
+    // this is what keeps the background locked to the same progress as the
+    // 3D node/camera motion (both driven by the identical a/b/t here).
+    systemEl.style.setProperty('--page-bg', lerpRgbCss(a.theme.bg, b.theme.bg, t));
+    systemEl.style.setProperty('--text-primary', lerpRgbCss(a.theme.text, b.theme.text, t));
+    systemEl.style.setProperty('--text-secondary', lerpRgbCss(a.theme.textDim, b.theme.textDim, t));
+    systemEl.style.setProperty('--accent', lerpRgbCss(a.theme.accent, b.theme.accent, t));
+    systemEl.style.setProperty('--line-color', t < 0.5 ? a.theme.line : b.theme.line);
+
+    var activeIdx = Math.round(p);
+    if (activeIdx !== lastActiveIdx) {
+      lastActiveIdx = activeIdx;
+      blocks.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+      svgPanels.forEach((svg, i) => svg.classList.toggle('active', i === activeIdx));
+    }
+
+    // Stage text opacity/position is a continuous function of the same p,
+    // so the left-rail crossfade always lands exactly when the 3D/background
+    // transition does — never independently timed.
+    for (var i = 0; i < blocks.length; i++) {
+      var dist = Math.min(Math.abs(p - i), 1);
+      var op = 0.32 + clamp01(1 - dist * 1.3) * 0.68;
+      blocks[i].style.opacity = op.toFixed(3);
+      blocks[i].style.transform = 'translateY(' + (dist * 6).toFixed(2) + 'px) scale(' + (1 - dist * 0.02).toFixed(3) + ')';
+    }
   }
 
   // ---- WebGL2 capability detection (no guessing: this is the actual check) ----
@@ -1810,23 +1862,40 @@
     }
   }
 
+  // True last-resort: only reached if even the 2D/SVG fallback setup below
+  // throws. Previously this element had no code path that ever made it
+  // visible (CSS default is display:none and nothing ever flipped it), so
+  // the "3D/2D Product System을 불러오지 못했습니다" message was dead/unreachable —
+  // if it was ever seen live, it was from an older deployed build, not this
+  // code. It's wired up here for real, as the genuine no-visual-works case.
+  function showHardError(reason) {
+    devError('[ProductSystem] 2D fallback also failed, showing text fallback:', reason);
+    if (canvas) canvas.style.display = 'none';
+    if (fallback2D) fallback2D.hidden = true;
+    if (errorFallback) errorFallback.style.display = 'flex';
+  }
+
   function activate2DFallback(reason) {
     devError('[ProductSystem] Using 2D/SVG fallback:', reason);
-    if (canvas) canvas.style.display = 'none';
-    if (errorFallback) errorFallback.style.display = 'none';
-    if (fallback2D) fallback2D.hidden = false;
+    try {
+      if (canvas) canvas.style.display = 'none';
+      if (fallback2D) fallback2D.hidden = false;
 
-    var ticking = false;
-    function update() {
-      ticking = false;
-      applyThemeAndText(getProgress());
+      var ticking = false;
+      function update() {
+        ticking = false;
+        var p = getProgress();
+        applyStageUI(p, computeStage(p));
+      }
+      function onScroll() {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      update();
+    } catch (e2) {
+      showHardError(e2);
     }
-    function onScroll() {
-      if (!ticking) { ticking = true; requestAnimationFrame(update); }
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    update();
   }
 
   var HAS_LIBS = typeof THREE !== 'undefined';
@@ -1835,13 +1904,12 @@
   if (!HAS_LIBS) { activate2DFallback('three.js failed to load from CDN'); return; }
   if (!HAS_WEBGL) { activate2DFallback('WebGL unavailable in this browser/device'); return; }
 
-  var renderer;
+  // Everything below this point is wrapped in one try/catch: if setup fails
+  // partway through (missing IntersectionObserver, a WebGL context that gets
+  // lost immediately, etc.) it falls back to the 2D/SVG visual instead of
+  // leaving a half-built, non-rendering canvas on screen with no explanation.
   try {
-    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !isMobile, alpha: true, powerPreference: 'low-power' });
-  } catch (e) {
-    activate2DFallback(e);
-    return;
-  }
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !isMobile, alpha: true, powerPreference: 'low-power' });
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2));
 
@@ -1850,11 +1918,17 @@
   var group = new THREE.Group();
   scene.add(group);
 
+  var BASE_FOV = 42;
   function resize() {
     var w = stickyEl.clientWidth, h = stickyEl.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h;
+    var aspect = w / h;
+    camera.aspect = aspect;
+    // On narrow/portrait viewports a fixed vertical FOV starves horizontal
+    // FOV, clipping the wider node layouts (e.g. COMPLEXITY reaches x=+-3.2).
+    // Widening FOV as aspect narrows keeps the network inside the viewport.
+    camera.fov = aspect < 1 ? Math.min(BASE_FOV / aspect, 78) : BASE_FOV;
     camera.updateProjectionMatrix();
   }
   resize();
@@ -1864,20 +1938,35 @@
   var sphereGeo = new THREE.SphereGeometry(0.15, 16, 16);
   var textureCache = {};
 
-  function makeLabelTexture(text) {
+  var LABEL_TEX_W = 900, LABEL_TEX_H = 160;
+  function makeLabelTexture(text, color) {
     if (!text) return null;
-    if (textureCache[text]) return textureCache[text];
+    var key = text + '|' + color;
+    if (textureCache[key]) return textureCache[key];
     var c = document.createElement('canvas');
-    c.width = 640; c.height = 140;
+    c.width = LABEL_TEX_W; c.height = LABEL_TEX_H;
     var ctx = c.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '700 42px "Segoe UI", -apple-system, sans-serif';
+    var spaced = text.split('').join(' ');
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text.split('').join(' '), c.width / 2, c.height / 2 + 4);
+    // Longer labels (PRODUCT LIFECYCLE, DIGITAL PRODUCT) need a smaller size
+    // to avoid overflowing the canvas and getting silently clipped.
+    var fontSize = 42;
+    var w;
+    do {
+      ctx.font = '700 ' + fontSize + 'px "Segoe UI", -apple-system, sans-serif';
+      w = ctx.measureText(spaced).width;
+      if (w <= LABEL_TEX_W * 0.92) break;
+      fontSize -= 2;
+    } while (fontSize > 14);
+    // Label color must match the stage's own text color (theme.text), not a
+    // fixed white — several stages (COMPLEXITY/STRUCTURE/PRODUCT LIFECYCLE)
+    // have light backgrounds where white text is nearly invisible.
+    ctx.fillStyle = color || '#ffffff';
+    ctx.fillText(spaced, c.width / 2, c.height / 2 + 4);
     var tex = new THREE.CanvasTexture(c);
     tex.needsUpdate = true;
-    textureCache[text] = tex;
+    textureCache[key] = tex;
     return tex;
   }
 
@@ -1887,9 +1976,9 @@
     var mesh = new THREE.Mesh(sphereGeo, mat);
     var spriteMat = new THREE.SpriteMaterial({ transparent: true, opacity: 0, depthWrite: false });
     var sprite = new THREE.Sprite(spriteMat);
-    sprite.scale.set(1.2, 0.26, 1);
+    sprite.scale.set(1.2, 1.2 * (LABEL_TEX_H / LABEL_TEX_W), 1);
     group.add(mesh); group.add(sprite);
-    nodePool.push({ mesh: mesh, sprite: sprite, currentLabel: null, pos: new THREE.Vector3(), phase: Math.random() * Math.PI * 2 });
+    nodePool.push({ mesh: mesh, sprite: sprite, currentLabel: null, currentLabelColor: null, pos: new THREE.Vector3(), phase: Math.random() * Math.PI * 2 });
   }
 
   var MAX_EDGES = 20;
@@ -1919,19 +2008,19 @@
   var idleRotY = 0;
   var clock = new THREE.Clock();
   var visible = true;
-  var io = new IntersectionObserver((entries) => { visible = entries[0].isIntersecting; }, { threshold: 0.01 });
-  io.observe(systemEl);
+  if (typeof IntersectionObserver !== 'undefined') {
+    var io = new IntersectionObserver((entries) => { visible = entries[0].isIntersecting; }, { threshold: 0.01 });
+    io.observe(systemEl);
+  }
 
   var currentNetworkColor = new THREE.Color(STATE_DATA[0].theme.node);
 
   function renderFrame(delta) {
     var p = getProgress();
-    var segCount = STATE_COUNT - 1;
-    var seg = Math.min(Math.floor(p), segCount - 1);
-    var t = easeInOutCubic(p - seg);
-    var a = STATE_DATA[seg], b = STATE_DATA[seg + 1];
+    var stage = computeStage(p);
+    var t = stage.t, a = stage.a, b = stage.b;
 
-    applyThemeAndText(p);
+    applyStageUI(p, stage);
 
     if (!reducedMotion) idleRotY += delta * 0.015;
     group.rotation.y = idleRotY;
@@ -1955,15 +2044,17 @@
       np.mesh.visible = alpha > 0.02;
 
       var label = t < 0.5 ? na.label : nb.label;
-      if (label && label !== np.currentLabel) {
+      var labelColor = t < 0.5 ? a.theme.text : b.theme.text;
+      if (label && (label !== np.currentLabel || labelColor !== np.currentLabelColor)) {
         np.currentLabel = label;
-        var tex = makeLabelTexture(label);
+        np.currentLabelColor = labelColor;
+        var tex = makeLabelTexture(label, labelColor);
         np.sprite.material.map = tex;
         np.sprite.material.needsUpdate = true;
       }
       var dip = 1 - Math.pow(Math.abs(t - 0.5) * 2, 8);
       np.sprite.position.set(x, y + 0.2 * scale + 0.13, z);
-      np.sprite.scale.set(1.2 * scale, 0.26 * scale, 1);
+      np.sprite.scale.set(1.2 * scale, 1.2 * (LABEL_TEX_H / LABEL_TEX_W) * scale, 1);
       np.sprite.material.opacity = label ? alpha * (1 - dip * 0.6) : 0;
       np.sprite.visible = alpha > 0.1 && !!label;
       alphaBySlot[i] = alpha;
@@ -2045,6 +2136,9 @@
     }
     window.addEventListener('scroll', onScrollReduced, { passive: true });
     renderFrame(0);
+  }
+  } catch (e) {
+    activate2DFallback(e);
   }
 })();
 </script>
