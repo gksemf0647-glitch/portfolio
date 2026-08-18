@@ -458,6 +458,106 @@
     color: var(--text-dim);
     font-size: 0.75rem;
   }
+
+  /* ===== Prototype — Product System 3D (Phase 1, isolated) ===== */
+  .proto-section {
+    position: relative;
+    height: 500vh;
+    padding: 0;
+    border-top: none;
+    background: var(--bg);
+  }
+
+  .proto-pin {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    border-top: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .proto-canvas-wrap {
+    position: absolute;
+    inset: 0;
+  }
+
+  #protoCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .proto-overlay {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 0 20px 56px;
+    pointer-events: none;
+  }
+
+  .proto-overlay-inner {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .proto-eyebrow {
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+
+  .proto-progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .proto-progress-step {
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--card-border);
+    transition: background 0.3s ease;
+  }
+
+  .proto-progress-step.active {
+    background: var(--accent);
+  }
+
+  .proto-title {
+    font-size: clamp(1.4rem, 3.4vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+  }
+
+  .proto-desc {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  .proto-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    padding: 20px;
+    text-align: center;
+  }
+
+  @media (max-width: 720px) {
+    .proto-section { height: 420vh; }
+    .proto-overlay { padding: 0 20px 40px; }
+  }
 </style>
 </head>
 <body>
@@ -490,6 +590,27 @@
     </div>
   </div>
 </header>
+
+<section id="prototype-3d" class="proto-section" aria-label="Prototype — Product System 3D Interaction">
+  <div class="proto-pin">
+    <div class="proto-canvas-wrap"><canvas id="protoCanvas"></canvas></div>
+    <div class="proto-fallback" id="protoFallback" hidden>이 브라우저 환경에서는 3D 프리뷰를 표시할 수 없습니다.</div>
+    <div class="proto-overlay">
+      <div class="proto-overlay-inner">
+        <div class="proto-eyebrow">PROTOTYPE — PRODUCT SYSTEM</div>
+        <div class="proto-progress" aria-hidden="true">
+          <span class="proto-progress-step"></span>
+          <span class="proto-progress-step"></span>
+          <span class="proto-progress-step"></span>
+          <span class="proto-progress-step"></span>
+          <span class="proto-progress-step"></span>
+        </div>
+        <h2 class="proto-title" id="protoTitle">COMPLEXITY</h2>
+        <p class="proto-desc" id="protoDesc">서로 다른 이해관계자, 데이터, 규칙, 예외가 뒤섞인 도메인의 초기 상태입니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="about">
   <div class="wrap">
@@ -816,6 +937,409 @@
         <ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>
       </div>
     `).join('');
+</script>
+
+<!-- ===== Prototype — Product System 3D (Phase 1, isolated) ===== -->
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://unpkg.com/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+(function () {
+  function n(label, pos, alpha, scale) {
+    return { label: label, pos: pos, alpha: alpha === undefined ? 1 : alpha, scale: scale === undefined ? 1 : scale };
+  }
+  var HIDDEN = { label: '', pos: [0, 0, 0], alpha: 0, scale: 0.4 };
+
+  // Reusable data structure: node slots, per-state layout/labels/connections/camera.
+  // Slot index is stable across states so the same physical node morphs between
+  // domain labels (Phase 1) and, later, real portfolio content (Phase 2+).
+  var STATE_DATA = [
+    {
+      key: 'complexity',
+      title: 'COMPLEXITY',
+      desc: '서로 다른 이해관계자, 데이터, 규칙, 예외가 뒤섞인 도메인의 초기 상태입니다.',
+      camera: { pos: [0, 0.6, 9.2], look: [0, 0, 0] },
+      nodes: [
+        n('USER', [-3.2, 1.6, 0.4]),
+        n('DATA', [2.8, -1.4, -0.6]),
+        n('PROCESS', [-1.0, -2.0, 1.2]),
+        n('RULE', [3.0, 1.8, -1.0]),
+        n('STAKEHOLDER', [-2.6, -0.6, -1.4]),
+        n('EXCEPTION', [0.4, 2.2, 1.6]),
+        n('DEVICE', [1.6, 0.2, -1.8]),
+        n('CONSTRAINT', [-0.6, -2.4, -0.2], 0.55),
+        HIDDEN
+      ],
+      connections: [[0, 2], [1, 3], [4, 6], [2, 5], [0, 6], [1, 7]]
+    },
+    {
+      key: 'structure',
+      title: 'STRUCTURE',
+      desc: 'Scroll하면 흩어진 요소들이 서서히 가까워지고 관계가 정리됩니다.',
+      camera: { pos: [0, 0.3, 7.6], look: [0, 0, 0] },
+      nodes: [
+        n('USER', [-2.0, 1.0, 0.2]),
+        n('DATA', [2.0, 1.0, -0.2]),
+        n('PROCESS', [0, 0.1, 0.5]),
+        n('RULE', [2.0, -1.0, 0.2]),
+        n('STAKEHOLDER', [-2.0, -1.0, -0.2]),
+        n('EXCEPTION', [0, 1.7, -0.4]),
+        n('DEVICE', [1.2, -0.3, 0.6]),
+        n('CONSTRAINT', [-1.2, -0.3, -0.6], 0.75),
+        HIDDEN
+      ],
+      connections: [[0, 2], [1, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2]]
+    },
+    {
+      key: 'requirement',
+      title: 'REQUIREMENT',
+      desc: 'User와 Process의 흐름에서 Requirement가 도출되고, Data/Rule로 분기됩니다.',
+      camera: { pos: [0, 0, 7.4], look: [0, -0.2, 0] },
+      nodes: [
+        n('USER', [0, 2.4, 0]),
+        n('DATA', [-1.3, -2.4, 0]),
+        n('PROCESS', [0, 0.8, 0]),
+        n('RULE', [1.3, -2.4, 0]),
+        n('STAKEHOLDER', [-3.0, -0.4, -1.6], 0.14),
+        n('EXCEPTION', [3.0, -0.4, -1.6], 0.14),
+        n('DEVICE', [-3.0, 1.8, -1.9], 0.1),
+        n('CONSTRAINT', [3.0, 1.8, -1.9], 0.1),
+        n('REQUIREMENT', [0, -0.8, 0], 1, 1.25)
+      ],
+      connections: [[0, 2], [2, 8], [8, 1], [8, 3]]
+    },
+    {
+      key: 'lifecycle',
+      title: 'PRODUCT LIFECYCLE',
+      desc: 'Network가 Discover → Define → Design → Deliver → Validate → Operate 흐름으로 재구성됩니다.',
+      camera: { pos: [1.6, 0, 8.0], look: [0, 0, 0] },
+      nodes: [
+        n('DISCOVER', [0, 3.0, 0]),
+        n('DEFINE', [0.9, 1.8, 0.4]),
+        n('DESIGN', [0, 0.6, 0.8]),
+        n('DELIVER', [-0.9, -0.6, 0.4]),
+        n('VALIDATE', [0, -1.8, 0]),
+        n('OPERATE', [0.9, -3.0, -0.4]),
+        HIDDEN, HIDDEN, HIDDEN
+      ],
+      connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]]
+    },
+    {
+      key: 'product',
+      title: 'DIGITAL PRODUCT',
+      desc: '모든 요소가 하나의 coherent한 Product System으로 수렴합니다.',
+      camera: { pos: [0, 0, 9.0], look: [0, 0, 0] },
+      nodes: [
+        n('USER', [2.6, 0, 0.3]),
+        n('DATA', [1.84, 1.84, -0.3]),
+        n('PROCESS', [0, 2.6, 0.3]),
+        n('RULE', [-1.84, 1.84, -0.3]),
+        n('STAKEHOLDER', [-2.6, 0, 0.3]),
+        n('EXCEPTION', [-1.84, -1.84, -0.3]),
+        n('DEVICE', [0, -2.6, 0.3]),
+        n('CONSTRAINT', [1.84, -1.84, -0.3]),
+        n('DIGITAL PRODUCT', [0, 0, 0], 1, 1.9)
+      ],
+      connections: [[0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8], [6, 8], [7, 8]]
+    }
+  ];
+
+  // Exposed for Phase 2+ reuse (Hero / "From Complexity to Product" section).
+  window.PROTOTYPE_3D_DATA = { states: STATE_DATA };
+
+  var canvas = document.getElementById('protoCanvas');
+  var fallbackEl = document.getElementById('protoFallback');
+
+  if (!canvas || typeof THREE === 'undefined' || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    if (fallbackEl) fallbackEl.hidden = false;
+    if (canvas) canvas.style.display = 'none';
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  var sectionEl = document.getElementById('prototype-3d');
+  var pinEl = canvas.closest('.proto-pin');
+  var titleEl = document.getElementById('protoTitle');
+  var descEl = document.getElementById('protoDesc');
+  var progressSteps = Array.prototype.slice.call(document.querySelectorAll('.proto-progress-step'));
+
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isMobile = window.innerWidth < 760;
+
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !isMobile, powerPreference: 'low-power' });
+  } catch (e) {
+    if (fallbackEl) fallbackEl.hidden = false;
+    canvas.style.display = 'none';
+    return;
+  }
+  renderer.setClearColor(0xffffff, 1);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2));
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  var group = new THREE.Group();
+  scene.add(group);
+
+  function resize() {
+    var w = pinEl.clientWidth;
+    var h = pinEl.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ---- nodes (fixed pool of 9 slots, reused/relabeled across states) ----
+  var SLOT_COUNT = 9;
+  var sphereGeo = new THREE.SphereGeometry(0.16, 18, 18);
+  var textureCache = {};
+
+  function makeLabelTexture(text) {
+    if (!text) return null;
+    if (textureCache[text]) return textureCache[text];
+    var c = document.createElement('canvas');
+    c.width = 640; c.height = 140;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#16181d';
+    ctx.font = '700 44px "Segoe UI", -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var spaced = text.split('').join(' ');
+    ctx.fillText(spaced, c.width / 2, c.height / 2 + 4);
+    var tex = new THREE.CanvasTexture(c);
+    tex.needsUpdate = true;
+    textureCache[text] = tex;
+    return tex;
+  }
+
+  var nodePool = [];
+  for (var i = 0; i < SLOT_COUNT; i++) {
+    var mat = new THREE.MeshBasicMaterial({ color: 0x2c4bd4, transparent: true, opacity: 0 });
+    var mesh = new THREE.Mesh(sphereGeo, mat);
+    var spriteMat = new THREE.SpriteMaterial({ transparent: true, opacity: 0, depthWrite: false });
+    var sprite = new THREE.Sprite(spriteMat);
+    sprite.scale.set(1.3, 0.285, 1);
+    group.add(mesh);
+    group.add(sprite);
+    nodePool.push({ mesh: mesh, sprite: sprite, currentLabel: null, pos: new THREE.Vector3(), phase: Math.random() * Math.PI * 2 });
+  }
+
+  // ---- connections (pool of reusable Line objects, union of adjacent states) ----
+  var MAX_EDGES = 24;
+  var linePool = [];
+  for (var j = 0; j < MAX_EDGES; j++) {
+    var lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+    var lineMat = new THREE.LineBasicMaterial({ color: 0x2c4bd4, transparent: true, opacity: 0 });
+    var line = new THREE.Line(lineGeo, lineMat);
+    line.visible = false;
+    group.add(line);
+    linePool.push(line);
+  }
+
+  // ---- subtle particles traveling along active connections ----
+  var PARTICLE_COUNT = (isMobile || reducedMotion) ? 0 : 36;
+  var particlePositions = new Float32Array(PARTICLE_COUNT * 3);
+  var particleGeo = new THREE.BufferGeometry();
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+  var particleMat = new THREE.PointsMaterial({ color: 0x2c4bd4, size: 0.035, transparent: true, opacity: 0.4, depthWrite: false });
+  var particles = new THREE.Points(particleGeo, particleMat);
+  var particlePhase = [];
+  for (var k = 0; k < PARTICLE_COUNT; k++) particlePhase.push(Math.random());
+  if (PARTICLE_COUNT > 0) group.add(particles);
+
+  // ---- scroll-linked progress (no scroll hijacking: we only read position) ----
+  var scrollProgress = 0;
+  var lastRoundedState = -1;
+
+  ScrollTrigger.create({
+    trigger: sectionEl,
+    start: 'top top',
+    end: 'bottom bottom',
+    pin: pinEl,
+    scrub: reducedMotion ? true : 0.6,
+    onUpdate: function (self) {
+      scrollProgress = self.progress;
+      if (reducedMotion) renderFrame(0);
+    }
+  });
+
+  // ---- subtle mouse parallax (desktop only) ----
+  var mouseTarget = { x: 0, y: 0 };
+  var mouseCurrent = { x: 0, y: 0 };
+  if (!isMobile && !reducedMotion) {
+    window.addEventListener('mousemove', function (e) {
+      mouseTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseTarget.y = (e.clientY / window.innerHeight) * 2 - 1;
+    });
+  }
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+  function edgeKey(a, b) { return a < b ? a + '_' + b : b + '_' + a; }
+
+  var idleRotY = 0;
+  var clock = new THREE.Clock();
+  var visible = true;
+  var io = new IntersectionObserver(function (entries) {
+    visible = entries[0].isIntersecting;
+  }, { threshold: 0.01 });
+  io.observe(sectionEl);
+
+  function renderFrame(delta) {
+    var segCount = STATE_DATA.length - 1;
+    var p = Math.min(Math.max(scrollProgress, 0), 1) * segCount;
+    var seg = Math.min(Math.floor(p), segCount - 1);
+    var t = easeInOutCubic(p - seg);
+    var a = STATE_DATA[seg];
+    var b = STATE_DATA[seg + 1];
+
+    var roundedState = Math.round(p);
+    if (roundedState !== lastRoundedState) {
+      lastRoundedState = roundedState;
+      var s = STATE_DATA[roundedState];
+      if (titleEl && descEl) {
+        gsap.to([titleEl, descEl], {
+          opacity: 0, duration: 0.15, onComplete: function () {
+            titleEl.textContent = s.title;
+            descEl.textContent = s.desc;
+            gsap.to([titleEl, descEl], { opacity: 1, duration: 0.25 });
+          }
+        });
+      }
+      progressSteps.forEach(function (el, idx) {
+        el.classList.toggle('active', idx === roundedState);
+      });
+    }
+
+    if (!reducedMotion) {
+      idleRotY += delta * 0.02;
+      mouseCurrent.x += (mouseTarget.x - mouseCurrent.x) * 0.05;
+      mouseCurrent.y += (mouseTarget.y - mouseCurrent.y) * 0.05;
+    }
+    group.rotation.y = idleRotY + mouseCurrent.x * 0.06;
+    group.rotation.x = mouseCurrent.y * -0.03;
+
+    var alphaBySlot = {};
+    for (var i = 0; i < SLOT_COUNT; i++) {
+      var na = a.nodes[i], nb = b.nodes[i];
+      var np = nodePool[i];
+      var alpha = na.alpha + (nb.alpha - na.alpha) * t;
+      var scale = na.scale + (nb.scale - na.scale) * t;
+      var x = na.pos[0] + (nb.pos[0] - na.pos[0]) * t;
+      var y = na.pos[1] + (nb.pos[1] - na.pos[1]) * t;
+      var z = na.pos[2] + (nb.pos[2] - na.pos[2]) * t;
+
+      if (!reducedMotion && alpha > 0.05) {
+        y += Math.sin(clock.elapsedTime * 0.6 + np.phase) * (isMobile ? 0.02 : 0.045);
+      }
+
+      np.pos.set(x, y, z);
+      np.mesh.position.copy(np.pos);
+      np.mesh.scale.setScalar(Math.max(scale, 0.001));
+      np.mesh.material.opacity = alpha;
+      np.mesh.visible = alpha > 0.02;
+
+      var label = t < 0.5 ? na.label : nb.label;
+      if (label && label !== np.currentLabel) {
+        np.currentLabel = label;
+        var tex = makeLabelTexture(label);
+        np.sprite.material.map = tex;
+        np.sprite.material.needsUpdate = true;
+      }
+      var dip = 1 - Math.pow(Math.abs(t - 0.5) * 2, 8);
+      np.sprite.position.set(x, y + 0.22 * scale + 0.14, z);
+      np.sprite.scale.set(1.3 * scale, 0.285 * scale, 1);
+      np.sprite.material.opacity = label ? alpha * (1 - dip * 0.6) : 0;
+      np.sprite.visible = alpha > 0.1 && !!label;
+
+      alphaBySlot[i] = alpha;
+    }
+
+    var union = {};
+    a.connections.forEach(function (e) { union[edgeKey(e[0], e[1])] = { pair: e, inA: true, inB: false }; });
+    b.connections.forEach(function (e) {
+      var k = edgeKey(e[0], e[1]);
+      if (union[k]) union[k].inB = true; else union[k] = { pair: e, inA: false, inB: true };
+    });
+    var edgeList = Object.keys(union).map(function (k) { return union[k]; });
+
+    for (var li = 0; li < linePool.length; li++) {
+      var line = linePool[li];
+      if (li >= edgeList.length) { line.visible = false; continue; }
+      var edge = edgeList[li];
+      var op = edge.inA && edge.inB ? 1 : (edge.inA ? (1 - t) : t);
+      op *= Math.min(alphaBySlot[edge.pair[0]], alphaBySlot[edge.pair[1]]);
+      if (op <= 0.02) { line.visible = false; continue; }
+      var p0 = nodePool[edge.pair[0]].pos;
+      var p1 = nodePool[edge.pair[1]].pos;
+      var posAttr = line.geometry.attributes.position;
+      posAttr.setXYZ(0, p0.x, p0.y, p0.z);
+      posAttr.setXYZ(1, p1.x, p1.y, p1.z);
+      posAttr.needsUpdate = true;
+      line.material.opacity = op * 0.7;
+      line.visible = true;
+    }
+
+    if (PARTICLE_COUNT > 0 && edgeList.length > 0) {
+      var activeEdges = edgeList.filter(function (e) {
+        return Math.min(alphaBySlot[e.pair[0]], alphaBySlot[e.pair[1]]) > 0.3;
+      });
+      if (activeEdges.length > 0) {
+        for (var pi = 0; pi < PARTICLE_COUNT; pi++) {
+          var e2 = activeEdges[pi % activeEdges.length];
+          particlePhase[pi] += delta * 0.06;
+          if (particlePhase[pi] > 1) particlePhase[pi] -= 1;
+          var pp0 = nodePool[e2.pair[0]].pos, pp1 = nodePool[e2.pair[1]].pos;
+          var pt = particlePhase[pi];
+          particlePositions[pi * 3] = pp0.x + (pp1.x - pp0.x) * pt;
+          particlePositions[pi * 3 + 1] = pp0.y + (pp1.y - pp0.y) * pt;
+          particlePositions[pi * 3 + 2] = pp0.z + (pp1.z - pp0.z) * pt;
+        }
+        particleGeo.attributes.position.needsUpdate = true;
+        particles.visible = true;
+      } else {
+        particles.visible = false;
+      }
+    }
+
+    var camPos = [
+      a.camera.pos[0] + (b.camera.pos[0] - a.camera.pos[0]) * t,
+      a.camera.pos[1] + (b.camera.pos[1] - a.camera.pos[1]) * t,
+      a.camera.pos[2] + (b.camera.pos[2] - a.camera.pos[2]) * t
+    ];
+    var camLook = [
+      a.camera.look[0] + (b.camera.look[0] - a.camera.look[0]) * t,
+      a.camera.look[1] + (b.camera.look[1] - a.camera.look[1]) * t,
+      a.camera.look[2] + (b.camera.look[2] - a.camera.look[2]) * t
+    ];
+    var mx = reducedMotion ? 0 : mouseCurrent.x * 0.35;
+    var my = reducedMotion ? 0 : mouseCurrent.y * -0.2;
+    camera.position.set(camPos[0] + mx, camPos[1] + my, camPos[2]);
+    camera.lookAt(camLook[0] + mx * 0.4, camLook[1] + my * 0.4, camLook[2]);
+
+    renderer.render(scene, camera);
+  }
+
+  if (!reducedMotion) {
+    var _clockStarted = false;
+    (function loop() {
+      requestAnimationFrame(loop);
+      if (!visible) return;
+      if (!_clockStarted) { clock.getDelta(); _clockStarted = true; }
+      var delta = Math.min(clock.getDelta(), 0.05);
+      renderFrame(delta);
+    })();
+  } else {
+    renderFrame(0);
+  }
+})();
 </script>
 
 </body>
