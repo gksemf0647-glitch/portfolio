@@ -331,43 +331,129 @@
     }
   }
 
-  /* 강점 */
-  .strengths {
+  /* Sections that should read as one full editorial screen rather than a
+     cramped block — About / Experience / Skills only (Work is naturally
+     tall already; Hero/Product System manage their own height). */
+  .section-full {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* ---- About: positioning statement ---- */
+  .about-statement {
+    font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+    font-weight: 700;
+    line-height: 1.55;
+    letter-spacing: -0.2px;
+    max-width: 640px;
+    margin-bottom: 40px;
+  }
+
+  .about-statement .accent { color: var(--accent); }
+
+  /* ---- About: 3 capability blocks ---- */
+  .capability-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 14px;
+    margin-bottom: 48px;
   }
 
   @media (min-width: 620px) {
-    .strengths { grid-template-columns: repeat(3, 1fr); }
+    .capability-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
-  .strength-card {
+  .capability-card {
     background: var(--bg-soft);
     border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 20px;
   }
 
-  .strength-card .num {
+  .capability-card .num {
     color: var(--accent);
     font-weight: 700;
     font-size: 0.78rem;
     margin-bottom: 10px;
   }
 
-  .strength-card h3 {
-    font-size: 0.94rem;
+  .capability-card h3 {
+    font-size: 0.92rem;
+    letter-spacing: 0.2px;
     margin-bottom: 8px;
   }
 
-  .strength-card p {
+  .capability-card p {
     color: var(--text-dim);
     font-size: 0.84rem;
     line-height: 1.65;
   }
 
-  /* 핵심 역량 */
+  /* ---- About: compact Career Summary / Education / Certifications row ---- */
+  .about-compact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-top: 28px;
+    border-top: 1px solid var(--card-border);
+  }
+
+  @media (min-width: 700px) {
+    .about-compact-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .about-compact-block h3 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .about-compact-block ul {
+    list-style: none;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+
+  .about-compact-block ul li::before {
+    content: "· ";
+    color: var(--accent);
+  }
+
+  /* ---- Skills: core capability categories ---- */
+  .capability-mini-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 620px) {
+    .capability-mini-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .capability-mini {
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .capability-mini .num {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+  }
+
+  .capability-mini .skills { gap: 6px; }
+
+  /* ---- Skills: flat tool tags (also reused by capability-mini) ---- */
   .skills {
     display: flex;
     flex-wrap: wrap;
@@ -383,62 +469,16 @@
     border-radius: 999px;
   }
 
-  /* 보유 툴 */
-  .tools-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  @media (min-width: 620px) {
-    .tools-grid { grid-template-columns: 1fr 1fr; }
-  }
-
-  .tools-block h3 {
-    font-size: 0.85rem;
-    color: var(--text);
-    margin-bottom: 10px;
-  }
-
-  .tools-block .skills { gap: 6px; }
-
-  /* 협업 구조 */
-  .collab-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  @media (min-width: 620px) {
-    .collab-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  .collab-card {
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 18px;
-  }
-
-  .collab-card .role {
+  .skills-subhead {
+    font-size: 0.72rem;
     font-weight: 700;
-    font-size: 0.88rem;
-    margin-bottom: 10px;
-    color: var(--accent);
-  }
-
-  .collab-card ul {
-    list-style: none;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
     color: var(--text-dim);
-    font-size: 0.82rem;
-    line-height: 1.7;
+    margin-bottom: 14px;
   }
 
-  .collab-card ul li::before {
-    content: "· ";
-    color: var(--accent);
-  }
-
-  /* 경력 타임라인 */
+  /* ---- Experience: timeline ---- */
   .timeline {
     position: relative;
     display: flex;
@@ -462,14 +502,14 @@
     background: var(--bg-soft);
     border: 1px solid var(--card-border);
     border-radius: 10px;
-    padding: 20px 22px;
+    padding: 22px 24px;
   }
 
   .timeline-item::before {
     content: "";
     position: absolute;
     left: -22px;
-    top: 24px;
+    top: 26px;
     width: 9px;
     height: 9px;
     border-radius: 50%;
@@ -483,7 +523,7 @@
     align-items: baseline;
     flex-wrap: wrap;
     gap: 6px;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
 
   .timeline-item .role {
@@ -494,160 +534,67 @@
   .timeline-item .period {
     color: var(--text-dim);
     font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
   }
 
-  .timeline-item ul {
-    list-style: none;
+  .timeline-item .focus {
     color: var(--text-dim);
-    font-size: 0.86rem;
-    line-height: 1.7;
+    font-size: 0.82rem;
+    margin-bottom: 14px;
   }
 
-  .timeline-item ul li::before {
-    content: "· ";
-    color: var(--accent);
-  }
-
-  /* 프로젝트 아코디언 (기존 목록 + Selected Work 카드 공통) */
-  .projects {
+  .timeline-item .tag-row {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .project {
-    background: var(--bg-soft);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .project-toggle {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    text-align: left;
-    padding: 18px 20px;
-    cursor: pointer;
-    font-family: inherit;
-  }
-
-  .project-toggle .title-block .name {
-    font-weight: 700;
-    font-size: 0.92rem;
-    margin-bottom: 4px;
-  }
-
-  .project-toggle .title-block .meta {
-    color: var(--text-dim);
-    font-size: 0.76rem;
-  }
-
-  .project-toggle .chevron {
-    color: var(--accent);
-    font-size: 0.85rem;
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .project.open .chevron { transform: rotate(180deg); }
-
-  .project-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.25s ease;
-  }
-
-  .project.open .project-body {
-    max-height: 2400px;
-  }
-
-  .project-body-inner {
-    padding: 0 20px 22px;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  @media (min-width: 620px) {
-    .project-body-inner {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .project-body-inner h4 {
-    color: var(--accent);
-    font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-  }
-
-  .project-body-inner ul {
-    list-style: none;
-    color: var(--text-dim);
-    font-size: 0.84rem;
-    line-height: 1.7;
-  }
-
-  .project-body-inner ul li::before {
-    content: "· ";
-    color: var(--accent);
-  }
-
-  /* 교육 및 자격 */
-  .edu-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  @media (min-width: 620px) {
-    .edu-grid { grid-template-columns: 1fr 1fr; }
-  }
-
-  .edu-block h3 {
-    font-size: 0.85rem;
-    color: var(--text);
-    margin-bottom: 10px;
-  }
-
-  .edu-block ul {
-    list-style: none;
-    color: var(--text-dim);
-    font-size: 0.84rem;
-    line-height: 1.8;
-  }
-
-  .edu-block ul li::before {
-    content: "· ";
-    color: var(--accent);
-  }
-
-  /* 연락처 */
-  .contact-section .wrap {
-    text-align: center;
-  }
-
-  .contact-section p {
-    color: var(--text-dim);
-    font-size: 0.9rem;
-    max-width: 440px;
-    margin: 0 auto 20px;
-    line-height: 1.7;
+    flex-wrap: wrap;
+    gap: 6px;
   }
 
   footer {
-    padding: 32px 0 44px;
+    padding: 56px 0 40px;
     text-align: center;
     color: var(--text-dim);
     font-size: 0.75rem;
   }
+
+  .footer-contact-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .footer-link {
+    color: var(--text);
+    font-size: 0.94rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .footer-link:hover { color: var(--accent); }
+
+  .footer-link--todo {
+    color: var(--text-dim);
+    font-weight: 500;
+    cursor: default;
+  }
+
+  .footer-link--todo em {
+    font-style: normal;
+    font-size: 0.7rem;
+    opacity: 0.75;
+  }
+
+  .footer-copyright { color: var(--text-dim); opacity: 0.7; }
 
   /* ===== HERO (Phase 3 — decoupled from 3D, typography-only, always fully readable) ===== */
   .hero {
@@ -866,107 +813,119 @@
     text-align: center;
   }
 
-  /* ===== SELECTED WORK ===== */
-  .work-grid {
+  /* ===== WORK: one editorial block per project, no accordion ===== */
+  .work-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
   }
 
-  .work-card {
-    background: var(--bg-soft);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-
-  .work-card-head {
-    width: 100%;
+  .work-item {
+    min-height: 100svh;
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 18px;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    text-align: left;
-    padding: 22px 24px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: transform 0.25s ease;
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 24px;
+    padding: 72px 0;
+    border-top: 1px solid var(--card-border);
   }
 
-  .work-card-head:hover { transform: translateY(-2px); }
+  .work-item:first-child { border-top: none; padding-top: 8px; }
+
+  @media (min-width: 800px) {
+    .work-item {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 56px;
+    }
+  }
+
+  .work-item-head {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
 
   .work-number {
-    font-size: 1.6rem;
-    font-weight: 800;
+    font-size: 0.85rem;
+    font-weight: 700;
     color: var(--accent-border);
-    line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
 
-  .work-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
-
-  .work-value-prop {
+  .work-year {
+    font-size: 0.85rem;
     color: var(--text-dim);
-    font-size: 0.86rem;
-    line-height: 1.6;
-    white-space: pre-line;
+    font-variant-numeric: tabular-nums;
   }
 
-  .work-card-head .chevron {
-    color: var(--accent);
-    font-size: 0.9rem;
-    transition: transform 0.2s ease;
+  .work-thumb { order: -1; }
+
+  @media (min-width: 800px) {
+    .work-thumb { order: 0; }
   }
 
-  .work-card.open .chevron { transform: rotate(180deg); }
+  .work-title {
+    font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 10px;
+  }
 
-  .work-meta-row {
+  .work-desc {
+    color: var(--text-dim);
+    font-size: 0.94rem;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    max-width: 440px;
+  }
+
+  .work-role-scope {
     display: flex;
-    gap: 22px;
-    flex-wrap: wrap;
-    padding: 0 24px 20px;
-    font-size: 0.78rem;
-    color: var(--text-dim);
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
   }
 
-  .work-meta-row strong {
+  .work-role-scope strong {
     display: block;
     color: var(--accent);
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.6px;
+    text-transform: uppercase;
     margin-bottom: 4px;
   }
 
-  .work-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    border-top: 1px solid var(--card-border);
+  .work-role-scope span {
+    color: var(--text-dim);
+    font-size: 0.84rem;
+    line-height: 1.6;
   }
 
-  .work-card.open .work-body { max-height: 4000px; }
-
-  .work-body-inner { padding: 26px 24px 30px; }
-
-  .work-visual-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-    margin-bottom: 26px;
+  .case-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
   }
 
-  @media (min-width: 700px) {
-    .work-visual-row { grid-template-columns: 1fr 1fr; }
+  .case-cta::after {
+    content: "→";
+    transition: transform var(--duration) var(--ease);
   }
 
-  .work-visual {
-    background: #fff;
+  .case-cta:hover::after { transform: translateX(3px); }
+
+  /* ---- Reusable placeholder box for any not-yet-provided image asset ---- */
+  .img-placeholder {
+    background: var(--bg-soft);
     border: 1px dashed var(--card-border);
-    border-radius: 10px;
-    min-height: 200px;
+    border-radius: 8px;
+    min-height: 240px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -980,9 +939,9 @@
 
   /* Only real, wired-up assets (data-real-src) get the zoom-in affordance —
      see the lightbox binding in the script below. Placeholders stay inert. */
-  .work-visual[data-real-src] { cursor: zoom-in; }
+  .img-placeholder[data-real-src] { cursor: zoom-in; border-style: solid; }
 
-  .work-visual .ph-icon {
+  .img-placeholder .ph-icon {
     width: 34px;
     height: 34px;
     border-radius: 8px;
@@ -994,6 +953,7 @@
     font-size: 1rem;
   }
 
+  /* ---- Reused inside the case-study detail overlay ---- */
   .case-block { margin-bottom: 22px; }
   .case-block:last-child { margin-bottom: 0; }
 
@@ -1024,29 +984,188 @@
     color: var(--accent);
   }
 
-  .other-projects-toggle {
+  .case-block .todo {
+    color: var(--text-dim);
+    opacity: 0.55;
+    font-style: italic;
+  }
+
+  /* ---- Case study detail: full-screen overlay (client-side "route") ---- */
+  .work-detail-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--bg);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .work-detail-overlay[hidden] { display: none; }
+
+  body.detail-open { overflow: hidden; }
+
+  .work-detail-inner { padding: 96px 0 90px; max-width: 760px; }
+
+  .detail-back {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 6px;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    text-decoration: none;
+    margin-bottom: 40px;
     background: none;
     border: none;
-    color: var(--text-dim);
-    font-size: 0.8rem;
     cursor: pointer;
     font-family: inherit;
-    padding: 8px 2px;
+    padding: 0;
   }
 
-  .other-projects-toggle:hover { color: var(--accent); }
+  .detail-back:hover { color: var(--accent); }
 
-  .other-projects-list {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
+  .detail-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
   }
 
-  .other-projects-list.open { max-height: 3000px; margin-top: 12px; }
+  .detail-header-row .detail-num { font-weight: 700; color: var(--accent-border); }
+  .detail-header-row .detail-year { color: var(--text-dim); }
+
+  .detail-title {
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    margin-bottom: 12px;
+  }
+
+  .detail-desc {
+    color: var(--text-dim);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 560px;
+  }
+
+  .detail-meta-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-bottom: 44px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .detail-meta-row strong {
+    display: block;
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .detail-meta-row ul {
+    list-style: none;
+    color: var(--text-dim);
+    font-size: 0.84rem;
+    line-height: 1.9;
+  }
+
+  .detail-hero-image { margin-bottom: 48px; }
+  .detail-hero-image .img-placeholder { min-height: 320px; }
+
+  .detail-section { margin-bottom: 44px; }
+  .detail-section:last-of-type { margin-bottom: 0; }
+
+  .process-flow {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .process-flow .step {
+    position: relative;
+    padding: 0 0 20px 26px;
+    border-left: 1px solid var(--card-border);
+  }
+
+  .process-flow .step:last-child { border-left-color: transparent; padding-bottom: 0; }
+
+  .process-flow .step::before {
+    content: "";
+    position: absolute;
+    left: -4.5px;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .process-flow .step .stage {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.76rem;
+    letter-spacing: 0.4px;
+    margin-bottom: 3px;
+  }
+
+  .process-flow .step .stage-desc {
+    color: var(--text-dim);
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+
+  .detail-image-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  @media (min-width: 700px) {
+    .detail-image-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  .detail-nav-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid var(--card-border);
+  }
+
+  .detail-nav-link {
+    color: var(--text-dim);
+    font-size: 0.84rem;
+    text-decoration: none;
+    max-width: 45%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    padding: 0;
+  }
+
+  .detail-nav-link:hover { color: var(--accent); }
+
+  .detail-nav-link .dir {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+
+  .detail-nav-link.next { text-align: right; margin-left: auto; }
 
   /* ===== Lightbox ===== */
   .lightbox {
@@ -1093,7 +1212,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ps-block, .work-card-head, .other-projects-list,
+    .ps-block, .case-cta::after,
     nav a, nav a::after, nav .nav-toggle span, nav ul { transition: none; }
   }
 </style>
@@ -1106,13 +1225,10 @@
     <ul id="navList">
       <li><a href="#projects" data-nav><span class="nav-num">01</span>WORK</a></li>
       <li><a href="#about" data-nav><span class="nav-num">02</span>ABOUT</a></li>
-      <li><a href="#skills" data-nav><span class="nav-num">03</span>SKILLS</a></li>
-      <li><a href="#tools" data-nav><span class="nav-num">04</span>TOOLS</a></li>
-      <li><a href="#career" data-nav><span class="nav-num">05</span>CAREER</a></li>
-      <li><a href="#collaboration" data-nav><span class="nav-num">06</span>COLLAB</a></li>
-      <li><a href="#education" data-nav><span class="nav-num">07</span>EDUCATION</a></li>
+      <li><a href="#experience" data-nav><span class="nav-num">03</span>EXPERIENCE</a></li>
+      <li><a href="#skills" data-nav><span class="nav-num">04</span>SKILLS</a></li>
     </ul>
-    <a class="btn nav-cta" href="#contact">CONTACT →</a>
+    <a class="btn nav-cta" href="mailto:handl94@naver.com?subject=Portfolio%20Inquiry%20-%20Handeul%20Kim">GET IN TOUCH →</a>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="메뉴 열기">
       <span></span><span></span><span></span>
     </button>
@@ -1240,7 +1356,7 @@
               <circle cx="100" cy="100" r="13" class="ps-hub"></circle>
             </svg>
           </div>
-          <div class="ps-error-fallback" id="protoFallback">3D/2D Product System을 불러오지 못했습니다.</div>
+          <div class="ps-error-fallback" id="protoFallback">이 브라우저에서는 Product System 시각화를 표시할 수 없습니다.</div>
         </div>
       </div>
     </div>
@@ -1251,483 +1367,486 @@
   <div class="wrap">
     <div class="section-head">
       <div class="section-eyebrow"><span class="num">01</span><span class="code">Work</span></div>
-      <h2>대표 프로젝트</h2>
+      <h2>주요 프로젝트</h2>
     </div>
-    <div class="work-grid" id="workGrid"></div>
+    <div class="work-list" id="workList"></div>
   </div>
 </section>
 
-<section id="about">
+<section id="about" class="section-full">
   <div class="wrap">
     <div class="section-head">
       <div class="section-eyebrow"><span class="num">02</span><span class="code">About</span></div>
-      <h2>강점</h2>
     </div>
-    <div class="strengths" id="strengthsList"></div>
+    <p class="about-statement" id="aboutStatement"></p>
+    <div class="capability-grid" id="capabilityList"></div>
+    <div class="about-compact-grid" id="aboutCompactGrid"></div>
   </div>
 </section>
 
-<section id="skills">
+<section id="experience" class="section-full">
   <div class="wrap">
     <div class="section-head">
-      <div class="section-eyebrow"><span class="num">03</span><span class="code">Skills</span></div>
-      <h2>핵심 역량</h2>
+      <div class="section-eyebrow"><span class="num">03</span><span class="code">Experience</span></div>
     </div>
-    <div class="skills" id="skillsList"></div>
+    <div class="timeline" id="experienceList"></div>
   </div>
 </section>
 
-<section id="tools">
+<section id="skills" class="section-full">
   <div class="wrap">
     <div class="section-head">
-      <div class="section-eyebrow"><span class="num">04</span><span class="code">Tools</span></div>
-      <h2>보유 툴</h2>
+      <div class="section-eyebrow"><span class="num">04</span><span class="code">Skills</span></div>
     </div>
-    <div class="tools-grid" id="toolsGrid"></div>
+    <div class="skills-subhead">Core Capabilities</div>
+    <div class="capability-mini-grid" id="coreCapabilityList"></div>
+    <div class="skills-subhead">Tools &amp; Techniques</div>
+    <div class="skills" id="toolsFlatList"></div>
   </div>
 </section>
 
-<section id="career">
+<footer>
   <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow"><span class="num">05</span><span class="code">Career</span></div>
-      <h2>경력사항 (6년 6개월)</h2>
-    </div>
-    <div class="timeline" id="careerList"></div>
+    <div class="footer-contact-label">Get in touch</div>
+    <div class="footer-links" id="footerLinks"></div>
+    <div class="footer-copyright">&copy; 2026 Handeul Kim</div>
   </div>
-</section>
-
-<section id="collaboration">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow"><span class="num">06</span><span class="code">Collab</span></div>
-      <h2>협업 구조</h2>
-    </div>
-    <div class="collab-grid" id="collabGrid"></div>
-  </div>
-</section>
-
-<section id="education">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow"><span class="num">07</span><span class="code">Education</span></div>
-      <h2>교육 및 자격</h2>
-    </div>
-    <div class="edu-grid" id="eduGrid"></div>
-  </div>
-</section>
-
-<section id="contact" class="contact-section">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="label">Contact</div>
-      <h2>연락하기</h2>
-    </div>
-    <p>복잡한 Domain Process를 Digital Product로 전환하는 작업에 대해 이야기하고 싶다면 편하게 연락해 주세요.</p>
-    <div class="contact-row">
-      <a class="btn" href="mailto:handl94@naver.com">이메일 보내기</a>
-    </div>
-  </div>
-</section>
-
-<footer>&copy; 2026 Handeul Kim</footer>
+</footer>
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <button class="lightbox-close" id="lightboxClose" aria-label="닫기">&times;</button>
   <div class="lightbox-inner" id="lightboxInner"></div>
 </div>
 
+<!-- Case-study "detail page" — a full-screen client-side view swapped in over
+     the single-page document (see the router in the script below). This is a
+     static single-file site with no build/server, so there is no real router
+     to reuse; this is the stable substitute: deep-linkable via #/work/<slug>,
+     back-button friendly via pushState, but not a separate HTML document. -->
+<div class="work-detail-overlay" id="workDetailOverlay" hidden>
+  <div class="wrap work-detail-inner" id="workDetailContent"></div>
+</div>
+
 <script>
-  const strengths = [
-    {
-      title: "바이오 제품 개발 프로세스 이해",
-      desc: "분자진단 제품 개발 과정의 실험 계획, 결과정리, 데이터 분석, 문서화 흐름을 End-to-End로 분석하고 표준화했습니다. 표준 템플릿과 절차를 설계해 사내 표준 프로세스로 채택시켰습니다."
-    },
-    {
-      title: "프로젝트 일정 관리 및 로드맵 수립",
-      desc: "AS-IS 프로세스를 단계별로 분해해 자동화 가능 영역을 정의하고 약 30% 수준의 자동화를 구현했습니다. 80% 자동화를 목표로 로드맵을 수립하고 WBS·유저스토리·백로그 기반으로 우선순위를 운영했습니다."
-    },
-    {
-      title: "End-to-End 개발 및 운영 경험",
-      desc: "요구사항 정의부터 IA, 사용자 흐름, 화면 설계, 정책서까지 기획을 주도하고 스프린트 단위로 구현을 검증했습니다. Help Desk를 운영하며 VOC를 수집·분석해 유지보수에 반영했습니다."
-    }
+  // ---- image asset helper: every image is TODO/placeholder until a real
+  // file exists — at that point set `realSrc` on the data entry and the
+  // template below picks it up automatically, no markup changes needed. ----
+  function img(path) { return { path: path, realSrc: null }; }
+
+  // ==== ABOUT ================================================================
+  const aboutStatement =
+    "Complex Domain Process를 분석하고 Requirement → Design → Development → Validation → Operation으로 연결하여 Digital Product로 전환합니다.";
+
+  // Paraphrases of the site's own existing positioning copy (hero-sub-ko) and
+  // the former "강점" cards — no new claims introduced.
+  const capabilities = [
+    { num: "01", title: "DOMAIN → PRODUCT", desc: "복잡한 Domain Process를 관찰하고 구조화해 Digital Product로 전환합니다." },
+    { num: "02", title: "SYSTEM THINKING", desc: "AS-IS 프로세스를 분해해 자동화 가능 영역을 정의하고, System 관점의 구조로 설계합니다." },
+    { num: "03", title: "END-TO-END", desc: "Requirement부터 Design, Development, Validation, Operation까지 전 과정에 관여합니다." }
   ];
 
-  const skills = [
-    "실험실 workflow 분석 및 AS-IS/TO-BE 설계",
-    "IVD/분자진단 제품개발 프로세스 이해",
-    "실험 자동화 장비 workflow 설계",
-    "Excel/PowerPoint 데이터 정리·보고",
-    "Figma/Lucidchart/Draw.io 화면 설계",
-    "Jira/Confluence/MS DevOps/TestRail",
-    "다부서 협업 및 커뮤니케이션",
-    "SOP/요구사항/테스트케이스 문서화",
-    "AI 생산성 도구 및 업무 자동화"
+  // Compact subset only — full history lives in each project's case study.
+  const careerSummary = [
+    "씨젠 · 전략기획2팀 (2020 – 현재)",
+    "유바이오로직스 · R&D (2020)"
   ];
+  const educationCompact = ["전북대학교 분자생물학 학사 / 컴퓨터공학 복수전공"];
+  const certificationsCompact = ["PMP", "정보처리기사", "컴퓨터활용능력 1급", "화학분석기사"];
 
-  const tools = {
-    "Collaboration": ["Notion", "MS DevOps", "Slack", "Jira", "Confluence"],
-    "Programming": ["Python", "Java", "C"],
-    "Design": ["Figma", "Photoshop", "Premiere", "After Effects"],
-    "Etc": ["TestRail", "MS Excel", "MS PowerPoint", "MS Word"]
-  };
-
-  const collaboration = [
+  // ==== EXPERIENCE ============================================================
+  // Same two roles as before, reframed as "selected experience" tags instead
+  // of full sentence bullets — every tag is a compression of the corresponding
+  // original bullet, not a new claim.
+  const experience = [
     {
-      role: "Researcher",
-      items: ["사용자 인터뷰", "요구사항 구조화", "업무 흐름 정리/분석", "VOC 수집"]
-    },
-    {
-      role: "Developer, SI Vendor",
-      items: ["기획/설계 문서 전달", "개발 범위·일정·이슈 조율", "구현 난이도 조율", "스프린트 단위 검증"]
-    },
-    {
-      role: "QA",
-      items: ["테스트 시나리오", "검증 기준", "결함 관리"]
-    },
-    {
-      role: "Operation",
-      items: ["Help Desk", "VOC 관리", "개선 backlog 관리"]
-    }
-  ];
-
-  const career = [
-    {
+      period: "2020 — PRESENT",
+      domain: "MOLECULAR DIAGNOSTICS",
+      focus: "Product · System Planning",
       role: "씨젠 · 전략기획2팀 · 대리",
-      period: "2020.05 ~ 현재 (6년 2개월)",
-      items: [
-        "분자진단 제품개발 및 R&D 실험 업무 프로세스 분석",
-        "실험계획·실험기록·결과정리·문서화 업무의 자동화 범위 정의",
-        "연구원 업무 흐름을 기반으로 workflow, 화면 흐름, 기능 요구사항 설계",
-        "실험 자동화 장비 운영 흐름 및 HW-SW 연계 시나리오 설계",
-        "개발자·QA·연구원·장비 담당자·외주 SI와 요구사항/일정/이슈 조율",
-        "TestRail, MS DevOps, Jira를 활용한 검증 및 이슈 관리"
+      tags: [
+        "R&D Workflow Analysis", "Experiment Planning Automation", "Equipment Automation Workflow",
+        "Requirement & Screen Design", "Cross-functional Coordination", "Validation & Issue Management"
       ]
     },
     {
+      period: "2020.01 — 2020.05",
+      domain: "BIOCHEMISTRY R&D",
+      focus: "Lab QA · Technical Support",
       role: "유바이오로직스 · R&D · 사원",
-      period: "2020.01 ~ 2020.05 (4개월)",
-      items: [
-        "생화학 및 이화학 시험법 개발 및 검증",
-        "안정성 시험, SOP 작성, 실험실 QA 지원",
-        "기술이전 및 시설 Audit 준비 지원"
-      ]
+      tags: ["Test Method Development", "Stability Testing", "SOP Documentation", "Tech Transfer Support"]
     }
   ];
 
-  const projects = [
+  // ==== SKILLS ================================================================
+  // Category structure as specified for this redesign; each item maps back to
+  // skills already listed in this site's prior "핵심 역량" content.
+  const coreCapabilities = [
+    { num: "01", title: "Product Strategy", items: ["Domain Analysis", "Product Definition", "Product Planning"] },
+    { num: "02", title: "System Design", items: ["Workflow", "Information Architecture", "UX / UI", "System Architecture"] },
+    { num: "03", title: "Requirement", items: ["User Story", "Functional Requirement", "Acceptance Criteria", "Traceability"] },
+    { num: "04", title: "Validation", items: ["Test Design", "V&V", "Validation Planning"] }
+  ];
+
+  // Real tools only, flattened from the prior "보유 툴" categories — nothing added.
+  const toolsFlat = [
+    "Notion", "MS DevOps", "Slack", "Jira", "Confluence",
+    "Python", "Java", "C",
+    "Figma", "Photoshop", "Premiere", "After Effects",
+    "TestRail", "MS Excel", "MS PowerPoint", "MS Word"
+  ];
+
+  // ==== WORK / CASE STUDIES ===================================================
+  // Every field is either verbatim from, or a direct paraphrase of, this
+  // site's prior project data. Fields with no prior source are left as
+  // literal [TODO: ...] markers rather than invented (see item 10 of the brief).
+  const caseStudies = [
     {
+      slug: "automation-experiment-planning",
+      num: "01", year: "2025",
       name: "제품개발 자동화 장비 및 실험계획 모듈 개발",
-      period: "2025.11 ~ 현재",
+      oneLiner: "Complex R&D workflows → Digital Product System",
       role: "실험계획 모듈 분석/설계, 자동화 장비 workflow 설계, 외주 SI 협업",
-      details: [
-        "제품개발 실험계획 workflow를 분석하고 시스템 자동화 범위를 정의",
-        "실험 조건 입력, 기준정보, 업무 규칙, 사용자 흐름, 기능 요구사항 정의",
-        "외주 SI 업체와 화면 요구사항, 개발 범위, 구현 이슈, 일정 방향 조율",
-        "자동화 장비의 운영 workflow, 조작 시나리오, 예외 처리 로직 설계"
+      scope: "Workflow · Requirement · Device Integration",
+      context: null,
+      problem: "제품개발 실험계획 업무가 표준화된 시스템 없이 개별적으로 처리되고 있었고, 자동화 장비와 연계된 일관된 workflow가 없었습니다.",
+      goal: null,
+      myRole: "실험계획 모듈의 분석/설계를 주도하고, 자동화 장비의 운영 workflow·조작 시나리오·예외 처리 로직을 설계했습니다. 외주 SI 업체와 화면 요구사항, 개발 범위, 구현 이슈, 일정을 직접 조율했습니다.",
+      process: [
+        { stage: "Domain", desc: "제품개발 실험계획 업무 관찰" },
+        { stage: "Workflow", desc: "자동화 대상 범위 정의" },
+        { stage: "Requirement", desc: "실험 조건·기준정보·업무 규칙·사용자 흐름 정의" },
+        { stage: "Design", desc: "화면 요구사항을 외주 SI와 조율" },
+        { stage: "Development", desc: "SI 구현 이슈·일정 조율" },
+        { stage: "Validation", desc: "자동화 장비 조작 시나리오·예외 처리 검증" }
       ],
-      results: [
+      keyDecisions: [
+        "실험 조건 입력부터 기준정보·업무 규칙까지 하나의 요구사항 구조로 정의해 SI와의 커뮤니케이션 기준선 마련",
+        "장비 운영 workflow에 예외 처리 로직을 별도로 설계해 운영 안정성을 확보"
+      ],
+      result: [
         "실험계획 모듈의 요구사항 기준선과 개발 범위 수립",
         "외주 SI와 협업 가능한 분석/설계 산출물 체계 마련",
         "자동화 장비와 실험계획 workflow 연계 기반 설계"
-      ]
+      ],
+      validation: "자동화 장비 조작 시나리오·예외 처리 검증",
+      tools: null,
+      thumbnail: img("assets/projects/project-01/thumbnail.png"),
+      detailImages: [img("assets/projects/project-01/detail-01.png")],
+      workflowImages: [img("assets/projects/project-01/workflow-01.png")]
     },
     {
+      slug: "feasibility-automation-sw",
+      num: "02", year: "2023",
       name: "분자진단 제품개발 Feasibility 단계 자동화 SW",
-      period: "2023.06 ~ 2025.07",
+      oneLiner: "Manual Excel/NAS workflow → End-to-end digital workflow",
       role: "시스템 기획, workflow 분석, 화면/기능 설계, QA 리드",
-      details: [
-        "Excel/NAS 기반 실험계획·결과정리 업무를 웹 기반 workflow로 전환",
-        "연구원 업무 관찰을 통한 AS-IS/TO-BE 프로세스 정의",
-        "실험계획~문서화 흐름을 End-to-End로 설계",
-        "사용자 흐름, 기능 요구사항, 정책서, WBS, 테스트 시나리오 작성"
+      scope: "Workflow · Requirement · UX · Validation",
+      context: null,
+      problem: "실험계획·결과정리 업무가 Excel/NAS 기반 수작업으로 처리되어 제품개발 단계별로 반복적인 비효율이 발생하고 있었습니다.",
+      goal: null,
+      myRole: "시스템 기획과 workflow 분석을 주도하고, 화면/기능 설계와 QA를 리드했습니다. 연구원 업무 관찰을 통해 AS-IS/TO-BE 프로세스를 직접 정의했습니다.",
+      process: [
+        { stage: "Domain", desc: "연구원 업무 관찰" },
+        { stage: "Workflow", desc: "AS-IS/TO-BE 프로세스 정의" },
+        { stage: "Requirement", desc: "사용자 흐름·기능 요구사항·정책서 작성" },
+        { stage: "Design", desc: "실험계획~문서화 흐름을 End-to-End로 설계" },
+        { stage: "Development", desc: "WBS 기반 개발 우선순위 운영" },
+        { stage: "Validation", desc: "테스트 시나리오 작성 및 QA 리드" }
       ],
-      results: [
+      keyDecisions: [
+        "실험계획부터 문서화까지 하나의 End-to-End workflow로 설계해 단계 간 데이터 재입력을 제거",
+        "자동화 범위를 단계적으로(약 30% → 80% 목표) 확대하는 로드맵을 수립해 우선순위를 관리"
+      ],
+      result: [
         "제품개발 시간 약 50% 단축에 기여",
         "수작업 대비 업무 효율 약 40% 개선",
         "실험 항목 작성 시간 약 50% 단축, 오류율 약 80% 감소",
         "자동화 범위를 약 30% → 80% 수준으로 확대하는 로드맵 수립"
-      ]
+      ],
+      validation: "테스트 시나리오 작성 및 QA 리드",
+      tools: null,
+      thumbnail: img("assets/projects/project-02/thumbnail.png"),
+      detailImages: [img("assets/projects/project-02/detail-01.png")],
+      workflowImages: [img("assets/projects/project-02/workflow-01.png")]
     },
     {
+      slug: "prototype-doc-automation",
+      num: "03", year: "2024",
       name: "Prototype 단계 제품개발 문서 자동화",
-      period: "2024.03 ~ 2024.08",
+      oneLiner: "Feasibility 단계 자동화 구조를 Prototype 단계로 확장",
       role: "workflow 분석, 기능 설계, QA 담당",
-      details: [
+      scope: null,
+      context: null,
+      problem: null,
+      goal: null,
+      myRole: "workflow 분석, 기능 설계, QA를 담당했습니다. Feasibility 단계 자동화 구조를 Prototype 단계로 확장하며 단계별 입력 데이터, 산출 문서, 검토 흐름을 정의했습니다.",
+      process: [
         "Feasibility 단계 자동화 구조를 Prototype 단계로 확장",
         "단계별 입력 데이터, 산출 문서, 검토 흐름 정의",
         "제품개발 단계별 공통 업무와 차이점을 기능 요구사항으로 전환"
       ],
-      results: [
+      keyDecisions: [],
+      result: [
         "Prototype 단계 문서 자동화 범위 확장",
         "문서 작성시간 약 70% 단축을 기대할 수 있는 구조 설계",
         "제품개발 문서 품질 일관성 확보 기반 마련"
-      ]
+      ],
+      validation: null,
+      tools: null,
+      thumbnail: img("assets/projects/project-03/thumbnail.png"),
+      detailImages: [img("assets/projects/project-03/detail-01.png")],
+      workflowImages: [img("assets/projects/project-03/workflow-01.png")]
     },
     {
+      slug: "qc-report-automation",
+      num: "04", year: "2020",
       name: "QC Report 및 문서 자동화",
-      period: "2020.08 ~ 2022.12",
+      oneLiner: "반복 문서 작성 workflow를 분석하고 자동화 대상 정의",
       role: "시스템 기획, 문서 표준화, QA, 운영 개선",
-      details: [
+      scope: null,
+      context: null,
+      problem: null,
+      goal: null,
+      myRole: "시스템 기획, 문서 표준화, QA, 운영 개선을 담당했습니다. 반복 문서 작성 workflow를 분석해 자동화 대상을 정의하고, 출력 양식·기능 요구사항·QA 기준을 설계했습니다.",
+      process: [
         "반복 문서 작성 workflow를 분석하고 자동화 대상 정의",
         "출력 양식, 기능 요구사항, QA 기준 설계",
         "Jira, Confluence, Slack을 활용한 외주/내부 협업",
         "출시 후 사용자 문의와 개선사항 관리"
       ],
-      results: [
+      keyDecisions: [],
+      result: [
         "문서 작성시간 최대 약 40% 단축",
         "R&D 및 품질 문서의 일관성과 재현성 개선",
         "반복 사용 가능한 표준 문서 workflow 구축"
-      ]
+      ],
+      validation: null,
+      tools: ["Jira", "Confluence", "Slack"],
+      thumbnail: img("assets/projects/project-04/thumbnail.png"),
+      detailImages: [img("assets/projects/project-04/detail-01.png")],
+      workflowImages: [img("assets/projects/project-04/workflow-01.png")]
     },
     {
+      slug: "liquid-handler-workflow",
+      num: "05", year: "2021",
       name: "Liquid Handler 장비 운영 workflow 개선",
-      period: "2021.10 ~ 2022.03",
+      oneLiner: "Complex device operation → Simplified, validated workflow",
       role: "장비 운영 workflow 분석, 사용성 개선, 검증",
-      details: [
-        "Liquid Handler 장비 구동 절차와 사용자 조작 흐름 분석",
-        "수동 입력 단계와 오류 발생 가능성이 높은 지점 식별",
-        "비전문 사용자도 쉽게 운영할 수 있도록 workflow 단순화",
-        "실제 사용자 테스트를 통해 개선된 흐름 검증"
-      ],
-      results: [
-        "장비 setup 및 실행 시간 약 30% 단축",
-        "비프로그래머 사용자의 장비 운영 가능성 제고",
-        "수동 입력 오류 50% 이상 감소"
-      ]
-    }
-  ];
-
-  // Selected Work: 3 projects picked to show Technical PM / PO breadth
-  // (requirement definition, cross-vendor coordination, E2E delivery, device
-  // usability validation) rather than leading with the Bio-Tech industry name.
-  // Every field below is a direct paraphrase of the `projects` data above —
-  // no new facts, numbers, or outcomes are introduced.
-  const selectedWork = [
-    {
-      projectIndex: 0,
-      valueProp: "Complex R&D workflows\n→ Digital Product System",
-      scope: "Workflow · Requirement · Device Integration",
-      problem: "제품개발 실험계획 업무가 표준화된 시스템 없이 개별적으로 처리되고 있었고, 자동화 장비와 연계된 일관된 workflow가 없었습니다.",
-      myRole: "실험계획 모듈의 분석/설계를 주도하고, 자동화 장비의 운영 workflow·조작 시나리오·예외 처리 로직을 설계했습니다. 외주 SI 업체와 화면 요구사항, 개발 범위, 구현 이슈, 일정을 직접 조율했습니다.",
-      process: ["Domain: 제품개발 실험계획 업무 관찰", "Workflow: 자동화 대상 범위 정의", "Requirement: 실험 조건·기준정보·업무 규칙·사용자 흐름 정의", "Design: 화면 요구사항을 외주 SI와 조율", "Development: SI 구현 이슈·일정 조율", "Validation: 자동화 장비 조작 시나리오·예외 처리 검증"],
-      keyDecisions: [
-        "실험 조건 입력부터 기준정보·업무 규칙까지 하나의 요구사항 구조로 정의해 SI와의 커뮤니케이션 기준선 마련",
-        "장비 운영 workflow에 예외 처리 로직을 별도로 설계해 운영 안정성을 확보"
-      ],
-      solution: "실험계획 모듈과 자동화 장비 운영 workflow를 하나의 요구사항 체계로 연결한 분석/설계 산출물 세트.",
-      outcome: [
-        "실험계획 모듈의 요구사항 기준선과 개발 범위 수립",
-        "외주 SI와 협업 가능한 분석/설계 산출물 체계 마련",
-        "자동화 장비와 실험계획 workflow 연계 기반 설계"
-      ],
-      learned: "외주 SI와의 협업에서는 분석/설계 산출물의 표준화가 커뮤니케이션 비용을 가장 크게 줄인다는 것을 확인했습니다."
-    },
-    {
-      projectIndex: 1,
-      valueProp: "Manual Excel/NAS workflow\n→ End-to-end digital workflow",
-      scope: "Workflow · Requirement · UX · Validation",
-      problem: "실험계획·결과정리 업무가 Excel/NAS 기반 수작업으로 처리되어 제품개발 단계별로 반복적인 비효율이 발생하고 있었습니다.",
-      myRole: "시스템 기획과 workflow 분석을 주도하고, 화면/기능 설계와 QA를 리드했습니다. 연구원 업무 관찰을 통해 AS-IS/TO-BE 프로세스를 직접 정의했습니다.",
-      process: ["Domain: 연구원 업무 관찰", "Workflow: AS-IS/TO-BE 프로세스 정의", "Requirement: 사용자 흐름·기능 요구사항·정책서 작성", "Design: 실험계획~문서화 흐름을 End-to-End로 설계", "Development: WBS 기반 개발 우선순위 운영", "Validation: 테스트 시나리오 작성 및 QA 리드"],
-      keyDecisions: [
-        "실험계획부터 문서화까지 하나의 End-to-End workflow로 설계해 단계 간 데이터 재입력을 제거",
-        "자동화 범위를 단계적으로(약 30% → 80% 목표) 확대하는 로드맵을 수립해 우선순위를 관리"
-      ],
-      solution: "Excel/NAS 기반 수작업 workflow를 웹 기반 실험계획·결과정리 시스템으로 전환.",
-      outcome: [
-        "제품개발 시간 약 50% 단축에 기여",
-        "수작업 대비 업무 효율 약 40% 개선",
-        "실험 항목 작성 시간 약 50% 단축, 오류율 약 80% 감소",
-        "자동화 범위를 약 30% → 80% 수준으로 확대하는 로드맵 수립"
-      ],
-      learned: "AS-IS 프로세스를 단계별로 분해해 자동화 가능 영역을 먼저 정의하는 것이, 전체를 한 번에 자동화하려는 접근보다 실제 채택률이 높았습니다."
-    },
-    {
-      projectIndex: 4,
-      valueProp: "Complex device operation\n→ Simplified, validated workflow",
       scope: "Device Workflow · Usability · Validation",
+      context: null,
       problem: "Liquid Handler 장비의 구동 절차가 복잡해 비전문 사용자가 운영하기 어려웠고, 수동 입력 단계에서 오류가 자주 발생했습니다.",
+      goal: null,
       myRole: "장비 운영 workflow를 분석하고 사용성 개선안을 설계했으며, 실제 사용자 테스트를 통해 개선된 흐름을 직접 검증했습니다.",
-      process: ["Domain: 장비 구동 절차·사용자 조작 흐름 분석", "Requirement: 수동 입력 단계·오류 발생 지점 식별", "Design: 비전문 사용자 기준으로 workflow 단순화", "Validation: 실제 사용자 테스트로 개선 흐름 검증"],
+      process: [
+        { stage: "Domain", desc: "장비 구동 절차·사용자 조작 흐름 분석" },
+        { stage: "Requirement", desc: "수동 입력 단계·오류 발생 지점 식별" },
+        { stage: "Design", desc: "비전문 사용자 기준으로 workflow 단순화" },
+        { stage: "Validation", desc: "실제 사용자 테스트로 개선 흐름 검증" }
+      ],
       keyDecisions: [
         "오류 발생 가능성이 높은 수동 입력 지점을 우선 식별해 단순화 범위를 좁게 설정",
         "실제 사용자 테스트를 통한 검증을 설계 프로세스에 포함"
       ],
-      solution: "비전문 사용자도 운영할 수 있도록 장비 조작 workflow를 단순화하고 사용자 테스트로 검증.",
-      outcome: [
+      result: [
         "장비 setup 및 실행 시간 약 30% 단축",
         "비프로그래머 사용자의 장비 운영 가능성 제고",
         "수동 입력 오류 50% 이상 감소"
       ],
-      learned: "장비 workflow 개선은 기능 추가보다 '불필요한 수동 입력 단계 제거'가 체감 효과가 컸습니다."
+      validation: "실제 사용자 테스트로 개선 흐름 검증",
+      tools: null,
+      thumbnail: img("assets/projects/project-05/thumbnail.png"),
+      detailImages: [img("assets/projects/project-05/detail-01.png")],
+      workflowImages: [img("assets/projects/project-05/workflow-01.png")]
     }
   ];
 
-  const education = {
-    "학력": ["전북대학교 분자생물학 학사 / 컴퓨터공학부 복수전공 (2013.03 ~ 2019.02)"],
-    "어학": ["영어: OPIC IH (2025.09)", "일본어: JLPT N2 (2026.01)"],
-    "자격": [
-      "Project Management Professional, PMP (2026.04)",
-      "컴퓨터활용능력 1급 (2021.05)",
-      "정보처리기사 (2019.08)",
-      "화학분석기사 (2019.01)"
-    ],
-    "교육": [
-      "SI & SM 프로젝트 관리를 위한 PM/PL 마스터 과정 (2025.06)",
-      "ChatGPT 활용 & 업무 자동화 과정 (2024.08)",
-      "애자일 프로젝트 관리 과정 (2023.11)",
-      "IT 프로젝트 관리 전문가를 위한 핵심 기술 (2023.08)",
-      "ISO 13485: 의료기기 품질경영시스템 (2020.06)",
-      "ISO 14971: 의료기기 위험관리 (2020.06)"
-    ]
-  };
-
-  document.getElementById('strengthsList').innerHTML = strengths.map((s, idx) => `
-    <div class="strength-card reveal" style="--i:${idx}">
-      <div class="num">0${idx + 1}</div>
-      <h3>${s.title}</h3>
-      <p>${s.desc}</p>
-    </div>
-  `).join('');
-
-  document.getElementById('skillsList').innerHTML =
-    skills.map((s, idx) => `<span class="skill-tag reveal" style="--i:${idx}">${s}</span>`).join('');
-
-  document.getElementById('toolsGrid').innerHTML =
-    Object.entries(tools).map(([category, items], catIdx) => `
-      <div class="tools-block reveal" style="--i:${catIdx}">
-        <h3>${category}</h3>
-        <div class="skills">${items.map(i => `<span class="skill-tag">${i}</span>`).join('')}</div>
-      </div>
-    `).join('');
-
-  document.getElementById('collabGrid').innerHTML = collaboration.map((c, idx) => `
-    <div class="collab-card reveal" style="--i:${idx}">
-      <div class="role">${c.role}</div>
-      <ul>${c.items.map(i => `<li>${i}</li>`).join('')}</ul>
-    </div>
-  `).join('');
-
-  document.getElementById('careerList').innerHTML = career.map((c, idx) => `
-    <div class="timeline-item reveal" style="--i:${idx}">
-      <div class="role-row">
-        <span class="role">${c.role}</span>
-        <span class="period">${c.period}</span>
-      </div>
-      <ul>${c.items.map(i => `<li>${i}</li>`).join('')}</ul>
-    </div>
-  `).join('');
-
-  document.getElementById('eduGrid').innerHTML =
-    Object.entries(education).map(([title, items], idx) => `
-      <div class="edu-block reveal" style="--i:${idx}">
-        <h3>${title}</h3>
-        <ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>
-      </div>
-    `).join('');
-
-  // ---- Selected Work cards (expandable case study, reuses the accordion pattern) ----
-  function visualPlaceholder(labelKo, assetPath) {
-    return `
-      <div class="work-visual" data-lightbox-label="${labelKo}" data-asset="${assetPath}">
-        <div class="ph-icon">▢</div>
-        <div>${labelKo}<br><span style="opacity:.7">준비 중 (MISSING ASSET: ${assetPath})</span></div>
-      </div>
-    `;
+  // ---- shared render helpers -------------------------------------------------
+  function imgPlaceholder(imgObj, label, extraClass) {
+    var cls = "img-placeholder" + (extraClass ? " " + extraClass : "");
+    if (imgObj.realSrc) {
+      return `<div class="${cls}" data-real-src="${imgObj.realSrc}" data-lightbox-label="${label}">
+        <img src="${imgObj.realSrc}" alt="${label}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+      </div>`;
+    }
+    return `<div class="${cls}" data-asset="${imgObj.path}">
+      <div class="ph-icon">▢</div>
+      <div>IMAGE TO BE ADDED<br><span style="opacity:.7">${imgObj.path}</span></div>
+    </div>`;
   }
 
-  document.getElementById('workGrid').innerHTML = selectedWork.map((w, idx) => {
-    const p = projects[w.projectIndex];
-    return `
-    <div class="work-card reveal" style="--i:${idx}" id="work-${idx}">
-      <button class="work-card-head" data-idx="${idx}">
-        <span class="work-number">0${idx + 1}</span>
-        <span>
-          <span class="work-title">${p.name}</span>
-          <span class="work-value-prop">${w.valueProp}</span>
-        </span>
-        <span class="chevron">▾</span>
-      </button>
-      <div class="work-meta-row">
-        <span><strong>ROLE</strong>${p.role}</span>
-        <span><strong>SCOPE</strong>${w.scope}</span>
-        <span><strong>DURATION</strong>${p.period}</span>
-      </div>
-      <div class="work-body">
-        <div class="work-body-inner">
-          <div class="work-visual-row">
-            ${visualPlaceholder('UI Screenshot', 'assets/projects/project-0' + (idx + 1) + '/screenshot-01.png')}
-            ${visualPlaceholder('Workflow / Figma', 'assets/projects/project-0' + (idx + 1) + '/workflow-01.png')}
-          </div>
-          <div class="case-block"><h4>01 · Problem</h4><p>${w.problem}</p></div>
-          <div class="case-block"><h4>02 · My Role</h4><p>${w.myRole}</p></div>
-          <div class="case-block"><h4>03 · Process</h4><ul>${w.process.map(x => `<li>${x}</li>`).join('')}</ul></div>
-          <div class="case-block"><h4>04 · Key Decisions</h4><ul>${w.keyDecisions.map(x => `<li>${x}</li>`).join('')}</ul></div>
-          <div class="case-block"><h4>05 · Solution</h4><p>${w.solution}</p></div>
-          <div class="case-block"><h4>06 · Outcome</h4><ul>${w.outcome.map(x => `<li>${x}</li>`).join('')}</ul></div>
-          <div class="case-block"><h4>07 · What I Learned</h4><p>${w.learned}</p></div>
-        </div>
-      </div>
-    </div>
-  `;
-  }).join('');
+  function metaLine(label, value) {
+    return `<span><strong>${label}</strong>${value || '<span class="todo">[TODO: ' + label + ']</span>'}</span>`;
+  }
 
-  document.querySelectorAll('.work-card-head').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const card = btn.closest('.work-card');
-      const willOpen = !card.classList.contains('open');
-      document.querySelectorAll('.work-card.open').forEach(c => { if (c !== card) c.classList.remove('open'); });
-      card.classList.toggle('open', willOpen);
-      if (willOpen) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
+  function renderProcess(process) {
+    if (!process || !process.length) return '<p class="case-block todo">[TODO: PROCESS]</p>';
+    if (typeof process[0] === "string") {
+      return `<ul>${process.map(p => `<li>${p}</li>`).join('')}</ul>`;
+    }
+    return `<div class="process-flow">${process.map(s => `
+      <div class="step"><div class="stage">${s.stage}</div><div class="stage-desc">${s.desc}</div></div>
+    `).join('')}</div>`;
+  }
 
-  // Remaining real projects, kept in full (not deleted) but shown as a compact
-  // secondary list so the 3 curated cards above stay the primary focus.
-  const otherProjects = projects.filter((_, i) => ![0, 1, 4].includes(i));
-  const otherWrap = document.createElement('div');
-  otherWrap.innerHTML = `
-    <button class="other-projects-toggle" id="otherProjectsToggle">
-      <span id="otherProjectsToggleLabel">그 외 프로젝트 ${otherProjects.length}건 더 보기</span>
-      <span class="chevron">▾</span>
-    </button>
-    <div class="projects other-projects-list" id="otherProjectsList"></div>
-  `;
-  document.getElementById('workGrid').after(otherWrap);
-  document.getElementById('otherProjectsList').innerHTML = otherProjects.map((p, idx) => `
-    <div class="project" id="other-project-${idx}">
-      <button class="project-toggle" data-idx="${idx}">
-        <div class="title-block">
-          <div class="name">${p.name}</div>
-          <div class="meta">${p.period} · ${p.role}</div>
+  function renderList(items, todoLabel) {
+    if (!items || !items.length) return `<p class="todo">[TODO: ${todoLabel}]</p>`;
+    return `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+  }
+
+  function renderParagraph(text, todoLabel) {
+    return text ? `<p>${text}</p>` : `<p class="todo">[TODO: ${todoLabel}]</p>`;
+  }
+
+  // ==== WORK list (one full editorial block per project, no accordion) =======
+  document.getElementById('workList').innerHTML = caseStudies.map((cs, idx) => `
+    <div class="work-item reveal" style="--i:${idx}" id="work-${cs.slug}">
+      <div class="work-item-head">
+        <span class="work-number">${cs.num}</span>
+        <span class="work-year">${cs.year}</span>
+      </div>
+      <div class="work-thumb">${imgPlaceholder(cs.thumbnail, cs.name)}</div>
+      <div class="work-meta">
+        <h3 class="work-title">${cs.name}</h3>
+        <p class="work-desc">${cs.oneLiner}</p>
+        <div class="work-role-scope">
+          ${metaLine("ROLE", cs.role)}
+          ${metaLine("SCOPE", cs.scope)}
         </div>
-        <span class="chevron">▾</span>
-      </button>
-      <div class="project-body">
-        <div class="project-body-inner">
-          <div>
-            <h4>주요 내용</h4>
-            <ul>${p.details.map(d => `<li>${d}</li>`).join('')}</ul>
-          </div>
-          <div>
-            <h4>성과</h4>
-            <ul>${p.results.map(r => `<li>${r}</li>`).join('')}</ul>
-          </div>
-        </div>
+        <a class="case-cta" href="#/work/${cs.slug}" data-slug="${cs.slug}">Case study</a>
       </div>
     </div>
   `).join('');
 
-  document.querySelectorAll('#otherProjectsList .project-toggle').forEach(btn => {
-    btn.addEventListener('click', () => btn.closest('.project').classList.toggle('open'));
+  // ==== ABOUT ==================================================================
+  document.getElementById('aboutStatement').textContent = aboutStatement;
+
+  document.getElementById('capabilityList').innerHTML = capabilities.map((c, idx) => `
+    <div class="capability-card reveal" style="--i:${idx}">
+      <div class="num">${c.num}</div>
+      <h3>${c.title}</h3>
+      <p>${c.desc}</p>
+    </div>
+  `).join('');
+
+  document.getElementById('aboutCompactGrid').innerHTML = `
+    <div class="about-compact-block reveal" style="--i:0">
+      <h3>Career Summary</h3>
+      <ul>${careerSummary.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>
+    <div class="about-compact-block reveal" style="--i:1">
+      <h3>Education</h3>
+      <ul>${educationCompact.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>
+    <div class="about-compact-block reveal" style="--i:2">
+      <h3>Certifications</h3>
+      <ul>${certificationsCompact.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>
+  `;
+
+  // ==== EXPERIENCE =============================================================
+  document.getElementById('experienceList').innerHTML = experience.map((e, idx) => `
+    <div class="timeline-item reveal" style="--i:${idx}">
+      <div class="role-row">
+        <span class="role">${e.domain}</span>
+        <span class="period">${e.period}</span>
+      </div>
+      <div class="focus">${e.focus} · ${e.role}</div>
+      <div class="tag-row">${e.tags.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+
+  // ==== SKILLS =================================================================
+  document.getElementById('coreCapabilityList').innerHTML = coreCapabilities.map((c, idx) => `
+    <div class="capability-mini reveal" style="--i:${idx}">
+      <div class="num">${c.num} ${c.title.toUpperCase()}</div>
+      <div class="skills">${c.items.map(i => `<span class="skill-tag">${i}</span>`).join('')}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('toolsFlatList').innerHTML =
+    toolsFlat.map((t, idx) => `<span class="skill-tag reveal" style="--i:${idx}">${t}</span>`).join('');
+
+  // ==== FOOTER: LinkedIn / Email only ==========================================
+  // No LinkedIn URL exists anywhere in this repository — left as an inert TODO
+  // marker per the brief rather than guessing at one.
+  document.getElementById('footerLinks').innerHTML = `
+    <span class="footer-link footer-link--todo" title="LinkedIn URL 필요">LinkedIn ↗ <em>(TODO: URL)</em></span>
+    <a class="footer-link" href="mailto:handl94@naver.com?subject=Portfolio%20Inquiry%20-%20Handeul%20Kim">Email ↗</a>
+  `;
+
+  // ==== Case-study detail overlay (client-side "route") =======================
+  // Static single-file site, no build/server — so there's no real router to
+  // plug into. This is the stable substitute: a full-screen overlay driven by
+  // a #/work/<slug> hash (deep-linkable, back-button aware via pushState),
+  // rather than a separate HTML document per project.
+  const workDetailOverlay = document.getElementById('workDetailOverlay');
+  const workDetailContent = document.getElementById('workDetailContent');
+
+  function renderCaseStudyDetail(cs, index) {
+    const prev = caseStudies[index - 1];
+    const next = caseStudies[index + 1];
+    workDetailContent.innerHTML = `
+      <button class="detail-back" id="detailBackBtn">← All projects</button>
+      <div class="detail-header-row">
+        <span class="detail-num">${cs.num}</span>
+        <span class="detail-year">${cs.year}</span>
+      </div>
+      <h1 class="detail-title">${cs.name}</h1>
+      <p class="detail-desc">${cs.oneLiner}</p>
+      <div class="detail-meta-row">
+        <div><strong>Role</strong><ul><li>${cs.role}</li></ul></div>
+        <div><strong>Scope</strong>${cs.scope ? `<ul>${cs.scope.split('·').map(s => `<li>${s.trim()}</li>`).join('')}</ul>` : '<p class="todo">[TODO: SCOPE]</p>'}</div>
+      </div>
+      <div class="detail-hero-image">${imgPlaceholder(cs.thumbnail, cs.name)}</div>
+      <div class="detail-section"><h4>01 Context</h4>${renderParagraph(cs.context, 'CONTEXT')}</div>
+      <div class="detail-section"><h4>02 Problem</h4>${renderParagraph(cs.problem, 'PROBLEM')}</div>
+      <div class="detail-section"><h4>03 Goal</h4>${renderParagraph(cs.goal, 'GOAL')}</div>
+      <div class="detail-section"><h4>04 My Role</h4>${renderParagraph(cs.myRole, 'MY ROLE')}</div>
+      <div class="detail-section"><h4>05 Process</h4>${renderProcess(cs.process)}</div>
+      <div class="detail-section"><h4>06 Key Decisions</h4>${renderList(cs.keyDecisions, 'KEY DECISION')}</div>
+      <div class="detail-section"><h4>07 Result</h4>${renderList(cs.result, 'RESULT')}</div>
+      <div class="detail-section"><h4>08 Validation</h4>${renderParagraph(cs.validation, 'VALIDATION')}</div>
+      <div class="detail-section"><h4>09 Tools &amp; Techniques</h4>${cs.tools && cs.tools.length ? `<div class="skills">${cs.tools.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>` : '<p class="todo">[TODO: TOOLS]</p>'}</div>
+      <div class="detail-image-row">${cs.detailImages.map(i => imgPlaceholder(i, cs.name + ' detail')).join('')}</div>
+      <div class="detail-image-row">${cs.workflowImages.map(i => imgPlaceholder(i, cs.name + ' workflow')).join('')}</div>
+      <div class="detail-nav-row">
+        ${prev ? `<button class="detail-nav-link prev" data-slug="${prev.slug}"><span class="dir">← Previous project</span>${prev.name}</button>` : '<span></span>'}
+        ${next ? `<button class="detail-nav-link next" data-slug="${next.slug}"><span class="dir">Next project →</span>${next.name}</button>` : '<span></span>'}
+      </div>
+    `;
+    document.getElementById('detailBackBtn').addEventListener('click', () => closeCaseStudy(true));
+    workDetailContent.querySelectorAll('.detail-nav-link[data-slug]').forEach(btn => {
+      btn.addEventListener('click', () => openCaseStudy(btn.dataset.slug, true));
+    });
+    bindImagePlaceholders(workDetailContent);
+  }
+
+  function openCaseStudy(slug, push) {
+    const index = caseStudies.findIndex(c => c.slug === slug);
+    if (index === -1) return;
+    renderCaseStudyDetail(caseStudies[index], index);
+    workDetailOverlay.hidden = false;
+    document.body.classList.add('detail-open');
+    workDetailOverlay.scrollTop = 0;
+    if (push) history.pushState({ view: 'work-detail', slug: slug }, '', '#/work/' + slug);
+  }
+
+  function closeCaseStudy(push) {
+    workDetailOverlay.hidden = true;
+    document.body.classList.remove('detail-open');
+    if (push) history.pushState({ view: 'main' }, '', '#projects');
+  }
+
+  document.getElementById('workList').addEventListener('click', function (e) {
+    const link = e.target.closest('.case-cta[data-slug]');
+    if (!link) return;
+    e.preventDefault();
+    openCaseStudy(link.dataset.slug, true);
   });
 
-  document.getElementById('otherProjectsToggle').addEventListener('click', function () {
-    const list = document.getElementById('otherProjectsList');
-    const open = list.classList.toggle('open');
-    document.getElementById('otherProjectsToggleLabel').textContent =
-      open ? '접기' : `그 외 프로젝트 ${otherProjects.length}건 더 보기`;
+  window.addEventListener('popstate', function () {
+    const m = /^#\/work\/(.+)$/.exec(location.hash);
+    if (m) { openCaseStudy(m[1], false); } else { closeCaseStudy(false); }
   });
 
   // ---- Lightbox (ready for real assets; placeholders are non-interactive) ----
@@ -1746,14 +1865,18 @@
   document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
   lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-  // When a real `src` is present on a .work-visual (via data-asset pointing at
-  // an actual file), wire it up to the lightbox automatically:
-  document.querySelectorAll('.work-visual[data-real-src]').forEach(el => {
-    el.style.cursor = 'zoom-in';
-    el.addEventListener('click', () => {
-      openLightbox(`<img src="${el.dataset.realSrc}" alt="${el.dataset.lightboxLabel || ''}" style="max-width:100%;max-height:76vh;border-radius:8px;">`);
+  // When a real `src` is present on an .img-placeholder (via data-real-src
+  // pointing at an actual file), wire it up to the lightbox automatically:
+  function bindImagePlaceholders(root) {
+    root.querySelectorAll('.img-placeholder[data-real-src]').forEach(el => {
+      if (el.dataset.lightboxBound) return;
+      el.dataset.lightboxBound = '1';
+      el.addEventListener('click', () => {
+        openLightbox(`<img src="${el.dataset.realSrc}" alt="${el.dataset.lightboxLabel || ''}" style="max-width:100%;max-height:76vh;border-radius:8px;">`);
+      });
     });
-  });
+  }
+  bindImagePlaceholders(document);
 
   // ---- Reveal-on-scroll (vanilla IntersectionObserver; no framework needed) ----
   var revealObserver = new IntersectionObserver((entries) => {
@@ -1772,12 +1895,16 @@
 
   function easeInOutQuad(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
 
+  // Sections are now full-viewport (each Work item + About/Experience/Skills
+  // is >=100svh), so a jump can span several screens — duration scales with
+  // distance (capped) so it always reads as one deliberate transition rather
+  // than either a blur-fast whoosh or a sluggish crawl.
   function smoothScrollTo(targetEl) {
     var navH = document.querySelector('nav').offsetHeight;
     var startY = window.pageYOffset;
     var targetY = targetEl.getBoundingClientRect().top + startY - navH - 8;
     var distance = targetY - startY;
-    var duration = Math.min(450, Math.max(300, Math.abs(distance) * 0.35));
+    var duration = Math.min(900, Math.max(350, Math.abs(distance) * 0.4));
     var startTime = null;
     function step(ts) {
       if (startTime === null) startTime = ts;
@@ -1806,6 +1933,7 @@
       if (!target) return;
       e.preventDefault();
       closeMobileNav();
+      closeCaseStudy(false);
       smoothScrollTo(target);
       if (history.pushState) history.pushState(null, '', a.getAttribute('href'));
     });
@@ -1836,9 +1964,14 @@
   }, { threshold: 0, rootMargin: '-45% 0px -50% 0px' });
   navSections.forEach(sec => navObserver.observe(sec));
 
-  // On a fresh load with no hash, guarantee we start at the very top
+  // On a fresh load: open a case study directly if the URL deep-links to one
+  // (#/work/<slug>), otherwise guarantee we start at the very top
   // (history.scrollRestoration='manual' is set inline in <head> for this too).
-  if (!location.hash) { window.scrollTo(0, 0); }
+  (function initialRoute() {
+    var m = /^#\/work\/(.+)$/.exec(location.hash);
+    if (m) { openCaseStudy(m[1], false); return; }
+    if (!location.hash) { window.scrollTo(0, 0); }
+  })();
 </script>
 
 <!-- ===== PRODUCT SYSTEM visual: Three.js when available, 2D/SVG fallback otherwise ===== -->
