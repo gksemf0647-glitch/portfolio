@@ -87,35 +87,7 @@
     background: var(--bg-soft);
   }
 
-  /* 히어로 */
-  header.hero {
-    padding: 76px 0 56px;
-    text-align: center;
-  }
-
-  header.hero .eyebrow {
-    color: var(--accent);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-  }
-
-  header.hero h1 {
-    font-size: clamp(1.7rem, 4vw, 2.3rem);
-    font-weight: 800;
-    margin-bottom: 12px;
-    letter-spacing: -0.5px;
-  }
-
-  header.hero p.tagline {
-    color: var(--text-dim);
-    font-size: 1rem;
-    max-width: 540px;
-    margin: 0 auto 26px;
-    line-height: 1.7;
-  }
-
+  /* 히어로 CTA (Hero + 3D 통합 구조에서 재사용) */
   .contact-row {
     display: flex;
     gap: 10px;
@@ -459,28 +431,26 @@
     font-size: 0.75rem;
   }
 
-  /* ===== Prototype — Product System 3D (Phase 1, isolated) ===== */
-  .proto-section {
+  /* ===== Hero + Product System 3D (Phase 2 — unified scroll state machine) ===== */
+  .hero3d-scroll {
     position: relative;
-    height: 500vh;
+    height: 600vh;
     padding: 0;
     border-top: none;
     background: var(--bg);
   }
 
-  .proto-pin {
+  .hero3d-pin {
     position: relative;
     height: 100vh;
     overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-    border-top: 1px solid var(--card-border);
     border-bottom: 1px solid var(--card-border);
   }
 
-  .proto-canvas-wrap {
+  .hero3d-canvas-wrap {
     position: absolute;
     inset: 0;
+    z-index: 1;
   }
 
   #protoCanvas {
@@ -489,62 +459,161 @@
     height: 100%;
   }
 
-  .proto-overlay {
-    position: relative;
+  .hero3d-scrim {
+    position: absolute;
+    inset: 0;
     z-index: 2;
-    width: 100%;
-    padding: 0 20px 56px;
+    pointer-events: none;
+    background: radial-gradient(ellipse 62% 58% at 50% 44%, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.6) 46%, rgba(255, 255, 255, 0) 74%);
+  }
+
+  .hero3d-scrim.is-story {
+    background: linear-gradient(100deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.82) 32%, rgba(255, 255, 255, 0.2) 58%, rgba(255, 255, 255, 0) 76%);
+  }
+
+  .hero3d-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
     pointer-events: none;
   }
 
-  .proto-overlay-inner {
+  .hero3d-overlay .wrap {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* State 0 — centered hero typography (highest visual priority) */
+  .hero3d-center {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+    pointer-events: auto;
+  }
+
+  .hero3d-eyebrow {
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 22px;
+  }
+
+  .hero3d-headline {
+    font-size: clamp(2.1rem, 6.2vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 26px;
+  }
+
+  .hero3d-headline .accent-line {
+    color: var(--accent);
+  }
+
+  .hero3d-sub {
+    color: var(--text-dim);
+    font-size: 1rem;
+    line-height: 1.8;
+    max-width: 520px;
+    margin: 0 auto 14px;
+  }
+
+  .hero3d-sub-ko {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    max-width: 480px;
+    margin: 0 auto 30px;
+  }
+
+  /* States 1-5 — fixed left-aligned scroll-story caption (reading rail) */
+  .hero3d-story {
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    bottom: 16%;
+    width: 100%;
+    padding: 0 20px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hero3d-story-inner {
     max-width: 860px;
     margin: 0 auto;
   }
 
-  .proto-eyebrow {
+  .hero3d-story-label {
     color: var(--accent);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 1.5px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
-  .proto-progress {
+  .hero3d-story-steps {
     display: flex;
     gap: 6px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
-  .proto-progress-step {
-    width: 22px;
+  .hero3d-story-step {
+    width: 20px;
     height: 3px;
     border-radius: 2px;
     background: var(--card-border);
     transition: background 0.3s ease;
   }
 
-  .proto-progress-step.active {
-    background: var(--accent);
-  }
+  .hero3d-story-step.active { background: var(--accent); }
 
-  .proto-title {
-    font-size: clamp(1.4rem, 3.4vw, 2rem);
+  .hero3d-story-title {
+    font-size: clamp(1.25rem, 2.8vw, 1.8rem);
     font-weight: 800;
     letter-spacing: -0.3px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    max-width: 420px;
   }
 
-  .proto-desc {
+  .hero3d-story-line {
     color: var(--text-dim);
     font-size: 0.9rem;
-    max-width: 480px;
+    max-width: 380px;
     line-height: 1.7;
   }
 
-  .proto-fallback {
+  .hero3d-scrolldown {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    z-index: 3;
+    color: var(--text-dim);
+    font-size: 0.68rem;
+    letter-spacing: 1.5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .hero3d-scrolldown::after {
+    content: "";
+    width: 1px;
+    height: 26px;
+    background: var(--card-border);
+  }
+
+  .hero3d-fallback {
     position: absolute;
     inset: 0;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -555,8 +624,11 @@
   }
 
   @media (max-width: 720px) {
-    .proto-section { height: 420vh; }
-    .proto-overlay { padding: 0 20px 40px; }
+    .hero3d-scroll { height: 500vh; }
+    .hero3d-headline { font-size: clamp(1.8rem, 8.6vw, 2.4rem); }
+    .hero3d-story { bottom: 13%; }
+    .hero3d-story-title { max-width: 300px; }
+    .hero3d-story-line { max-width: 280px; }
   }
 </style>
 </head>
@@ -576,41 +648,56 @@
   </div>
 </nav>
 
-<header class="hero">
-  <div class="wrap">
-    <div class="eyebrow">서비스 기획 · PM/PO/PL</div>
-    <h1>김한들 Handeul Kim</h1>
-    <p class="tagline">
-      Bio-Tech 도메인 지식과 SW 역량의 결합으로 문제를 해결합니다.<br>
-      바이오 R&amp;D Workflow를 이해하고 요구사항을 제품 구조로 전환하는 PO입니다.
-    </p>
-    <div class="contact-row">
-      <a class="btn" href="mailto:handl94@naver.com">이메일 보내기</a>
-      <a class="btn ghost" href="#projects">프로젝트 보기</a>
+<header id="hero3d" aria-label="Hero — Complex Workflows into Digital Products">
+  <div class="hero3d-scroll" id="hero3dScroll">
+    <div class="hero3d-pin" id="hero3dPin">
+      <div class="hero3d-canvas-wrap"><canvas id="protoCanvas"></canvas></div>
+      <div class="hero3d-scrim" id="hero3dScrim"></div>
+      <div class="hero3d-fallback" id="protoFallback" hidden>이 브라우저 환경에서는 3D 프리뷰를 표시할 수 없습니다.</div>
+
+      <div class="hero3d-overlay">
+        <div class="wrap">
+          <div class="hero3d-center" id="hero3dCenter">
+            <div class="hero3d-eyebrow">TECHNICAL PM · PRODUCT OWNER</div>
+            <h1 class="hero3d-headline">
+              COMPLEX<br>WORKFLOWS<br>
+              <span class="accent-line">INTO<br>DIGITAL&nbsp;PRODUCTS.</span>
+            </h1>
+            <p class="hero3d-sub">
+              I turn complex domain processes into structured digital products —
+              from requirements to validation and operation.
+            </p>
+            <p class="hero3d-sub-ko">
+              복잡한 Domain Process를 구조화하고 Requirement부터 Validation과 Operation까지 Digital Product로 연결합니다.
+            </p>
+            <div class="contact-row">
+              <a class="btn" href="mailto:handl94@naver.com">이메일 보내기</a>
+              <a class="btn ghost" href="#projects">프로젝트 보기</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero3d-story" id="hero3dStory">
+        <div class="hero3d-story-inner">
+          <div class="hero3d-story-label" id="storyLabel">COMPLEXITY</div>
+          <div class="hero3d-story-steps" aria-hidden="true">
+            <span class="hero3d-story-step"></span>
+            <span class="hero3d-story-step"></span>
+            <span class="hero3d-story-step"></span>
+            <span class="hero3d-story-step"></span>
+            <span class="hero3d-story-step"></span>
+            <span class="hero3d-story-step"></span>
+          </div>
+          <h2 class="hero3d-story-title" id="storyTitle">Complexity is everywhere.</h2>
+          <p class="hero3d-story-line" id="storyDesc">User, Data, Rule, Device, Stakeholder, Exception이 서로 얽혀 있는 하나의 Domain입니다.</p>
+        </div>
+      </div>
+
+      <div class="hero3d-scrolldown" id="hero3dScrolldown">SCROLL</div>
     </div>
   </div>
 </header>
-
-<section id="prototype-3d" class="proto-section" aria-label="Prototype — Product System 3D Interaction">
-  <div class="proto-pin">
-    <div class="proto-canvas-wrap"><canvas id="protoCanvas"></canvas></div>
-    <div class="proto-fallback" id="protoFallback" hidden>이 브라우저 환경에서는 3D 프리뷰를 표시할 수 없습니다.</div>
-    <div class="proto-overlay">
-      <div class="proto-overlay-inner">
-        <div class="proto-eyebrow">PROTOTYPE — PRODUCT SYSTEM</div>
-        <div class="proto-progress" aria-hidden="true">
-          <span class="proto-progress-step"></span>
-          <span class="proto-progress-step"></span>
-          <span class="proto-progress-step"></span>
-          <span class="proto-progress-step"></span>
-          <span class="proto-progress-step"></span>
-        </div>
-        <h2 class="proto-title" id="protoTitle">COMPLEXITY</h2>
-        <p class="proto-desc" id="protoDesc">서로 다른 이해관계자, 데이터, 규칙, 예외가 뒤섞인 도메인의 초기 상태입니다.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section id="about">
   <div class="wrap">
@@ -939,7 +1026,7 @@
     `).join('');
 </script>
 
-<!-- ===== Prototype — Product System 3D (Phase 1, isolated) ===== -->
+<!-- ===== Hero + Product System 3D (Phase 2 — unified scroll state machine) ===== -->
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://unpkg.com/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
@@ -952,13 +1039,34 @@
 
   // Reusable data structure: node slots, per-state layout/labels/connections/camera.
   // Slot index is stable across states so the same physical node morphs between
-  // domain labels (Phase 1) and, later, real portfolio content (Phase 2+).
+  // domain labels and, later, real portfolio content. State 0 is the Hero itself —
+  // typography always outranks the 3D scene, so its nodes stay dim and off-center.
   var STATE_DATA = [
     {
+      key: 'hero',
+      label: 'HERO',
+      title: '',
+      desc: '',
+      camera: { pos: [0, 0.3, 10.6], look: [0, 0, 0] },
+      nodes: [
+        n('USER', [-3.6, 1.3, -0.6], 0.4),
+        n('DATA', [3.6, -1.1, -0.7], 0.4),
+        n('PROCESS', [-3.1, -1.6, -1.1], 0.32),
+        n('RULE', [3.2, 1.7, -0.9], 0.32),
+        n('STAKEHOLDER', [-2.1, 2.4, -1.5], 0.26),
+        n('EXCEPTION', [2.3, -2.3, -1.3], 0.26),
+        n('DEVICE', [0, -3.1, -1.7], 0.2),
+        n('CONSTRAINT', [0, 3.1, -1.7], 0.2),
+        HIDDEN
+      ],
+      connections: [[0, 2], [1, 3]]
+    },
+    {
       key: 'complexity',
-      title: 'COMPLEXITY',
-      desc: '서로 다른 이해관계자, 데이터, 규칙, 예외가 뒤섞인 도메인의 초기 상태입니다.',
-      camera: { pos: [0, 0.6, 9.2], look: [0, 0, 0] },
+      label: 'COMPLEXITY',
+      title: 'Complexity is everywhere.',
+      desc: 'User, Data, Rule, Device, Stakeholder, Exception이 서로 얽혀 있는 하나의 Domain입니다.',
+      camera: { pos: [-0.5, 0.4, 8.8], look: [-1.6, 0, 0] },
       nodes: [
         n('USER', [-3.2, 1.6, 0.4]),
         n('DATA', [2.8, -1.4, -0.6]),
@@ -974,27 +1082,29 @@
     },
     {
       key: 'structure',
-      title: 'STRUCTURE',
-      desc: 'Scroll하면 흩어진 요소들이 서서히 가까워지고 관계가 정리됩니다.',
-      camera: { pos: [0, 0.3, 7.6], look: [0, 0, 0] },
+      label: 'STRUCTURE',
+      title: 'Structure the complexity.',
+      desc: '관계를 정의하고 구조화하면서 Process를 중심으로 흐름이 정리됩니다.',
+      camera: { pos: [-0.4, 0.2, 7.9], look: [-1.5, 0, 0] },
       nodes: [
-        n('USER', [-2.0, 1.0, 0.2]),
-        n('DATA', [2.0, 1.0, -0.2]),
-        n('PROCESS', [0, 0.1, 0.5]),
-        n('RULE', [2.0, -1.0, 0.2]),
-        n('STAKEHOLDER', [-2.0, -1.0, -0.2]),
-        n('EXCEPTION', [0, 1.7, -0.4]),
-        n('DEVICE', [1.2, -0.3, 0.6]),
-        n('CONSTRAINT', [-1.2, -0.3, -0.6], 0.75),
-        HIDDEN
+        n('USER', [-2.6, 1.3, 0.2]),
+        n('DATA', [2.6, 1.3, 0.2]),
+        n('PROCESS', [0, 1.3, 0.4]),
+        n('RULE', [0, 0, 0.3]),
+        n('STAKEHOLDER', [-3.0, -1.0, -1.3], 0.18),
+        n('EXCEPTION', [3.0, -1.0, -1.3], 0.18),
+        n('DEVICE', [-2.4, -2.2, -1.6], 0.12),
+        n('CONSTRAINT', [2.4, -2.2, -1.6], 0.12),
+        n('REQUIREMENT', [0, -1.6, 0.2], 0.55, 0.9)
       ],
-      connections: [[0, 2], [1, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2]]
+      connections: [[0, 2], [2, 1], [2, 3], [3, 8]]
     },
     {
       key: 'requirement',
-      title: 'REQUIREMENT',
+      label: 'REQUIREMENT',
+      title: 'Turn process into product requirements.',
       desc: 'User와 Process의 흐름에서 Requirement가 도출되고, Data/Rule로 분기됩니다.',
-      camera: { pos: [0, 0, 7.4], look: [0, -0.2, 0] },
+      camera: { pos: [-0.3, 0, 7.3], look: [-1.4, -0.2, 0] },
       nodes: [
         n('USER', [0, 2.4, 0]),
         n('DATA', [-1.3, -2.4, 0]),
@@ -1010,9 +1120,10 @@
     },
     {
       key: 'lifecycle',
-      title: 'PRODUCT LIFECYCLE',
-      desc: 'Network가 Discover → Define → Design → Deliver → Validate → Operate 흐름으로 재구성됩니다.',
-      camera: { pos: [1.6, 0, 8.0], look: [0, 0, 0] },
+      label: 'PRODUCT LIFECYCLE',
+      title: 'From requirements to operation.',
+      desc: 'Discover → Define → Design → Deliver → Validate → Operate로 이어지는 Product Lifecycle입니다.',
+      camera: { pos: [0.6, 0, 8.6], look: [-1.0, 0, 0] },
       nodes: [
         n('DISCOVER', [0, 3.0, 0]),
         n('DEFINE', [0.9, 1.8, 0.4]),
@@ -1026,25 +1137,55 @@
     },
     {
       key: 'product',
-      title: 'DIGITAL PRODUCT',
-      desc: '모든 요소가 하나의 coherent한 Product System으로 수렴합니다.',
-      camera: { pos: [0, 0, 9.0], look: [0, 0, 0] },
+      label: 'DIGITAL PRODUCT',
+      title: 'From domain complexity to digital product.',
+      desc: '모든 요소가 하나의 coherent한 Digital Product System으로 수렴합니다.',
+      camera: { pos: [-0.3, 0, 9.2], look: [-1.5, 0, 0] },
       nodes: [
         n('USER', [2.6, 0, 0.3]),
-        n('DATA', [1.84, 1.84, -0.3]),
-        n('PROCESS', [0, 2.6, 0.3]),
-        n('RULE', [-1.84, 1.84, -0.3]),
-        n('STAKEHOLDER', [-2.6, 0, 0.3]),
-        n('EXCEPTION', [-1.84, -1.84, -0.3]),
-        n('DEVICE', [0, -2.6, 0.3]),
-        n('CONSTRAINT', [1.84, -1.84, -0.3]),
+        n('DATA', [1.62, 2.03, -0.3]),
+        n('WORKFLOW', [-0.58, 2.53, 0.3]),
+        n('RULE', [-2.34, 1.13, -0.3]),
+        n('UI', [-2.34, -1.13, 0.3]),
+        n('VALIDATION', [-0.58, -2.53, -0.3]),
+        n('OPERATION', [1.62, -2.03, 0.3]),
+        HIDDEN,
         n('DIGITAL PRODUCT', [0, 0, 0], 1, 1.9)
       ],
-      connections: [[0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8], [6, 8], [7, 8]]
+      connections: [[0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8], [6, 8]]
     }
   ];
 
-  // Exposed for Phase 2+ reuse (Hero / "From Complexity to Product" section).
+  // Phase 3+ scaffold: connects a "DIGITAL PRODUCT" node group to real project
+  // content (Selected Work -> Project -> Workflow -> UI Screenshot -> Outcome).
+  // No image assets are attached yet — structure only.
+  window.PROTOTYPE_PROJECT_SCHEMA = {
+    fields: ['id', 'title', 'category', 'role', 'description', 'nodes', 'screenshot', 'workflow'],
+    entries: [
+      {
+        id: 'feasibility-automation',
+        title: '분자진단 제품개발 Feasibility 단계 자동화 SW',
+        category: 'Product System',
+        role: '시스템 기획 · workflow 분석 · QA 리드',
+        description: null,
+        nodes: ['user', 'process', 'requirement', 'data', 'rule'],
+        screenshot: null,
+        workflow: null
+      },
+      {
+        id: 'experiment-planning-module',
+        title: '제품개발 자동화 장비 및 실험계획 모듈 개발',
+        category: 'Product System',
+        role: '실험계획 모듈 분석/설계 · 자동화 장비 workflow 설계',
+        description: null,
+        nodes: ['process', 'device', 'constraint', 'requirement'],
+        screenshot: null,
+        workflow: null
+      }
+    ]
+  };
+
+  // Exposed for reuse elsewhere on the page / next phases.
   window.PROTOTYPE_3D_DATA = { states: STATE_DATA };
 
   var canvas = document.getElementById('protoCanvas');
@@ -1058,11 +1199,16 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  var sectionEl = document.getElementById('prototype-3d');
-  var pinEl = canvas.closest('.proto-pin');
-  var titleEl = document.getElementById('protoTitle');
-  var descEl = document.getElementById('protoDesc');
-  var progressSteps = Array.prototype.slice.call(document.querySelectorAll('.proto-progress-step'));
+  var sectionEl = document.getElementById('hero3dScroll');
+  var pinEl = document.getElementById('hero3dPin');
+  var heroCenterEl = document.getElementById('hero3dCenter');
+  var storyEl = document.getElementById('hero3dStory');
+  var scrimEl = document.getElementById('hero3dScrim');
+  var scrollDownEl = document.getElementById('hero3dScrolldown');
+  var storyLabelEl = document.getElementById('storyLabel');
+  var titleEl = document.getElementById('storyTitle');
+  var descEl = document.getElementById('storyDesc');
+  var progressSteps = Array.prototype.slice.call(document.querySelectorAll('.hero3d-story-step'));
 
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var isMobile = window.innerWidth < 760;
@@ -1192,13 +1338,36 @@
   }, { threshold: 0.01 });
   io.observe(sectionEl);
 
+  function clamp01(v) { return Math.min(Math.max(v, 0), 1); }
+
   function renderFrame(delta) {
     var segCount = STATE_DATA.length - 1;
-    var p = Math.min(Math.max(scrollProgress, 0), 1) * segCount;
+    var p = clamp01(scrollProgress) * segCount;
     var seg = Math.min(Math.floor(p), segCount - 1);
     var t = easeInOutCubic(p - seg);
     var a = STATE_DATA[seg];
     var b = STATE_DATA[seg + 1];
+
+    // ---- Typography always outranks the 3D scene ----
+    // p in [0,1] === the Hero -> State-1 transition: the headline shrinks/fades
+    // out exactly once, then the left-aligned story caption takes over.
+    var heroFade = clamp01(p);
+    var storyFade = clamp01((p - 0.55) / 0.6);
+    if (heroCenterEl) {
+      heroCenterEl.style.opacity = String(1 - heroFade);
+      heroCenterEl.style.transform = 'translateY(' + (-heroFade * 26) + 'px) scale(' + (1 - heroFade * 0.05) + ')';
+      heroCenterEl.style.pointerEvents = heroFade > 0.5 ? 'none' : 'auto';
+    }
+    if (storyEl) {
+      storyEl.style.opacity = String(storyFade);
+    }
+    if (scrollDownEl) {
+      var sdFade = 1 - clamp01(p / 0.12);
+      scrollDownEl.style.opacity = String(sdFade);
+    }
+    if (scrimEl) {
+      scrimEl.classList.toggle('is-story', p > 0.5);
+    }
 
     var roundedState = Math.round(p);
     if (roundedState !== lastRoundedState) {
@@ -1207,6 +1376,7 @@
       if (titleEl && descEl) {
         gsap.to([titleEl, descEl], {
           opacity: 0, duration: 0.15, onComplete: function () {
+            if (storyLabelEl) storyLabelEl.textContent = s.label;
             titleEl.textContent = s.title;
             descEl.textContent = s.desc;
             gsap.to([titleEl, descEl], { opacity: 1, duration: 0.25 });
