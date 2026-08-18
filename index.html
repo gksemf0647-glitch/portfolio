@@ -264,50 +264,43 @@
 
   /* 섹션 공통 */
   section {
-    padding: 48px 0;
+    padding: 13vh 0;
     border-top: 1px solid var(--card-border);
   }
 
   section .section-head {
-    margin-bottom: 24px;
+    margin-bottom: clamp(20px, 4vh, 40px);
   }
 
-  section .section-head .label {
-    color: var(--accent);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  section .section-head h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-
-  /* Numbered eyebrow (01 WORK / 02 ABOUT / ...) — mirrors the GNB's own
-     number+code so a section and its nav link read as the same thing. */
+  /* The number+word (01 WORK / 02 ABOUT / ...) is the section's primary
+     visual anchor, not a small nav-style label — same line, .num in a
+     softer tone than .code so the pairing still reads as one unit.
+     A single clamp() carries the whole responsive range (mobile -> desktop),
+     so no extra breakpoint override is needed for this element. */
   section .section-head .section-eyebrow {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 0.15em;
+    font-size: clamp(2rem, 4.5vw, 4rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
   }
 
   section .section-head .section-eyebrow .num {
-    color: var(--text-dim);
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
+    color: var(--accent);
   }
 
   section .section-head .section-eyebrow .code {
-    color: var(--accent);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  section .section-head h2 {
+    font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+    font-weight: 500;
+    color: var(--text-dim);
+    margin-top: clamp(8px, 1.5vh, 16px);
   }
 
   /* ---- scroll-reveal utility (vanilla IntersectionObserver, opacity+transform only) ---- */
@@ -323,8 +316,38 @@
     transform: translateY(0);
   }
 
+  /* Bigger, slower variant of .reveal for section-head pieces (01 / WORK /
+     subtitle) — same revealObserver, just its own motion so a 140px
+     headline doesn't animate identically to a small skill tag. */
+  .title-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--i, 0) * 130ms);
+  }
+
+  .title-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Work-item thumbnail reveal — deliberately stronger than .reveal (bigger
+     offset + a scale-in) so the image is what actually catches the eye
+     first, per "image가 가장 강하게 눈에 들어오도록 한다". */
+  .work-thumb-reveal {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--i, 0) * 90ms);
+  }
+
+  .work-thumb-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .reveal {
+    .reveal, .title-reveal, .work-thumb-reveal {
       opacity: 1;
       transform: none;
       transition: none;
@@ -339,6 +362,35 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+
+  /* ---- Section visual identity: each chapter gets a very slightly
+     different off-white so sections read as distinct without any strong
+     color. Deltas are intentionally tiny (a few RGB steps) — the point is
+     a faint chapter change, not a visible background "design". ---- */
+  #projects { background: #FAFAF8; }
+  #about { background: #F7F7F5; }
+  #experience { background: #F3F3F1; }
+  #skills { background: #EFEFEC; }
+
+  #projects, #about, #experience, #skills {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Faint accent-tinted radial glow + hairline grid — pure CSS, no image
+     asset, restrained enough to stay behind the content at all times. */
+  #projects::before, #about::before, #experience::before, #skills::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(ellipse 55% 38% at 50% 0%, rgba(44, 75, 212, 0.04), transparent 70%),
+      linear-gradient(rgba(17, 24, 39, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17, 24, 39, 0.025) 1px, transparent 1px);
+    background-size: 100% 100%, 72px 72px, 72px 72px;
   }
 
   /* ---- About: positioning statement ---- */
@@ -549,8 +601,15 @@
     gap: 6px;
   }
 
+  /* Dark bookend chapter, mirroring Hero at the other end of the page.
+     Redefining the shared tokens locally is enough — every footer-* rule
+     below already reads color via var(--text)/var(--text-dim). */
   footer {
-    padding: 56px 0 40px;
+    --text: #F5F5F2;
+    --text-dim: #9A9A96;
+    --card-border: rgba(245, 245, 242, 0.14);
+    background: #121317;
+    padding: 96px 0 40px;
     text-align: center;
     color: var(--text-dim);
     font-size: 0.75rem;
@@ -819,14 +878,19 @@
     flex-direction: column;
   }
 
+  /* The whole card (thumbnail, title, description, metadata, CTA) is one
+     <a> — hovering/focusing anywhere on it should signal "this opens a case
+     study", not just the CTA text at the bottom. */
   .work-item {
     min-height: 100svh;
     display: grid;
     grid-template-columns: 1fr;
     align-content: center;
     gap: 24px;
-    padding: 72px 0;
+    padding: 8vh 0;
     border-top: 1px solid var(--card-border);
+    text-decoration: none;
+    color: inherit;
   }
 
   .work-item:first-child { border-top: none; padding-top: 8px; }
@@ -859,10 +923,23 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .work-thumb { order: -1; }
+  .work-thumb {
+    order: -1;
+    overflow: hidden;
+    border-radius: 4px;
+  }
 
   @media (min-width: 800px) {
     .work-thumb { order: 0; }
+  }
+
+  .work-thumb .img-placeholder {
+    transition: transform 450ms var(--ease);
+  }
+
+  .work-item:hover .work-thumb .img-placeholder,
+  .work-item:focus-visible .work-thumb .img-placeholder {
+    transform: scale(1.02);
   }
 
   .work-title {
@@ -870,6 +947,12 @@
     font-weight: 700;
     letter-spacing: -0.3px;
     margin-bottom: 10px;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .work-item:hover .work-title,
+  .work-item:focus-visible .work-title {
+    color: var(--accent);
   }
 
   .work-desc {
@@ -903,14 +986,21 @@
     line-height: 1.6;
   }
 
+  /* Default state is always visible with its own visible "→" — hover/focus
+     on the whole card (not the CTA itself, since it's a plain span now that
+     the entire project block is the clickable <a>) shifts it to accent and
+     morphs the arrow, per the "always show a CTA, hover just reinforces it"
+     accessibility requirement. */
   .case-cta {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--accent);
+    color: var(--text);
     font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    transition: color var(--duration) var(--ease);
   }
 
   .case-cta::after {
@@ -918,7 +1008,109 @@
     transition: transform var(--duration) var(--ease);
   }
 
-  .case-cta:hover::after { transform: translateX(3px); }
+  .work-item:hover .case-cta,
+  .work-item:focus-visible .case-cta {
+    color: var(--accent);
+  }
+
+  .work-item:hover .case-cta::after,
+  .work-item:focus-visible .case-cta::after {
+    content: "↗";
+    transform: translateX(3px);
+  }
+
+  /* ===== MORE WORK: compact 2-col grid, lighter interaction than Major ===== */
+  .more-work {
+    margin-top: 4vh;
+    padding-top: 6vh;
+    border-top: 1px solid var(--card-border);
+  }
+
+  .more-work-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 36px;
+  }
+
+  .more-work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+
+  @media (min-width: 800px) {
+    .more-work-grid { grid-template-columns: 1fr 1fr; gap: 52px 40px; }
+  }
+
+  .more-work-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .more-work-thumb {
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 18px;
+  }
+
+  .more-work-thumb .img-placeholder {
+    min-height: 200px;
+    transition: transform 350ms var(--ease);
+  }
+
+  .more-work-item:hover .more-work-thumb .img-placeholder,
+  .more-work-item:focus-visible .more-work-thumb .img-placeholder {
+    transform: scale(1.02);
+  }
+
+  .more-work-number {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--accent-border);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 6px;
+  }
+
+  .more-work-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    margin-bottom: 8px;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .more-work-item:hover .more-work-title,
+  .more-work-item:focus-visible .more-work-title {
+    color: var(--accent);
+  }
+
+  .more-work-desc {
+    color: var(--text-dim);
+    font-size: 0.86rem;
+    line-height: 1.6;
+    margin-bottom: 14px;
+    max-width: 400px;
+  }
+
+  .more-work-item .case-cta {
+    font-size: 0.82rem;
+  }
+
+  .more-work-item:hover .case-cta,
+  .more-work-item:focus-visible .case-cta {
+    color: var(--accent);
+  }
+
+  .more-work-item:hover .case-cta::after,
+  .more-work-item:focus-visible .case-cta::after {
+    content: "↗";
+    transform: translateX(3px);
+  }
 
   /* ---- Reusable placeholder box for any not-yet-provided image asset ---- */
   .img-placeholder {
@@ -1212,7 +1404,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ps-block, .case-cta::after,
+    .ps-block, .case-cta::after, .work-title, .more-work-title,
+    .work-thumb .img-placeholder, .more-work-thumb .img-placeholder,
     nav a, nav a::after, nav .nav-toggle span, nav ul { transition: none; }
   }
 </style>
@@ -1366,19 +1559,27 @@
 <section id="projects">
   <div class="wrap">
     <div class="section-head">
-      <div class="section-eyebrow"><span class="num">01</span><span class="code">Work</span></div>
-      <h2>주요 프로젝트</h2>
+      <div class="section-eyebrow">
+        <span class="num title-reveal" style="--i:0">01</span><span class="code title-reveal" style="--i:1">WORK</span>
+      </div>
+      <h2 class="title-reveal" style="--i:2">주요 프로젝트</h2>
     </div>
     <div class="work-list" id="workList"></div>
+    <div class="more-work">
+      <div class="more-work-label reveal">More Work</div>
+      <div class="more-work-grid" id="moreWorkGrid"></div>
+    </div>
   </div>
 </section>
 
 <section id="about" class="section-full">
   <div class="wrap">
     <div class="section-head">
-      <div class="section-eyebrow"><span class="num">02</span><span class="code">About</span></div>
+      <div class="section-eyebrow">
+        <span class="num title-reveal" style="--i:0">02</span><span class="code title-reveal" style="--i:1">ABOUT</span>
+      </div>
     </div>
-    <p class="about-statement" id="aboutStatement"></p>
+    <p class="about-statement reveal" style="--i:2" id="aboutStatement"></p>
     <div class="capability-grid" id="capabilityList"></div>
     <div class="about-compact-grid" id="aboutCompactGrid"></div>
   </div>
@@ -1387,7 +1588,9 @@
 <section id="experience" class="section-full">
   <div class="wrap">
     <div class="section-head">
-      <div class="section-eyebrow"><span class="num">03</span><span class="code">Experience</span></div>
+      <div class="section-eyebrow">
+        <span class="num title-reveal" style="--i:0">03</span><span class="code title-reveal" style="--i:1">EXPERIENCE</span>
+      </div>
     </div>
     <div class="timeline" id="experienceList"></div>
   </div>
@@ -1396,7 +1599,9 @@
 <section id="skills" class="section-full">
   <div class="wrap">
     <div class="section-head">
-      <div class="section-eyebrow"><span class="num">04</span><span class="code">Skills</span></div>
+      <div class="section-eyebrow">
+        <span class="num title-reveal" style="--i:0">04</span><span class="code title-reveal" style="--i:1">SKILLS</span>
+      </div>
     </div>
     <div class="skills-subhead">Core Capabilities</div>
     <div class="capability-mini-grid" id="coreCapabilityList"></div>
@@ -1501,7 +1706,9 @@
   // literal [TODO: ...] markers rather than invented (see item 10 of the brief).
   const caseStudies = [
     {
+      major: true,
       slug: "automation-experiment-planning",
+      caseStudyRoute: "#/work/automation-experiment-planning",
       num: "01", year: "2025",
       name: "제품개발 자동화 장비 및 실험계획 모듈 개발",
       oneLiner: "Complex R&D workflows → Digital Product System",
@@ -1535,7 +1742,9 @@
       workflowImages: [img("assets/projects/project-01/workflow-01.png")]
     },
     {
+      major: true,
       slug: "feasibility-automation-sw",
+      caseStudyRoute: "#/work/feasibility-automation-sw",
       num: "02", year: "2023",
       name: "분자진단 제품개발 Feasibility 단계 자동화 SW",
       oneLiner: "Manual Excel/NAS workflow → End-to-end digital workflow",
@@ -1570,8 +1779,10 @@
       workflowImages: [img("assets/projects/project-02/workflow-01.png")]
     },
     {
+      major: false,
       slug: "prototype-doc-automation",
-      num: "03", year: "2024",
+      caseStudyRoute: "#/work/prototype-doc-automation",
+      num: "04", year: "2024",
       name: "Prototype 단계 제품개발 문서 자동화",
       oneLiner: "Feasibility 단계 자동화 구조를 Prototype 단계로 확장",
       role: "workflow 분석, 기능 설계, QA 담당",
@@ -1598,8 +1809,10 @@
       workflowImages: [img("assets/projects/project-03/workflow-01.png")]
     },
     {
+      major: false,
       slug: "qc-report-automation",
-      num: "04", year: "2020",
+      caseStudyRoute: "#/work/qc-report-automation",
+      num: "05", year: "2020",
       name: "QC Report 및 문서 자동화",
       oneLiner: "반복 문서 작성 workflow를 분석하고 자동화 대상 정의",
       role: "시스템 기획, 문서 표준화, QA, 운영 개선",
@@ -1627,8 +1840,10 @@
       workflowImages: [img("assets/projects/project-04/workflow-01.png")]
     },
     {
+      major: true,
       slug: "liquid-handler-workflow",
-      num: "05", year: "2021",
+      caseStudyRoute: "#/work/liquid-handler-workflow",
+      num: "03", year: "2021",
       name: "Liquid Handler 장비 운영 workflow 개선",
       oneLiner: "Complex device operation → Simplified, validated workflow",
       role: "장비 운영 workflow 분석, 사용성 개선, 검증",
@@ -1697,24 +1912,47 @@
     return text ? `<p>${text}</p>` : `<p class="todo">[TODO: ${todoLabel}]</p>`;
   }
 
-  // ==== WORK list (one full editorial block per project, no accordion) =======
-  document.getElementById('workList').innerHTML = caseStudies.map((cs, idx) => `
-    <div class="work-item reveal" style="--i:${idx}" id="work-${cs.slug}">
-      <div class="work-item-head">
+  // Major-first, then More Work — this single ordering drives the Work
+  // section render below AND case-study prev/next, so the two can never
+  // disagree about "what comes after this project".
+  const orderedCaseStudies = caseStudies.filter(c => c.major).concat(caseStudies.filter(c => !c.major));
+  const majorCaseStudies = orderedCaseStudies.filter(c => c.major);
+  const moreCaseStudies = orderedCaseStudies.filter(c => !c.major);
+
+  // ==== WORK: 3 major projects, one full editorial block each, no accordion.
+  // The whole block is a single <a> (thumbnail + title + description +
+  // metadata + CTA all clickable) — hover/focus anywhere signals "this opens
+  // a case study", not just the CTA text. Sub-elements reveal in sequence
+  // (number/metadata -> image -> title -> description -> CTA) with the image
+  // given the strongest motion so it's what actually catches the eye first. =
+  document.getElementById('workList').innerHTML = majorCaseStudies.map((cs) => `
+    <a class="work-item" href="${cs.caseStudyRoute}" data-slug="${cs.slug}" id="work-${cs.slug}">
+      <div class="work-item-head reveal" style="--i:0">
         <span class="work-number">${cs.num}</span>
         <span class="work-year">${cs.year}</span>
       </div>
-      <div class="work-thumb">${imgPlaceholder(cs.thumbnail, cs.name)}</div>
+      <div class="work-thumb work-thumb-reveal" style="--i:1">${imgPlaceholder(cs.thumbnail, cs.name)}</div>
       <div class="work-meta">
-        <h3 class="work-title">${cs.name}</h3>
-        <p class="work-desc">${cs.oneLiner}</p>
-        <div class="work-role-scope">
+        <h3 class="work-title reveal" style="--i:2">${cs.name}</h3>
+        <p class="work-desc reveal" style="--i:3">${cs.oneLiner}</p>
+        <div class="work-role-scope reveal" style="--i:4">
           ${metaLine("ROLE", cs.role)}
           ${metaLine("SCOPE", cs.scope)}
         </div>
-        <a class="case-cta" href="#/work/${cs.slug}" data-slug="${cs.slug}">Case study</a>
+        <span class="case-cta reveal" style="--i:5">Case study</span>
       </div>
-    </div>
+    </a>
+  `).join('');
+
+  // ==== MORE WORK: remaining projects, compact 2-col grid, lighter hover ====
+  document.getElementById('moreWorkGrid').innerHTML = moreCaseStudies.map((cs, idx) => `
+    <a class="more-work-item reveal" style="--i:${idx}" href="${cs.caseStudyRoute}" data-slug="${cs.slug}" id="work-${cs.slug}">
+      <div class="more-work-thumb">${imgPlaceholder(cs.thumbnail, cs.name)}</div>
+      <span class="more-work-number">${cs.num}</span>
+      <h3 class="more-work-title">${cs.name}</h3>
+      <p class="more-work-desc">${cs.oneLiner}</p>
+      <span class="case-cta">Case study</span>
+    </a>
   `).join('');
 
   // ==== ABOUT ==================================================================
@@ -1783,8 +2021,8 @@
   const workDetailContent = document.getElementById('workDetailContent');
 
   function renderCaseStudyDetail(cs, index) {
-    const prev = caseStudies[index - 1];
-    const next = caseStudies[index + 1];
+    const prev = orderedCaseStudies[index - 1];
+    const next = orderedCaseStudies[index + 1];
     workDetailContent.innerHTML = `
       <button class="detail-back" id="detailBackBtn">← All projects</button>
       <div class="detail-header-row">
@@ -1822,9 +2060,9 @@
   }
 
   function openCaseStudy(slug, push) {
-    const index = caseStudies.findIndex(c => c.slug === slug);
+    const index = orderedCaseStudies.findIndex(c => c.slug === slug);
     if (index === -1) return;
-    renderCaseStudyDetail(caseStudies[index], index);
+    renderCaseStudyDetail(orderedCaseStudies[index], index);
     workDetailOverlay.hidden = false;
     document.body.classList.add('detail-open');
     workDetailOverlay.scrollTop = 0;
@@ -1837,12 +2075,16 @@
     if (push) history.pushState({ view: 'main' }, '', '#projects');
   }
 
-  document.getElementById('workList').addEventListener('click', function (e) {
-    const link = e.target.closest('.case-cta[data-slug]');
-    if (!link) return;
-    e.preventDefault();
-    openCaseStudy(link.dataset.slug, true);
-  });
+  function bindCaseStudyLinks(container) {
+    container.addEventListener('click', function (e) {
+      const link = e.target.closest('a[data-slug]');
+      if (!link) return;
+      e.preventDefault();
+      openCaseStudy(link.dataset.slug, true);
+    });
+  }
+  bindCaseStudyLinks(document.getElementById('workList'));
+  bindCaseStudyLinks(document.getElementById('moreWorkGrid'));
 
   window.addEventListener('popstate', function () {
     const m = /^#\/work\/(.+)$/.exec(location.hash);
@@ -1887,7 +2129,7 @@
       }
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  document.querySelectorAll('.reveal, .title-reveal, .work-thumb-reveal').forEach(el => revealObserver.observe(el));
 
   // ---- GNB: active-section tracking + eased scroll (no long whoosh past sections) ----
   var navLinks = Array.prototype.slice.call(document.querySelectorAll('nav a[data-nav]'));
