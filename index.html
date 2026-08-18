@@ -272,6 +272,12 @@
     margin-bottom: clamp(20px, 4vh, 40px);
   }
 
+  /* Work specifically reads a touch too airy between "01 WORK" and the first
+     project card — tightened just for this section. */
+  #projects .section-head {
+    margin-bottom: clamp(14px, 2.5vh, 28px);
+  }
+
   /* The number+word (01 WORK / 02 ABOUT / ...) is the section's primary
      visual anchor, not a small nav-style label — same line, .num in a
      softer tone than .code so the pairing still reads as one unit.
@@ -520,18 +526,8 @@
     border: 1px solid var(--card-border);
     color: var(--text-dim);
     font-size: 0.8rem;
-    padding: 6px 14px 6px 10px;
+    padding: 6px 13px;
     border-radius: 999px;
-    box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04);
-    transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease),
-      transform var(--duration) var(--ease), color var(--duration) var(--ease);
-  }
-
-  .skill-tag:hover {
-    border-color: var(--accent-border);
-    box-shadow: 0 4px 10px rgba(17, 24, 39, 0.09);
-    transform: translateY(-1px);
-    color: var(--text);
   }
 
   /* Optional brand/tech icon inside a chip — <img src="assets/icons/<slug>.svg">.
@@ -542,10 +538,6 @@
     height: 14px;
     object-fit: contain;
     flex-shrink: 0;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .skill-tag { transition: none; }
   }
 
   .skills-subhead {
@@ -923,7 +915,7 @@
     display: grid;
     grid-template-columns: 1fr;
     align-content: center;
-    gap: 24px;
+    gap: 18px;
     padding: 8vh 0;
     border-top: 1px solid var(--card-border);
     text-decoration: none;
@@ -936,7 +928,7 @@
     .work-item {
       grid-template-columns: 1.1fr 0.9fr;
       align-items: center;
-      gap: 56px;
+      gap: 40px;
     }
   }
 
@@ -947,15 +939,20 @@
     align-items: baseline;
   }
 
+  /* Was --accent-border (28%-opacity blue) — too faint to read at this size.
+     Solid --accent + a touch more weight/tracking reads as a clean, deliberate
+     "index" label instead of a chip, matching the section's minimal language. */
   .work-number {
     font-size: 0.85rem;
     font-weight: 700;
-    color: var(--accent-border);
+    letter-spacing: 0.3px;
+    color: var(--accent);
     font-variant-numeric: tabular-nums;
   }
 
   .work-year {
     font-size: 0.85rem;
+    font-weight: 600;
     color: var(--text-dim);
     font-variant-numeric: tabular-nums;
   }
@@ -983,7 +980,7 @@
     font-size: clamp(1.3rem, 2.6vw, 1.9rem);
     font-weight: 700;
     letter-spacing: -0.3px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     transition: color var(--duration) var(--ease);
   }
 
@@ -996,21 +993,21 @@
     color: var(--text-dim);
     font-size: 0.94rem;
     line-height: 1.7;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     max-width: 440px;
   }
 
   .work-role-scope {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 28px;
+    gap: 10px;
+    margin-bottom: 18px;
   }
 
   .work-role-scope strong {
     display: block;
     color: var(--accent);
-    font-size: 0.68rem;
+    font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.6px;
     text-transform: uppercase;
@@ -1108,7 +1105,8 @@
     display: block;
     font-size: 0.76rem;
     font-weight: 700;
-    color: var(--accent-border);
+    letter-spacing: 0.3px;
+    color: var(--accent);
     font-variant-numeric: tabular-nums;
     margin-bottom: 6px;
   }
@@ -1233,7 +1231,13 @@
 
   body.detail-open { overflow: hidden; }
 
-  .work-detail-inner { padding: 96px 0 90px; max-width: 760px; }
+  /* Only override top/bottom — this element also carries .wrap (left/right:
+     20px + max-width:860px + auto margins). The old 3-value shorthand here
+     zeroed .wrap's horizontal padding, which was invisible on desktop
+     (auto-margins still centered the 760px column with room to spare) but
+     collapsed to edge-to-edge content on mobile, where the viewport is
+     narrower than 760px and there's no margin left to create a gutter. */
+  .work-detail-inner { padding-top: 96px; padding-bottom: 90px; max-width: 760px; }
 
   .detail-back {
     display: inline-flex;
@@ -1261,8 +1265,8 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .detail-header-row .detail-num { font-weight: 700; color: var(--accent-border); }
-  .detail-header-row .detail-year { color: var(--text-dim); }
+  .detail-header-row .detail-num { font-weight: 700; letter-spacing: 0.3px; color: var(--accent); }
+  .detail-header-row .detail-year { font-weight: 600; color: var(--text-dim); }
 
   .detail-title {
     font-size: clamp(1.6rem, 3.4vw, 2.4rem);
@@ -1790,9 +1794,9 @@
       ],
       validation: "자동화 장비 조작 시나리오·예외 처리 검증",
       tools: null,
-      thumbnail: img("assets/projects/project-01/thumbnail.png"),
-      detailImages: [img("assets/projects/project-01/detail-01.png")],
-      workflowImages: [img("assets/projects/project-01/workflow-01.png")]
+      thumbnail: img("assets/projects/automation-experiment-planning/thumbnail.png"),
+      detailImages: [img("assets/projects/automation-experiment-planning/detail-01.png")],
+      workflowImages: [img("assets/projects/automation-experiment-planning/workflow-01.png")]
     },
     {
       major: true,
@@ -1827,9 +1831,9 @@
       ],
       validation: "테스트 시나리오 작성 및 QA 리드",
       tools: null,
-      thumbnail: img("assets/projects/project-02/thumbnail.png"),
-      detailImages: [img("assets/projects/project-02/detail-01.png")],
-      workflowImages: [img("assets/projects/project-02/workflow-01.png")]
+      thumbnail: img("assets/projects/feasibility-automation-sw/thumbnail.png"),
+      detailImages: [img("assets/projects/feasibility-automation-sw/detail-01.png")],
+      workflowImages: [img("assets/projects/feasibility-automation-sw/workflow-01.png")]
     },
     {
       major: false,
@@ -1857,9 +1861,9 @@
       ],
       validation: null,
       tools: null,
-      thumbnail: img("assets/projects/project-03/thumbnail.png"),
-      detailImages: [img("assets/projects/project-03/detail-01.png")],
-      workflowImages: [img("assets/projects/project-03/workflow-01.png")]
+      thumbnail: img("assets/projects/prototype-doc-automation/thumbnail.png"),
+      detailImages: [img("assets/projects/prototype-doc-automation/detail-01.png")],
+      workflowImages: [img("assets/projects/prototype-doc-automation/workflow-01.png")]
     },
     {
       major: false,
@@ -1888,9 +1892,9 @@
       ],
       validation: null,
       tools: ["Jira", "Confluence", "Slack"],
-      thumbnail: img("assets/projects/project-04/thumbnail.png"),
-      detailImages: [img("assets/projects/project-04/detail-01.png")],
-      workflowImages: [img("assets/projects/project-04/workflow-01.png")]
+      thumbnail: img("assets/projects/qc-report-automation/thumbnail.png"),
+      detailImages: [img("assets/projects/qc-report-automation/detail-01.png")],
+      workflowImages: [img("assets/projects/qc-report-automation/workflow-01.png")]
     },
     {
       major: true,
@@ -1922,9 +1926,9 @@
       ],
       validation: "실제 사용자 테스트로 개선 흐름 검증",
       tools: null,
-      thumbnail: img("assets/projects/project-05/thumbnail.png"),
-      detailImages: [img("assets/projects/project-05/detail-01.png")],
-      workflowImages: [img("assets/projects/project-05/workflow-01.png")]
+      thumbnail: img("assets/projects/liquid-handler-workflow/thumbnail.png"),
+      detailImages: [img("assets/projects/liquid-handler-workflow/detail-01.png")],
+      workflowImages: [img("assets/projects/liquid-handler-workflow/workflow-01.png")]
     }
   ];
 
