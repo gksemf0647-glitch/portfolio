@@ -152,8 +152,50 @@
   nav a.active .nav-num { color: var(--accent); }
   nav a.active::after { transform: scaleX(1); }
 
-  nav .nav-cta {
-    white-space: nowrap;
+  .nav-icon-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Circular icon-only action buttons — used by the nav's Email/LinkedIn
+     pair. is-disabled renders the button visibly but inert, for a social
+     link with no real URL yet (see linkedInUrl in the script below), so the
+     layout doesn't shift once a real URL is added. */
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform var(--duration) var(--ease), background var(--duration) var(--ease),
+      border-color var(--duration) var(--ease), opacity var(--duration) var(--ease);
+  }
+
+  .icon-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  .icon-btn:hover {
+    background: rgba(44, 75, 212, 0.16);
+    border-color: rgba(44, 75, 212, 0.5);
+    transform: scale(1.08);
+  }
+
+  .icon-btn.is-disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
   }
 
   nav .nav-toggle {
@@ -1824,7 +1866,7 @@
       <li><a href="#experience" data-nav><span class="nav-num">03</span>EXPERIENCE</a></li>
       <li><a href="#skills" data-nav><span class="nav-num">04</span>SKILLS</a></li>
     </ul>
-    <a class="btn nav-cta" href="mailto:handl94@naver.com?subject=Portfolio%20Inquiry%20-%20Handeul%20Kim">GET IN TOUCH →</a>
+    <div class="nav-icon-group" id="navIconGroup"></div>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="메뉴 열기">
       <span></span><span></span><span></span>
     </button>
@@ -2565,17 +2607,38 @@
     });
   })();
 
-  // ==== FOOTER: LinkedIn / Email only ==========================================
-  // No LinkedIn URL exists anywhere in this repository — left as an inert TODO
-  // marker per the brief rather than guessing at one.
+  // ==== SOCIAL / CONTACT: shared by the nav icon-buttons and the footer =======
+  // Neither a LinkedIn URL nor a resume PDF exists anywhere in this repository
+  // — both stay an inert TODO (same policy as the img() placeholders above)
+  // until a real value is set here. Every consumer below reads from these two
+  // constants, so activating either is a one-line change with no markup edits.
+  const linkedInUrl = null; // e.g. "https://www.linkedin.com/in/..."
+  const resumeFile = null; // e.g. "assets/resume.pdf"
+  const contactEmail = "handl94@naver.com";
+  const emailSubject = "?subject=Portfolio%20Inquiry%20-%20Handeul%20Kim";
+
   const linkedInIcon = `<svg class="footer-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`;
   const emailIcon = `<svg class="footer-link-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>`;
+  const resumeIcon = `<svg class="footer-link-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M280 0c13.3 0 24 10.7 24 24V269.5l63-63c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-104 104c-9.4 9.4-24.6 9.4-33.9 0l-104-104c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l63 63V24c0-13.3 10.7-24 24-24zM64 352c17.7 0 32 14.3 32 32v64c0 17.7 14.3 32 32 32H384c17.7 0 32-14.3 32-32V384c0-17.7 14.3-32 32-32s32 14.3 32 32v64c0 53-43 96-96 96H128c-53 0-96-43-96-96V384c0-17.7 14.3-32 32-32z"/></svg>`;
 
-  // LinkedIn URL isn't in this repository anywhere — left as an inert TODO
-  // marker (same policy as project asset placeholders) rather than guessed.
+  // Nav: icon-only Email + LinkedIn buttons in place of the old text CTA.
+  document.getElementById('navIconGroup').innerHTML = `
+    <a class="icon-btn" href="mailto:${contactEmail}${emailSubject}" aria-label="Send Email">${emailIcon}</a>
+    ${linkedInUrl
+      ? `<a class="icon-btn" href="${linkedInUrl}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">${linkedInIcon}</a>`
+      : `<span class="icon-btn is-disabled" aria-disabled="true" aria-label="LinkedIn Profile" title="LinkedIn URL 필요">${linkedInIcon}</span>`}
+  `;
+
+  // Footer: LinkedIn / Email / Resume download, same footer-link treatment
+  // (and same inert-until-set pattern) across all three.
   document.getElementById('footerLinks').innerHTML = `
-    <span class="footer-link footer-link--todo" title="LinkedIn URL 필요">${linkedInIcon}LinkedIn ↗ <em>(TODO: URL)</em></span>
-    <a class="footer-link" href="mailto:handl94@naver.com?subject=Portfolio%20Inquiry%20-%20Handeul%20Kim">${emailIcon}Email ↗</a>
+    ${linkedInUrl
+      ? `<a class="footer-link" href="${linkedInUrl}" target="_blank" rel="noopener noreferrer">${linkedInIcon}LinkedIn ↗</a>`
+      : `<span class="footer-link footer-link--todo" title="LinkedIn URL 필요">${linkedInIcon}LinkedIn ↗ <em>(TODO: URL)</em></span>`}
+    <a class="footer-link" href="mailto:${contactEmail}${emailSubject}">${emailIcon}Email ↗</a>
+    ${resumeFile
+      ? `<a class="footer-link" href="${resumeFile}" download>${resumeIcon}Resume ↓</a>`
+      : `<span class="footer-link footer-link--todo" title="이력서 파일 필요">${resumeIcon}Resume ↓ <em>(TODO: PDF)</em></span>`}
   `;
 
   // ==== Case-study detail overlay (client-side "route") =======================
