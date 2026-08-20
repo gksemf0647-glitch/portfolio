@@ -1449,6 +1449,336 @@
     .work-thumb .img-placeholder, .more-work-thumb .img-placeholder,
     nav a, nav a::after, nav .nav-toggle span, nav ul { transition: none; }
   }
+
+  /* ===== HERO: stat counters + partner logo grid ===== */
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: clamp(24px, 5vw, 56px);
+    margin: 12px 0 36px;
+  }
+
+  .hero-stat {
+    text-align: center;
+    min-width: 84px;
+  }
+
+  .hero-stat-num {
+    display: block;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-stat-label {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.74rem;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+  }
+
+  /* ===== ABOUT: headline accent + profile image slot ===== */
+  .about-top {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 700px) {
+    .about-top { grid-template-columns: 220px 1fr; }
+  }
+
+  .about-profile-frame {
+    width: 100%;
+    max-width: 220px;
+    aspect-ratio: 3 / 4;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--bg-soft);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 24px 48px -28px rgba(17, 24, 39, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 1.6rem;
+  }
+
+  .about-profile-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .about-profile-frame.img-placeholder {
+    max-width: 220px;
+    min-height: 0;
+    aspect-ratio: 3 / 4;
+    border-radius: 20px;
+  }
+
+  .about-headline {
+    font-size: clamp(1.35rem, 2.8vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    line-height: 1.35;
+    margin-bottom: 16px;
+  }
+
+  .about-headline .accent { color: var(--accent); }
+
+  .about-top .about-statement { margin-bottom: 0; }
+
+  /* ===== EXPERIENCE: sticky title rail + dashed target-circle timeline ===== */
+  .exp-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  @media (min-width: 820px) {
+    .exp-grid { grid-template-columns: minmax(220px, 320px) 1fr; align-items: start; }
+  }
+
+  .exp-sticky-col {
+    position: static;
+    width: 100%;
+    overflow: visible;
+  }
+
+  @media (min-width: 820px) {
+    .exp-sticky-col {
+      position: sticky;
+      top: 88px;
+    }
+  }
+
+  /* Narrower rail than a regular section-head, so the "EXPERIENCE" word gets
+     its own smaller clamp instead of inheriting the page's large eyebrow
+     size and overflowing/clipping inside the sticky column. */
+  #experience .section-head { margin-bottom: 0; overflow: visible; }
+
+  #experience .section-eyebrow {
+    flex-wrap: nowrap;
+    font-size: clamp(1.7rem, 2.6vw, 2.6rem);
+    overflow: visible;
+    white-space: nowrap;
+  }
+
+  .timeline::before {
+    background: none;
+    border-left: 2px dashed var(--accent-border);
+  }
+
+  .timeline-item::before {
+    background: var(--bg);
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+
+  .timeline-item.in-view::before {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 5px var(--accent-soft);
+  }
+
+  /* ===== SKILLS: Tools & Techniques — vertical tab navigation + logo grid ===== */
+  .tools-tabs-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  @media (min-width: 680px) {
+    .tools-tabs-grid { grid-template-columns: 190px 1fr; align-items: start; }
+  }
+
+  .skills-tabs {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 28px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Vertical variant (desktop only — stays a horizontal scrollable row on
+     mobile, same as the default) with the accent indicator moved from an
+     underline to a left-edge bar, matching a vertical tab list. */
+  @media (min-width: 680px) {
+    .skills-tabs--vertical {
+      flex-direction: column;
+      gap: 2px;
+      overflow-x: visible;
+      border-bottom: none;
+      border-left: 1px solid var(--card-border);
+      margin-bottom: 0;
+    }
+
+    .skills-tabs--vertical .skills-tab {
+      text-align: left;
+      padding: 10px 16px;
+    }
+
+    .skills-tabs--vertical .skills-tab::after {
+      left: -1px;
+      right: auto;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      height: auto;
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+
+    .skills-tabs--vertical .skills-tab.active::after { transform: scaleY(1); }
+  }
+
+  .skills-tab {
+    position: relative;
+    flex-shrink: 0;
+    padding: 11px 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .skills-tab::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -1px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .skills-tab:hover { color: var(--text); }
+
+  .skills-tab.active { color: var(--accent); }
+  .skills-tab.active::after { transform: scaleX(1); }
+
+  .skills-panel { display: none; }
+  .skills-panel.active { display: block; }
+
+  .skills-logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(98px, 1fr));
+    gap: 14px;
+  }
+
+  .skill-logo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 12px;
+    border-radius: 14px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 8px 22px -14px rgba(17, 24, 39, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .skill-logo-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 30px -14px rgba(44, 75, 212, 0.3);
+  }
+
+  .skill-logo-card img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+
+  .skill-logo-card span {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ===== Reusable "clickable card" hover-lift, paired with the custom cursor's
+     expand-on-hover state so both signal "this is interactive" together. ===== */
+  .interactive-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+
+  .interactive-card:hover {
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  .capability-card.interactive-card:hover,
+  .capability-mini.interactive-card:hover {
+    box-shadow: 0 16px 30px -16px rgba(17, 24, 39, 0.2);
+    border-color: var(--accent-border);
+  }
+
+  .timeline-item.interactive-card:hover {
+    box-shadow: 0 16px 30px -16px rgba(17, 24, 39, 0.2);
+  }
+
+  /* ===== Custom dual-circle cursor — fine-pointer devices only, so touch/
+     mobile keeps the normal tap behavior and never hides a cursor no one has. ===== */
+  @media (hover: hover) and (pointer: fine) {
+    body { cursor: none; }
+
+    a, button, .interactive-card, .skill-tag, .nav-toggle { cursor: none; }
+
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+    }
+
+    .cursor-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+    }
+
+    .cursor-ring {
+      width: 30px;
+      height: 30px;
+      border: 1.5px solid var(--accent);
+      opacity: 0.75;
+      transition: width 0.25s var(--ease), height 0.25s var(--ease),
+        border-color 0.25s var(--ease), opacity 0.25s var(--ease);
+    }
+
+    .cursor-ring.is-hover {
+      width: 54px;
+      height: 54px;
+      opacity: 0.9;
+    }
+
+    .cursor-ring.is-down { width: 24px; height: 24px; }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .cursor-dot, .cursor-ring { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -1484,6 +1814,7 @@
       복잡한 Domain Process를 구조화하고 Requirement부터 Validation과 Operation까지
       Digital Product로 연결합니다.
     </p>
+    <div class="hero-stats" id="heroStats"></div>
     <div class="contact-row">
       <a class="btn" href="mailto:handl94@naver.com">이메일 보내기</a>
       <a class="btn ghost" href="#projects">프로젝트 보기</a>
@@ -1620,7 +1951,13 @@
         <span class="num title-reveal" style="--i:0">02</span><span class="code title-reveal" style="--i:1">ABOUT</span>
       </div>
     </div>
-    <p class="about-statement reveal" style="--i:2" id="aboutStatement"></p>
+    <div class="about-top">
+      <div class="about-profile-frame reveal" style="--i:1" id="aboutProfileFrame"></div>
+      <div>
+        <h3 class="about-headline title-reveal" style="--i:2" id="aboutHeadline"></h3>
+        <p class="about-statement reveal" style="--i:3" id="aboutStatement"></p>
+      </div>
+    </div>
     <div class="capability-grid" id="capabilityList"></div>
     <div class="about-compact-grid" id="aboutCompactGrid"></div>
   </div>
@@ -1628,12 +1965,16 @@
 
 <section id="experience" class="section-full">
   <div class="wrap">
-    <div class="section-head">
-      <div class="section-eyebrow">
-        <span class="num title-reveal" style="--i:0">03</span><span class="code title-reveal" style="--i:1">EXPERIENCE</span>
+    <div class="exp-grid">
+      <div class="exp-sticky-col" id="expStickyCol">
+        <div class="section-head">
+          <div class="section-eyebrow">
+            <span class="num title-reveal" style="--i:0">03</span><span class="code title-reveal" style="--i:1">EXPERIENCE</span>
+          </div>
+        </div>
       </div>
+      <div class="timeline" id="experienceList"></div>
     </div>
-    <div class="timeline" id="experienceList"></div>
   </div>
 </section>
 
@@ -1646,8 +1987,12 @@
     </div>
     <div class="skills-subhead">Core Capabilities</div>
     <div class="capability-mini-grid" id="coreCapabilityList"></div>
+
     <div class="skills-subhead">Tools &amp; Techniques</div>
-    <div class="capability-mini-grid" id="toolsCategoryGrid"></div>
+    <div class="tools-tabs-grid">
+      <div class="skills-tabs skills-tabs--vertical" id="toolsTabs" role="tablist"></div>
+      <div class="skills-panels" id="toolsPanels"></div>
+    </div>
   </div>
 </section>
 
@@ -1673,13 +2018,26 @@
   <div class="wrap work-detail-inner" id="workDetailContent"></div>
 </div>
 
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
 <script>
   // ---- image asset helper: every image is TODO/placeholder until a real
   // file exists — at that point set `realSrc` on the data entry and the
   // template below picks it up automatically, no markup changes needed. ----
   function img(path) { return { path: path, realSrc: null }; }
 
+  // ==== HERO: stat counters + partner logos ===================================
+  const heroStats = [
+    { value: 10, suffix: "+", label: "Projects Completed" },
+    { value: 5, suffix: "+", label: "Years Experience" },
+    { value: 100, suffix: "%", label: "Passion & Quality" }
+  ];
+
   // ==== ABOUT ================================================================
+  const aboutHeadline = 'Designing <span class="accent">Impactful</span> Digital Products';
+  const aboutProfileImage = img("assets/images/profile.png");
+
   const aboutStatement =
     "Complex Domain Process를 분석하고 Requirement → Design → Development → Validation → Operation으로 연결하여 Digital Product로 전환합니다.";
 
@@ -1733,26 +2091,26 @@
     { num: "04", title: "Validation", items: ["Test Design", "V&V", "Validation Planning"] }
   ];
 
-  // Real tools only — same 4 groups as this site's original "보유 툴" data,
-  // renumbered/relabeled to the requested category names. `icon` is a
-  // placeholder path (assets/icons/<slug>.svg); missing files fail silently
-  // via the onerror handler in the render code, so this is safe to fill in
-  // later one file at a time.
+  // Real tools only, regrouped under the requested tab labels — every tool
+  // is still the same one from this site's original "보유 툴" data, just
+  // recategorized. `icon` is a placeholder path (assets/icons/<slug>.svg);
+  // missing files fail silently via the onerror handler in the render code,
+  // so this is safe to fill in later one file at a time.
   function tool(name, icon) { return { name: name, icon: "assets/icons/" + icon + ".svg" }; }
   const toolsCategories = [
-    { num: "01", title: "Collaboration", items: [
-      tool("Notion", "notion"), tool("MS DevOps", "azuredevops"), tool("Slack", "slack"),
-      tool("Jira", "jira"), tool("Confluence", "confluence")
+    { num: "01", title: "Product Management", items: [
+      tool("Notion", "notion"), tool("Jira", "jira"),
+      tool("Confluence", "confluence"), tool("MS DevOps", "azuredevops")
     ] },
-    { num: "02", title: "Design", items: [
+    { num: "02", title: "Design / Prototyping", items: [
       tool("Figma", "figma"), tool("Photoshop", "photoshop"),
       tool("Premiere", "premierepro"), tool("After Effects", "aftereffects")
     ] },
-    { num: "03", title: "Programming", items: [
-      tool("Python", "python"), tool("Java", "java"), tool("C", "c")
+    { num: "03", title: "Development / Automation", items: [
+      tool("Python", "python"), tool("Java", "java"), tool("C", "c"), tool("TestRail", "testrail")
     ] },
-    { num: "04", title: "Etc (Office & Test)", items: [
-      tool("TestRail", "testrail"), tool("MS Excel", "excel"),
+    { num: "04", title: "Collaboration", items: [
+      tool("Slack", "slack"), tool("MS Excel", "excel"),
       tool("MS PowerPoint", "powerpoint"), tool("MS Word", "word")
     ] }
   ];
@@ -1946,6 +2304,13 @@
     </div>`;
   }
 
+  function profileImageHtml(imgObj) {
+    if (imgObj.realSrc) {
+      return `<img src="${imgObj.realSrc}" alt="Handeul Kim" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+    }
+    return `<span title="${imgObj.path}">▢</span>`;
+  }
+
   function metaLine(label, value) {
     return `<span><strong>${label}</strong>${value || '<span class="todo">[TODO: ' + label + ']</span>'}</span>`;
   }
@@ -2013,10 +2378,53 @@
   `).join('');
 
   // ==== ABOUT ==================================================================
+  // ==== HERO: stat counters =====================================================
+  document.getElementById('heroStats').innerHTML = heroStats.map((s, idx) => `
+    <div class="hero-stat reveal" style="--i:${idx}">
+      <span class="hero-stat-num" data-count-to="${s.value}" data-suffix="${s.suffix}">0${s.suffix}</span>
+      <span class="hero-stat-label">${s.label}</span>
+    </div>
+  `).join('');
+
+  // Count-up animation, fires once when the stats row first enters view.
+  (function initHeroCounters() {
+    const nums = document.querySelectorAll('#heroStats .hero-stat-num');
+    if (!nums.length) return;
+    function animate(el) {
+      const to = parseInt(el.dataset.countTo, 10) || 0;
+      const suffix = el.dataset.suffix || '';
+      const duration = 1200;
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * to) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    if (typeof IntersectionObserver === 'undefined') {
+      nums.forEach(animate);
+      return;
+    }
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animate(entry.target);
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    nums.forEach(el => counterObserver.observe(el));
+  })();
+
+  // ==== ABOUT ===================================================================
+  document.getElementById('aboutHeadline').innerHTML = aboutHeadline;
+  document.getElementById('aboutProfileFrame').innerHTML = profileImageHtml(aboutProfileImage);
   document.getElementById('aboutStatement').textContent = aboutStatement;
 
   document.getElementById('capabilityList').innerHTML = capabilities.map((c, idx) => `
-    <div class="capability-card reveal" style="--i:${idx}">
+    <div class="capability-card interactive-card reveal" style="--i:${idx}">
       <div class="num">${c.num}</div>
       <h3>${c.title}</h3>
       <p>${c.desc}</p>
@@ -2040,7 +2448,7 @@
 
   // ==== EXPERIENCE =============================================================
   document.getElementById('experienceList').innerHTML = experience.map((e, idx) => `
-    <div class="timeline-item reveal" style="--i:${idx}">
+    <div class="timeline-item interactive-card reveal" style="--i:${idx}">
       <div class="role-row">
         <span class="role">${e.domain}</span>
         <span class="period">${e.period}</span>
@@ -2049,6 +2457,21 @@
       <div class="tag-row">${e.tags.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>
     </div>
   `).join('');
+
+  // Highlight whichever card is centered in view so the timeline's target
+  // dots read as dynamic while scrolling instead of staying static.
+  (function initExperienceInView() {
+    const items = Array.prototype.slice.call(document.querySelectorAll('#experienceList .timeline-item'));
+    if (!items.length || typeof IntersectionObserver === 'undefined') return;
+
+    const expObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        entry.target.classList.toggle('in-view', entry.isIntersecting);
+      });
+    }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+
+    items.forEach(item => expObserver.observe(item));
+  })();
 
   // ==== SKILLS =================================================================
   // A plain string ("Domain Analysis") or a {name, icon} tool object both
@@ -2062,6 +2485,8 @@
     return `<span class="skill-tag">${iconHtml}${name}</span>`;
   }
 
+  // Core Capabilities: plain chip layout, no tabs — every category always
+  // visible at once, same as the site's original pre-tab treatment.
   document.getElementById('coreCapabilityList').innerHTML = coreCapabilities.map((c, idx) => `
     <div class="capability-mini reveal" style="--i:${idx}">
       <div class="num">${c.num} ${c.title.toUpperCase()}</div>
@@ -2069,12 +2494,38 @@
     </div>
   `).join('');
 
-  document.getElementById('toolsCategoryGrid').innerHTML = toolsCategories.map((c, idx) => `
-    <div class="capability-mini reveal" style="--i:${idx}">
-      <div class="num">${c.num} ${c.title.toUpperCase()}</div>
-      <div class="skills">${c.items.map(renderSkillTag).join('')}</div>
+  // Tools & Techniques: vertical tab list on the left, matching logo grid on
+  // the right — only this data set uses the tab/logo-grid pattern.
+  document.getElementById('toolsTabs').innerHTML = toolsCategories.map((c, idx) => `
+    <button class="skills-tab${idx === 0 ? ' active' : ''}" type="button" role="tab"
+      aria-selected="${idx === 0 ? 'true' : 'false'}" data-tab="${idx}">${c.title}</button>
+  `).join('');
+
+  document.getElementById('toolsPanels').innerHTML = toolsCategories.map((c, idx) => `
+    <div class="skills-panel${idx === 0 ? ' active' : ''}" role="tabpanel" data-panel="${idx}">
+      <div class="skills-logo-grid">${c.items.map(item => `
+        <div class="skill-logo-card interactive-card">
+          <img src="${item.icon}" alt="" loading="lazy" onerror="this.remove()">
+          <span>${item.name}</span>
+        </div>
+      `).join('')}</div>
     </div>
   `).join('');
+
+  (function initToolsTabs() {
+    const tabButtons = Array.prototype.slice.call(document.querySelectorAll('#toolsTabs .skills-tab'));
+    const panels = Array.prototype.slice.call(document.querySelectorAll('#toolsPanels .skills-panel'));
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        const panel = document.querySelector(`#toolsPanels .skills-panel[data-panel="${btn.dataset.tab}"]`);
+        if (panel) panel.classList.add('active');
+      });
+    });
+  })();
 
   // ==== FOOTER: LinkedIn / Email only ==========================================
   // No LinkedIn URL exists anywhere in this repository — left as an inert TODO
@@ -2196,6 +2647,51 @@
     });
   }
   bindImagePlaceholders(document);
+
+  // ---- Custom dual-circle cursor: dot follows the pointer 1:1, ring lerps
+  // toward it each frame, and both expand/opacity-shift over any clickable
+  // element. Fine-pointer only (see the matching @media guard in CSS) so
+  // touch devices never lose their normal tap cursor. ----
+  (function initCustomCursor() {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    if (!dot || !ring) return;
+
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    let ringX = mouseX, ringY = mouseY;
+    let started = false;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+      if (!started) { ringX = mouseX; ringY = mouseY; started = true; }
+    });
+
+    function raf() {
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
+      ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest && e.target.closest('a, button, .interactive-card, .skill-tag')) {
+        ring.classList.add('is-hover');
+      }
+    });
+    document.addEventListener('mouseout', (e) => {
+      const to = e.relatedTarget;
+      if (to && to.closest && to.closest('a, button, .interactive-card, .skill-tag')) return;
+      ring.classList.remove('is-hover');
+    });
+    document.addEventListener('mousedown', () => ring.classList.add('is-down'));
+    document.addEventListener('mouseup', () => ring.classList.remove('is-down'));
+    document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
+    document.addEventListener('mouseenter', () => { dot.style.opacity = '1'; ring.style.opacity = '0.75'; });
+  })();
 
   // ---- Reveal-on-scroll (vanilla IntersectionObserver; no framework needed) ----
   var revealObserver = new IntersectionObserver((entries) => {
