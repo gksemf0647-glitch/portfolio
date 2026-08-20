@@ -283,12 +283,16 @@
      softer tone than .code so the pairing still reads as one unit.
      A single clamp() carries the whole responsive range (mobile -> desktop),
      so no extra breakpoint override is needed for this element. */
+  /* Font size/weight/line-height/letter-spacing unified across every section
+     (01/02/03/04) to match 03 EXPERIENCE's rail size — that size was tuned
+     to fit its sticky column, so all section titles now share it instead of
+     the previous, much larger clamp(). */
   section .section-head .section-eyebrow {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.15em;
-    font-size: clamp(2rem, 4.5vw, 4rem);
+    font-size: clamp(1.7rem, 2.6vw, 2.6rem);
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -358,6 +362,8 @@
       transform: none;
       transition: none;
     }
+
+    .capability-grid { animation: none; }
   }
 
   /* Sections that should read as one full editorial screen rather than a
@@ -382,6 +388,13 @@
   #projects, #about, #experience, #skills {
     position: relative;
     overflow: hidden;
+  }
+
+  /* EXPERIENCE overrides the shared overflow:hidden above — an ancestor with
+     overflow other than visible clips/reclamps position:sticky, which breaks
+     the sticky "03 EXPERIENCE" title rail below. */
+  #experience {
+    overflow: visible;
   }
 
   /* Faint accent-tinted radial glow + hairline grid — pure CSS, no image
@@ -411,19 +424,36 @@
 
   .about-statement .accent { color: var(--accent); }
 
-  /* ---- About: 3 capability blocks ---- */
-  .capability-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
+  /* ---- About: 3 capability blocks, rendered as an infinite horizontal
+     ticker (track is the card list duplicated once in JS so -50% is exactly
+     one full set — the loop point is invisible). The wrapper clips + fades
+     the edges; the track itself just drifts and pauses on hover. ---- */
+  .strength-ticker {
+    overflow: hidden;
     margin-bottom: 48px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
 
-  @media (min-width: 620px) {
-    .capability-grid { grid-template-columns: repeat(3, 1fr); }
+  .capability-grid {
+    display: flex;
+    width: max-content;
+    gap: 14px;
+    animation: strength-ticker-scroll 20s linear infinite;
+  }
+
+  .strength-ticker:hover .capability-grid {
+    animation-play-state: paused;
+  }
+
+  @keyframes strength-ticker-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 
   .capability-card {
+    flex: 0 0 auto;
+    width: 260px;
     background: var(--bg-soft);
     border: 1px solid var(--card-border);
     border-radius: 12px;
@@ -635,12 +665,12 @@
   }
 
   .footer-contact-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 16px;
+    margin-bottom: 28px;
   }
 
   .footer-links {
@@ -1557,6 +1587,7 @@
     .exp-sticky-col {
       position: sticky;
       top: 88px;
+      z-index: 2;
     }
   }
 
@@ -1567,7 +1598,6 @@
 
   #experience .section-eyebrow {
     flex-wrap: nowrap;
-    font-size: clamp(1.7rem, 2.6vw, 2.6rem);
     overflow: visible;
     white-space: nowrap;
   }
@@ -1705,8 +1735,9 @@
   }
 
   .skill-logo-card img {
-    width: 30px;
-    height: 30px;
+    width: auto;
+    max-width: 30px;
+    max-height: 30px;
     object-fit: contain;
   }
 
@@ -1761,7 +1792,7 @@
     .cursor-ring {
       width: 30px;
       height: 30px;
-      border: 1.5px solid var(--accent);
+      border: 1.5px solid rgba(44, 75, 212, 0.2);
       opacity: 0.75;
       transition: width 0.25s var(--ease), height 0.25s var(--ease),
         border-color 0.25s var(--ease), opacity 0.25s var(--ease);
@@ -1770,6 +1801,7 @@
     .cursor-ring.is-hover {
       width: 54px;
       height: 54px;
+      border-color: rgba(44, 75, 212, 0.35);
       opacity: 0.9;
     }
 
@@ -1958,7 +1990,9 @@
         <p class="about-statement reveal" style="--i:3" id="aboutStatement"></p>
       </div>
     </div>
-    <div class="capability-grid" id="capabilityList"></div>
+    <div class="strength-ticker reveal" style="--i:2">
+      <div class="capability-grid" id="capabilityList"></div>
+    </div>
     <div class="about-compact-grid" id="aboutCompactGrid"></div>
   </div>
 </section>
@@ -2423,13 +2457,17 @@
   document.getElementById('aboutProfileFrame').innerHTML = profileImageHtml(aboutProfileImage);
   document.getElementById('aboutStatement').textContent = aboutStatement;
 
-  document.getElementById('capabilityList').innerHTML = capabilities.map((c, idx) => `
-    <div class="capability-card interactive-card reveal" style="--i:${idx}">
+  // Rendered twice back-to-back so the track's -50% keyframe lines up with
+  // the start of the second (identical) set — the loop never shows a gap.
+  var capabilityCardsHtml = capabilities.map(c => `
+    <div class="capability-card interactive-card">
       <div class="num">${c.num}</div>
       <h3>${c.title}</h3>
       <p>${c.desc}</p>
     </div>
   `).join('');
+  document.getElementById('capabilityList').innerHTML =
+    capabilityCardsHtml + `<div style="display:contents" aria-hidden="true">${capabilityCardsHtml}</div>`;
 
   document.getElementById('aboutCompactGrid').innerHTML = `
     <div class="about-compact-block reveal" style="--i:0">
