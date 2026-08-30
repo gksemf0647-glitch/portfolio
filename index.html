@@ -3054,1201 +3054,1140 @@
 </template>
 <!-- ▲▲▲ [프로젝트 04] 끝 ▲▲▲ -->
 
-
 <!-- ┌─────────────────────────────────────────────────────────────────────────┐
-     │ [프로젝트 02]  분자진단 제품개발 Feasibility 단계 자동화 SW              │
-     │ slug: feasibility-automation-sw                                         │
-     │ 변경점: Screen 6(실험 방법) 가이드 펄스를 "Template preparation" 카드    │
-     │        → "Next" 버튼으로 이동 / Discussion 의 Complete → 실험목록 복귀   │
-     │        + "완료되었습니다!" 토스트                                        │
+     │ [프로젝트 01]  제품개발 자동화 장비 및 실험계획 모듈 개발
+     │ slug: automation-experiment-planning
+     │ 원본: lab-automation-cureca-mockup-v2 (1).html
+     │ 임베드용 구조 변경: 상단 설명영역(portfolio-head) · 화면이동 바(jumpbar) ·
+     │ 기획 포인트 패널(note-*) 제거 → Inner Screen(.device)만 독립 표시
      └─────────────────────────────────────────────────────────────────────────┘ -->
-<template id="prototype-embed--feasibility-automation-sw">
+<template id="prototype-embed--automation-experiment-planning">
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>실험실 자동화 시스템 재기획 — Feasibility 시나리오 목업</title>
+<title>실험 아이템 &amp; 실험계획 관리 시스템 v2 — 목업</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
+:root{
+  --accent:#5B54E8; --accent-dark:#4740C7; --accent-soft:#EEEDFD;
+  --ink:#1E1E2B; --ink-60:#5D5E6E; --ink-40:#9596A6;
+  --line:#E4E4EC; --bg:#F6F6FA; --surface:#FFFFFF;
+  --green:#2F9E5B; --green-soft:#E9F8EF;
+  --amber:#B8860B; --amber-soft:#FFF6DC;
+  --red:#D64545; --red-soft:#FDEBEC;
+  --blue:#3B7DDB; --blue-soft:#EAF2FD;
+  --purple-tag-bg:#EFEBFB; --purple-tag-ink:#6B4FBB;
+  --shadow: 0 1px 2px rgba(20,20,40,.04), 0 10px 28px rgba(20,20,40,.06);
+  --radius-lg:16px; --radius-md:12px; --radius-sm:8px;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans KR',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
 
-  :root{
-    --brand:#2C2C2C; --brand-soft:#F0F0F0; --on-brand:#F5F5F5;
-    --accent:#4F46E5; --accent-soft:#EEF0FF; --accent-dark:#4338CA;
-    --red:#C22A2A; --red-soft:#FBEAEA;
-    --ink:#1E1E1E; --ink-60:#5B5B5B; --ink-40:#8A8A8A;
-    --line:#D9D9D9; --bg:#F5F5F5; --surface:#FFFFFF;
-    --navy:#45526B; --teal:#7FCFCB; --amber:#B8860B; --green:#2F7D4F; --blue:#1F6FB8;
-    --shadow: 0 1px 2px rgba(20,20,25,.04), 0 8px 20px rgba(20,20,25,.05);
-    --radius-lg:16px; --radius-md:12px; --radius-sm:8px;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans KR',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
-  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:.02em;}
+.portfolio-head{padding:26px 40px 14px;max-width:1520px;margin:0 auto;}
+.portfolio-head .eyebrow{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.portfolio-head h1{font-size:21px;margin:0 0 6px;font-weight:800;}
+.portfolio-head p{font-size:13px;color:var(--ink-60);margin:0;max-width:820px;line-height:1.6;}
 
-  .portfolio-head{padding:26px 40px 14px;max-width:1440px;margin:0 auto;}
-  .portfolio-head .eyebrow{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
-  .portfolio-head h1{font-size:21px;margin:0 0 6px;font-weight:900;}
-  .portfolio-head p{font-size:13px;color:var(--ink-60);margin:0;max-width:760px;line-height:1.6;}
+.jumpbar{display:flex;align-items:center;gap:10px;max-width:1520px;margin:12px auto 0;padding:0 40px;flex-wrap:wrap;}
+.jumpbar span{font-size:11.5px;font-weight:700;color:var(--ink-40);}
+.jumpbar select{font-size:12.5px;font-weight:700;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);}
+.flowtag{font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:999px;}
 
-  .jumpbar{display:flex;align-items:center;gap:10px;max-width:1440px;margin:12px auto 0;padding:0 40px;flex-wrap:wrap;}
-  .jumpbar span{font-size:11.5px;font-weight:700;color:var(--ink-40);}
-  .jumpbar select{font-size:12.5px;font-weight:700;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);}
-  .flowtag{font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:999px;}
+.stage{max-width:1520px;margin:14px auto 60px;padding:0 40px;}
+.screen{display:none;}
+.screen.active{display:block;}
 
-  .stage{max-width:1440px;margin:14px auto 60px;padding:0 40px;position:relative;}
-  .screen{display:none;}
-  .screen.active{display:block;}
+.device{background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);display:flex;height:760px;}
 
-  /* 1. 목업 프레임 720px 고정 및 레이아웃 유지 */
-  .device{
-    background:var(--surface);
-    border-radius:var(--radius-lg);
-    overflow:hidden;
-    box-shadow:var(--shadow);
-    border:1px solid var(--line);
-    height:720px;
-    display:flex;
-    flex-direction:column;
-  }
+/* ---- Sidebar ---- */
+.sidenav{width:220px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;flex-shrink:0;}
+.sidenav-logo{display:flex;align-items:center;gap:9px;padding:20px 18px;font-weight:800;font-size:15px;}
+.sidenav-logo .mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#8F7DF0);flex-shrink:0;}
+.sidenav nav{flex:1;padding:6px 10px;display:flex;flex-direction:column;gap:2px;}
+.sidenav nav a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;color:var(--ink-60);cursor:pointer;}
+.sidenav nav a:hover{background:var(--bg);}
+.sidenav nav a.active{background:var(--accent-soft);color:var(--accent);}
+.sidenav nav a svg{width:16px;height:16px;flex-shrink:0;}
+.sidenav-footer{padding:14px;border-top:1px solid var(--line);}
+.user-chip{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;margin-bottom:8px;}
+.user-chip .av{width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.tools-link{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--ink-40);}
 
-  /* 2. GNB & LNB 어둡고 직관적인 스타일로 개선 */
-  .gnb{background:#1E293B;color:#F8FAFC;display:flex;align-items:center;padding:0 24px;height:60px;gap:18px;border-bottom:1px solid #334155;flex-shrink:0;}
-  .gnb .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;color:#FFFFFF;}
-  .gnb .brand .dot{width:28px;height:28px;border-radius:var(--radius-sm);background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
-  .gnb .divider{width:1px;height:22px;background:#334155;}
-  .gnb .product{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;color:#94A3B8;}
-  .gnb .badge{background:#334155;color:#E2E8F0;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid #475569;}
-  .gnb .spacer{flex:1;}
-  .gnb .search{background:#0F172A;border:1px solid #334155;border-radius:var(--radius-sm);color:#F8FAFC;font-size:12px;padding:8px 12px;width:180px;}
-  .gnb .search::placeholder{color:#64748B;}
-  .gnb .icons{display:flex;gap:6px;align-items:center;margin-left:8px;}
-  .gnb .icons .ico-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#94A3B8;cursor:pointer;}
-  .gnb .icons .ico-btn:hover{background:#334155;color:#FFFFFF;}
+/* ---- Main / Topbar ---- */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;}
+.topbar{height:52px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:flex-end;padding:0 20px;gap:16px;flex-shrink:0;}
+.topbar .userinfo{font-size:12px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:6px;}
+.topbar .sep-txt{color:var(--ink-40);font-weight:500;}
+.topbar .lang{font-size:12px;font-weight:700;color:var(--ink-60);}
+.topbar .ico-btn{width:28px;height:28px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-40);cursor:pointer;}
+.topbar .ico-btn:hover{background:var(--bg);color:var(--ink);}
+.topbar .ver{font-size:11px;color:var(--ink-40);font-weight:600;}
+[data-icon] svg{width:100%;height:100%;display:block;}
+.ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;vertical-align:-3px;}
+.topbar .ico-btn svg{width:16px;height:16px;}
 
-  .body-wrap{display:flex;background:#FAFAFB;flex:1;min-height:0;overflow:hidden;}
-  .lnb{width:52px;background:#0F172A;border-right:1px solid #1E293B;display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:18px;flex-shrink:0;}
-  .lnb .lnb-icon{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#64748B;cursor:pointer;transition:.2s;}
-  .lnb .lnb-icon svg{width:18px;height:18px;}
-  .lnb .lnb-icon:hover{color:#F8FAFC;background:#1E293B;}
-  .lnb .lnb-icon.active{background:var(--accent);color:#FFFFFF;box-shadow:0 0 10px rgba(79,70,229,0.4);}
+/* Content Layout for Sticky Navigation & Footer */
+.content{flex:1;overflow-y:auto;padding:24px 30px 40px;position:relative;display:flex;flex-direction:column;}
+.breadcrumb-card{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-40);margin-bottom:6px;}
+.breadcrumb-card span.cur{color:var(--ink-60);}
+.breadcrumb-card span.lnk{cursor:pointer;text-decoration:underline;}
+.item-title-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:20px;}
+.item-title-row h2{margin:0 0 8px;font-size:21px;font-weight:800;}
+.item-meta{display:flex;gap:20px;font-size:12px;color:var(--ink-60);flex-wrap:wrap;}
+.item-meta b{color:var(--ink);font-weight:700;}
 
-  /* 클릭 위치 가이딩 파동(Pulse) 애니메이션 */
-  @keyframes guidePulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
-      border-color: var(--accent);
-    }
-    70% {
-      box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
-      border-color: var(--accent);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
-      border-color: var(--accent);
-    }
-  }
+/* ---- Buttons ---- */
+.btn{padding:9px 18px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink-60);display:inline-flex;align-items:center;gap:6px;}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff;}
+.btn.ghost{background:#fff;}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn.sm{padding:6px 12px;font-size:11.5px;}
 
-  .guide-highlight {
-    position: relative;
-    animation: guidePulse 1.6s infinite !important;
-    border: 2px solid var(--accent) !important;
-    border-radius: var(--radius-md);
-    z-index: 20;
-  }
+/* ---- Tabs / subtabs ---- */
+.subtabs{display:flex;gap:22px;border-bottom:1px solid var(--line);margin-bottom:16px;}
+.subtabs .st{font-size:13px;font-weight:700;color:var(--ink-40);padding:9px 2px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+.subtabs .st.on{color:var(--accent);border-color:var(--accent);}
+.subtabs .st .cnt{color:inherit;}
 
-  .content{flex:1;padding:22px 26px 20px;overflow-y:auto;display:flex;flex-direction:column;}
-  .crumb{font-size:12.5px;color:var(--ink-40);margin-bottom:6px;font-weight:600;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-  .crumb .cur{color:var(--accent);font-weight:700;}
-  .crumb .sep{opacity:.5;}
-  .pagetitle{font-size:20px;font-weight:900;margin:2px 0 16px;}
-  .helpnote{font-size:12px;color:var(--ink-40);margin:-10px 0 16px;}
+.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.pill{padding:7px 15px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);color:var(--ink-60);cursor:pointer;background:#fff;}
+.pill.on{background:var(--accent);border-color:var(--accent);color:#fff;}
 
-  .grid-2{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;}
-  .card{background:#fff;border-radius:var(--radius-md);border:1px solid var(--line);padding:20px 22px;}
-  .card-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px;}
-  .card-head h3{font-size:15px;margin:0;font-weight:700;}
-  .card-head .more{font-size:12px;color:var(--ink-40);font-weight:600;cursor:pointer;}
+/* ---- Cards / fieldset ---- */
+.fieldset{border:1px solid var(--line);border-radius:var(--radius-md);padding:20px 22px;margin-bottom:16px;background:#fff;}
+.fieldset .sec-title{font-size:14.5px;font-weight:800;margin:0 0 4px;}
+.fieldset .sec-help{font-size:11.5px;color:var(--ink-40);margin:0 0 14px;line-height:1.6;}
+.field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.field-grid.c3{grid-template-columns:repeat(3,1fr);}
+.field-grid.c4{grid-template-columns:repeat(4,1fr);}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12px;font-weight:700;color:var(--ink-60);display:flex;align-items:center;gap:4px;}
+.field label .req{color:var(--red);}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:var(--radius-sm);padding:9px 11px;font-size:12.5px;background:#fff;color:var(--ink);font-family:inherit;}
+.field input[disabled],.field select[disabled]{background:var(--bg);color:var(--ink-40);}
+.charcount{text-align:right;font-size:10.5px;color:var(--ink-40);margin-top:4px;}
+.ai-draft{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:none;padding:6px 12px;border-radius:999px;cursor:pointer;}
 
-  .cat-section{margin-bottom:20px;}
-  .cat-section:last-child{margin-bottom:0;}
-  .cat-subhead{font-size:11px;font-weight:700;color:var(--ink-40);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
-  .cat-refs{display:flex;gap:10px;}
-  .cat-ref-item{flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;background:#fff;transition:.15s;}
-  .cat-ref-item:hover{border-color:var(--accent);background:var(--accent-soft);}
-  .cat-ref-item .ico{width:20px;height:20px;color:var(--ink-60);flex-shrink:0;}
-  .cat-ref-item .label{font-size:13px;font-weight:600;color:var(--ink);}
-  .cat-stages{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-  .stage-card{border:1px solid var(--line);border-radius:var(--radius-md);padding:22px 14px;text-align:center;cursor:pointer;background:#fff;transition:.15s;}
-  .stage-card:hover{border-color:var(--accent);background:var(--accent-soft);}
-  .stage-card .ico{width:30px;height:30px;color:var(--accent);margin:0 auto 12px;display:block;}
-  .stage-card h4{margin:0 0 4px;font-size:14px;font-weight:800;color:var(--ink);}
-  .stage-card p{margin:0;font-size:11px;color:var(--ink-40);font-weight:600;}
-  .stage-card.disabled{cursor:default;}
-  .stage-card.disabled .ico{color:var(--ink-40);}
-  .stage-card.disabled h4{color:var(--ink-40);}
-  .stage-card.disabled:hover{border-color:var(--line);background:#fff;}
+/* ---- Chips (multi-select) ---- */
+.chiprow{display:flex;gap:8px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);min-height:44px;align-items:center;}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent-dark);font-size:12px;font-weight:700;padding:5px 10px 5px 12px;border-radius:999px;}
+.chip .x{cursor:pointer;font-weight:900;opacity:.6;}
 
-  .utab-row{display:flex;gap:26px;border-bottom:1px solid var(--line);margin-bottom:18px;}
-  .utab{font-size:14px;font-weight:700;color:var(--ink-40);padding:10px 2px;cursor:pointer;border-bottom:2px solid transparent;}
-  .utab.on{color:var(--accent);border-color:var(--accent);}
+/* ---- Data table ---- */
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead th{text-align:left;padding:10px 12px;color:var(--ink-40);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line);background:var(--bg);white-space:nowrap;}
+tbody td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tbody tr.clickable{cursor:pointer;}
+tbody tr.clickable:hover{background:var(--bg);}
+.drag-handle{color:var(--ink-40);cursor:grab;font-size:13px;}
+.numbadge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:10px;font-weight:800;}
 
-  .status-row{display:flex;gap:12px;}
-  .status-pill{flex:1;border-radius:var(--radius-sm);border:1px solid var(--line);padding:16px 8px;text-align:center;}
-  .status-pill .label{font-size:12px;font-weight:700;margin-bottom:8px;}
-  .status-pill .num{font-size:20px;font-weight:900;}
-  .status-pill.todo{background:rgba(127,127,220,.12);}
-  .status-pill.progress{background:rgba(63,167,114,.14);}
-  .status-pill.hold{background:rgba(242,169,59,.14);}
-  .status-pill.done{background:rgba(70,164,249,.14);}
+.tag{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:6px;display:inline-block;}
+.tag.purple{background:var(--purple-tag-bg);color:var(--purple-tag-ink);}
+.tag.green{background:var(--green-soft);color:var(--green);}
+.tag.blue{background:var(--blue-soft);color:var(--blue);}
+.tag.amber{background:var(--amber-soft);color:var(--amber);}
+.tag.gray{background:var(--bg);color:var(--ink-40);}
+.status-dot{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;}
+.status-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--ink-40);}
+.status-dot.ready::before{background:var(--blue);}
+.status-dot.done::before{background:var(--accent);}
+.star-ico{color:var(--amber);cursor:pointer;}
+.star-ico.off{color:var(--line);}
 
-  .donut-row{display:flex;justify-content:space-around;margin-top:18px;}
-  .donut{text-align:center;font-size:12px;font-weight:700;}
-  .donut svg{display:block;margin:0 auto 8px;}
+/* ---- Wizard step nav (Fixed / Sticky Header) ---- */
+.wizard-nav{
+  display:flex;
+  gap:10px;
+  margin-bottom:22px;
+  position:sticky;
+  top:-24px;
+  background:var(--surface);
+  padding:12px 0;
+  z-index:10;
+  border-bottom:1px solid var(--line);
+}
+.wnav-step{flex:1;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--line);cursor:pointer;background:#fff;}
+.wnav-step.on{border-color:var(--accent);background:var(--accent-soft);}
+.wnav-step .num{width:22px;height:22px;border-radius:50%;background:var(--line);color:var(--ink-40);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.wnav-step.on .num{background:var(--accent);color:#fff;}
+.wnav-step .lbl{font-size:12.5px;font-weight:700;color:var(--ink-40);}
+.wnav-step.on .lbl{color:var(--ink);}
 
-  .list-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:12.5px;border-bottom:1px dashed var(--line);}
-  .list-row:last-child{border-bottom:none;}
-  .list-row .t{color:var(--ink);}
-  .list-row .meta{color:var(--ink-40);text-align:right;font-size:11px;}
+/* ---- Checklist footer bar (Fixed / Sticky Footer) ---- */
+.checklist-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:16px 20px;
+  margin-top:auto;
+  border-top:1px solid var(--line);
+  flex-wrap:wrap;
+  position:sticky;
+  bottom:-40px;
+  background:var(--surface);
+  z-index:10;
+  box-shadow: 0 -4px 12px rgba(20,20,40,.05);
+}
+.checklist-items{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;font-weight:700;color:var(--ink-40);}
+.checklist-items .ok{color:var(--green);}
+.checklist-items .pending{color:var(--amber);}
+.checklist-items span{display:flex;align-items:center;gap:5px;}
 
-  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-  .iconbtns{display:flex;gap:8px;}
-  .iconbtn{width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--line);background:#fff;color:var(--ink-60);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;}
-  .iconbtn svg{width:16px;height:16px;}
-  .iconbtn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-soft);}
-  table{width:100%;border-collapse:collapse;font-size:12.5px;}
-  thead th{text-align:left;padding:11px 12px;color:var(--ink-60);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line);background:#FAFAFA;}
-  tbody td{padding:11px 12px;border-bottom:1px solid var(--line);}
-  tbody tr.clickable{cursor:pointer;}
-  tbody tr.clickable:hover{background:#FAFAFB;}
-  .tag{font-size:11px;font-weight:800;padding:4px 9px;border-radius:6px;}
-  .tag.todo{background:rgba(127,127,220,.14);color:#5b5bc4;}
-  .tag.progress{background:rgba(63,167,114,.16);color:var(--green);}
-  .tag.hold{background:rgba(242,169,59,.18);color:#9a6a10;}
-  .tag.done{background:rgba(70,164,249,.16);color:#1f6fb8;}
-  .stage-tag{font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--line);background:var(--accent-soft);padding:3px 8px;border-radius:6px;}
-  .progressbar{width:80px;height:6px;background:var(--line);border-radius:99px;overflow:hidden;}
-  .progressbar > div{height:100%;background:var(--accent);}
-  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;}
-  .dot.green{background:var(--green);} .dot.amber{background:var(--amber);} .dot.blue{background:var(--blue);}
+/* ---- Radio cards ---- */
+.radio-card-row{display:flex;gap:12px;}
+.radio-card{flex:1;border:1.5px solid var(--line);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;}
+.radio-card.selected{border-color:var(--accent);background:var(--accent-soft);}
+.radio-card .dot-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;position:relative;}
+.radio-card.selected .dot-radio{border-color:var(--accent);}
+.radio-card.selected .dot-radio::after{content:'';position:absolute;inset:2px;border-radius:50%;background:var(--accent);}
+.radio-card b{font-size:13px;}
+.radio-card span.desc{display:block;font-size:11px;color:var(--ink-40);font-weight:500;}
 
-  .wizard-steps{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-  .wstep{flex:1;min-width:110px;padding:9px 6px;text-align:center;font-size:11.5px;font-weight:700;border-radius:8px;background:#F1F1F3;color:var(--ink-40);}
-  .wstep.current{background:var(--accent);color:#fff;}
-  .wstep.done{background:#EFF6EF;color:var(--green);}
+/* ---- Empty state ---- */
+.empty-state{padding:80px 0;text-align:center;color:var(--ink-40);}
+.empty-state svg{width:56px;height:56px;margin-bottom:14px;color:var(--line);}
+.empty-state p{font-size:13px;font-weight:600;margin:0;}
 
-  .form-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;margin-bottom:18px;}
-  .fieldset{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;}
-  .fieldset legend{font-size:12px;font-weight:800;color:var(--navy);padding:0 6px;}
-  .field-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-  .field{display:flex;flex-direction:column;gap:6px;}
-  .field label{font-size:11.5px;font-weight:700;color:var(--ink-60);display:flex;align-items:center;gap:4px;}
-  .field label .lock{font-size:10px;color:var(--ink-40);}
-  .field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;background:#fff;color:var(--ink);font-family:inherit;}
-  .field input[disabled],.field select[disabled]{background:#F6F6F7;color:var(--ink-40);}
-  .add-row-btn{font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:8px;}
-  .note-box{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px;font-family:inherit;resize:vertical;}
+/* ---- Exp group cards ---- */
+.expgroup-layout{display:grid;grid-template-columns:280px 1fr;gap:18px;}
+.expgroup-card{border:1px solid var(--line);border-radius:var(--radius-md);padding:14px;margin-bottom:10px;position:relative;background:#fff;}
+.expgroup-card .top{display:flex;justify-content:space-between;align-items:flex-start;}
+.expgroup-card .name{font-size:13.5px;font-weight:800;}
+.expgroup-card .runbtn{margin-top:12px;}
+.exprow{display:flex;justify-content:space-between;align-items:center;padding:11px 4px;border-bottom:1px dashed var(--line);font-size:12.5px;}
+.exprow:last-child{border-bottom:none;}
+.exprow .no{color:var(--ink-40);font-weight:700;margin-right:8px;}
 
-  /* 3. 풋터 (wizard-actions) 고정 스타일 */
-  .wizard-actions{
-    display:flex;
-    justify-content:flex-end;
-    gap:8px;
-    margin-top:auto;
-    padding-top:16px;
-    padding-bottom:4px;
-    position:sticky;
-    bottom:0;
-    background:#FAFAFB;
-    z-index:10;
-    border-top:1px solid var(--line);
-  }
-  .btn{padding:9px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink-60);}
-  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .btn.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
-  .btn.dark{background:var(--ink);border-color:var(--ink);color:#fff;}
-  .btn.ghost{background:#fff;}
+/* ---- Well plate grid ---- */
+.wellgrid-wrap{overflow-x:auto;}
+.wellgrid{display:grid;grid-template-columns:34px repeat(12,minmax(74px,1fr));gap:4px;font-size:9.5px;min-width:900px;}
+.wellgrid .hcell{text-align:center;font-weight:700;color:var(--ink-40);font-size:11px;padding:6px 0;}
+.wellgrid .rcell{display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink-40);font-size:11px;}
+.wellgrid .wcell{border-radius:6px;padding:8px 4px;text-align:center;font-weight:700;color:var(--ink-60);background:var(--bg);line-height:1.3;}
+.wellgrid .wcell.blank{background:transparent;}
+.legend-row{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap;font-size:11.5px;font-weight:700;color:var(--ink-60);}
+.legend-row .sw{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;}
 
-  .plate-wrap{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;}
-  .plate{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;}
-  .plate h4{font-size:12.5px;margin:0 0 10px;font-weight:800;color:var(--ink-60);}
-  .plate-grid{display:grid;grid-template-columns:repeat(12,20px);grid-auto-rows:20px;gap:3px;}
-  .well{width:20px;height:20px;border-radius:4px;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;}
-  .legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;font-size:11px;color:var(--ink-60);}
-  .legend .sw{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px;}
-  .well-info-panel{border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:260px;background:#fff;}
-  .well-info-panel .row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px dashed var(--line);}
-  .well-info-panel .row:last-child{border-bottom:none;}
+/* ---- Highlight Animation for Flow Navigation ---- */
+@keyframes pulseHighlight {
+  0% { box-shadow: 0 0 0 0 rgba(91, 84, 232, 0.6); transform: scale(1); }
+  50% { box-shadow: 0 0 0 8px rgba(91, 84, 232, 0); transform: scale(1.02); }
+  100% { box-shadow: 0 0 0 0 rgba(91, 84, 232, 0); transform: scale(1); }
+}
+.flow-highlight {
+  animation: pulseHighlight 2s infinite ease-in-out;
+  border-color: var(--accent) !important;
+  position: relative;
+  z-index: 5;
+}
 
-  .method-row{display:flex;gap:20px;flex-wrap:wrap;}
-  .method-card{width:290px;border:3px solid var(--line);border-radius:12px;padding:22px;text-align:center;cursor:pointer;background:#fff;transition:.15s;}
-  .method-card:hover{border-color:var(--accent);}
-  .method-card.selected{border-color:var(--accent);background:var(--accent-soft);}
-  .method-card .ico{font-size:34px;margin-bottom:12px;}
-  .method-card h4{margin:0 0 8px;font-size:16px;}
-  .method-card p{margin:0;font-size:12.5px;color:var(--ink-60);}
+/* ---- Modal (reused) ---- */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,20,40,.45);display:none;align-items:center;justify-content:center;z-index:100;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:16px;width:520px;max-width:92vw;box-shadow:var(--shadow);overflow:hidden;max-height:86vh;display:flex;flex-direction:column;}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.modal-head h3{margin:0;font-size:17px;font-weight:800;}
+.modal-head .x{cursor:pointer;color:var(--ink-40);font-size:16px;}
+.modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;}
+.modal-foot{padding:16px 22px 22px;display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;border-top:1px solid var(--line);}
 
-  .result-layout{display:grid;grid-template-columns:230px 1fr 240px;gap:16px;align-items:start;}
-  .pane{border:1px solid var(--line);border-radius:12px;background:#fff;padding:14px;}
-  .pane h4{font-size:12.5px;margin:0 0 10px;font-weight:800;}
-  .page-row{display:flex;align-items:center;justify-content:space-between;padding:9px 8px;border-radius:8px;font-size:12px;cursor:pointer;}
-  .page-row.on{background:var(--accent-soft);color:var(--accent);font-weight:700;}
-  .page-row:hover{background:#F6F6F7;}
-  .complete-badge{font-size:10px;font-weight:800;color:var(--green);}
-  .data-file{font-size:11px;color:var(--ink-60);padding:8px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;}
+.helpbanner{background:var(--accent-soft);border-radius:var(--radius-sm);padding:12px 14px;font-size:11.5px;color:var(--ink-60);line-height:1.7;display:flex;gap:8px;}
+.helpbanner b{color:var(--accent-dark);}
 
-  .crit-table th,.crit-table td{text-align:center;border:1px solid var(--line);padding:8px;font-size:11.5px;}
-  .crit-table th{background:#F8F8F8;color:var(--ink);}
-  .crit-table td.pass{background:#FFF6C4;}
+.pagination{display:flex;justify-content:center;gap:6px;margin-top:22px;}
+.pagination button{all:unset;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:12px;font-weight:700;color:var(--ink-60);cursor:pointer;}
+.pagination button.on{background:var(--accent);color:#fff;}
 
-  .modal-overlay{position:fixed;inset:0;background:rgba(20,20,25,.45);display:none;align-items:center;justify-content:center;z-index:100;}
-  .modal-overlay.show{display:flex;}
-  .modal-box{background:#fff;border-radius:16px;width:520px;max-width:92vw;box-shadow:var(--shadow);overflow:hidden;}
-  .modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
-  .modal-head h3{margin:0;font-size:18px;}
-  .modal-head .x{cursor:pointer;color:var(--ink-40);font-size:16px;}
-  .modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px;}
-  .modal-foot{padding:20px 22px 26px;display:flex;justify-content:center;gap:16px;}
-  .modal-table{width:100%;font-size:12px;border-collapse:collapse;}
-  .modal-table th{background:#FAFAFA;color:var(--ink-60);padding:8px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.02em;border-bottom:1px solid var(--line);}
-  .modal-table td{padding:8px;border-bottom:1px solid var(--line);}
+.note-toggle{position:fixed;right:28px;bottom:28px;background:var(--ink);color:#fff;border-radius:999px;padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow);z-index:50;display:flex;align-items:center;gap:8px;}
+.note-panel{position:fixed;right:28px;bottom:82px;width:340px;max-height:60vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--line);padding:18px 20px;display:none;z-index:50;}
+.note-panel.show{display:block;}
+.note-panel h4{font-size:13px;margin:0 0 10px;font-weight:800;color:var(--accent);}
+.note-panel ul{margin:0;padding-left:16px;font-size:12px;line-height:1.7;color:var(--ink);}
+.note-panel li{margin-bottom:6px;}
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;box-shadow:var(--shadow);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  .note-toggle{position:fixed;right:28px;bottom:28px;background:var(--ink);color:#fff;border-radius:999px;padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow);z-index:50;display:flex;align-items:center;gap:8px;}
-  .note-panel{position:fixed;right:28px;bottom:82px;width:340px;max-height:60vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--line);padding:18px 20px;display:none;z-index:50;}
-  .note-panel.show{display:block;}
-  .note-panel h4{font-size:13px;margin:0 0 10px;font-weight:800;color:var(--accent);}
-  .note-panel ul{margin:0;padding-left:16px;font-size:12px;line-height:1.7;color:var(--ink);}
-  .note-panel li{margin-bottom:6px;}
+@media (max-width:1100px){
+  .field-grid.c3,.field-grid.c4{grid-template-columns:repeat(2,1fr);}
+  .expgroup-layout{grid-template-columns:1fr;}
+}
 
-  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;box-shadow:var(--shadow);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-  [data-icon] svg{width:100%;height:100%;display:block;}
-  .ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;vertical-align:-3px;}
-  .iconbtn .ico{width:16px;height:16px;}
-  .lock.ico{width:11px;height:11px;vertical-align:-1px;}
-  .gnb .icons .ico-btn svg{width:18px;height:18px;}
-
-  @media (max-width:1000px){
-    .field-grid{grid-template-columns:repeat(2,1fr);}
-    .grid-2{grid-template-columns:1fr;}
-    .result-layout{grid-template-columns:1fr;}
-  }
-
-  /* ---- Feasibility-scenario additions ---- */
-  .set-select{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--ink);}
-  .set-select select{border:1px solid var(--line);border-radius:var(--radius-sm);padding:7px 10px;font-size:12.5px;font-weight:600;background:#fff;color:var(--ink);}
-
-  .stage-progress{display:flex;gap:4px;width:220px;}
-  .stage-seg{flex:1;text-align:center;}
-  .stage-seg .bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:4px;}
-  .stage-seg .bar > div{height:100%;background:var(--accent);}
-  .stage-seg .lbl{font-size:9.5px;color:var(--ink-40);font-weight:700;}
-
-  .stage-card .done-badge{font-size:10px;font-weight:800;color:#2F7D4F;background:#EAF6EE;padding:2px 8px;border-radius:999px;display:inline-block;margin-top:8px;}
-
-  .dilution-table th{background:#FAFAFA;color:var(--ink-60);font-weight:700;font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--line);padding:10px;}
-  .dilution-table td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:12.5px;}
-  .dilution-table input{width:100%;border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12px;}
-
-  .discussion-editor{border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px;min-height:160px;font-size:13px;line-height:1.7;width:100%;font-family:inherit;resize:vertical;}
-  .import-btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent);padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;}
-  .imported-block{border:1px dashed var(--line);border-radius:var(--radius-md);padding:14px 16px;margin-top:12px;background:#FAFAFA;}
-  .imported-block h5{margin:0 0 8px;font-size:12px;font-weight:800;color:var(--ink-60);}
-
-  .modal-checklist{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;}
-  .modal-checklist label{display:flex;align-items:center;gap:10px;font-size:12.5px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);cursor:pointer;}
-  .modal-checklist label:hover{border-color:var(--accent);background:var(--accent-soft);}
-
-  .stage-card.disabled-nav{opacity:.55;cursor:not-allowed;}
-  .stage-card.disabled-nav:hover{border-color:var(--line);background:#fff;}
-
+/* ── portfolio 상세 페이지 iframe 임베드용 override ──
+   공용 임베드 파이프라인이 .screen>.device 를 flex-direction:column 으로
+   강제하므로, 이 목업의 가로 레이아웃(sidenav | main)을 되돌린다. */
+.portfolio-head,.jumpbar,.note-toggle,.note-panel{display:none!important;}
+.screen>.device{flex-direction:row!important;}
 </style>
 </head>
 <body>
 
-<div class="portfolio-head">
-  <div class="eyebrow">Portfolio · UX Reframing Case</div>
-  <h1>연구원 실험 워크플로우 디지털 전환 — Feasibility 시나리오 목업</h1>
-  <p>Home 화면은 Prototype 케이스와 동일한 구조를 사용하고, 이번 케이스에서는 <b>Feasibility</b> 흐름만 동작함(Prototype 카드는 비활성화). Lab-book 추가 → 실험항목 추가 → Material &amp; Method → Well information(자동생성) → 실험 방법(Template preparation / PCR Setup) → 데이터 업로드 → 결과 정리 → Discussion까지 이어지는 실제 화면설계서 흐름을 그대로 재현.</p>
-</div>
 
-<div class="jumpbar">
-  <span class="flowtag">화면 이동</span>
-  <span>버튼을 눌러 순서대로 진행하거나, 아래에서 화면을 바로 선택:</span>
-  <select id="jumpSelect" onchange="show(this.value)">
-    <option value="home">1. Home / Dashboard</option>
-    <option value="labbooklist">2. Feasibility — Lab-book list</option>
-    <option value="testlist">3. Lab-book — 실험항목 리스트</option>
-    <option value="plan">4. 실험계획 입력 (Material &amp; Method)</option>
-    <option value="wellinfo">5. Well information (자동생성)</option>
-    <option value="method">6. 실험 방법 선택</option>
-    <option value="tprep">7. Template preparation</option>
-    <option value="pcrsetup">8. PCR Setup</option>
-    <option value="dataupload">9. 데이터 업로드</option>
-    <option value="result">10. 결과 정리 (Result)</option>
-    <option value="discussion">11. Discussion</option>
-  </select>
-</div>
 
 <div class="stage">
 
-  <!-- ============ 1. HOME ============ -->
-  <div class="screen active" id="screen-home">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div>
-        <div class="product"><span class="badge">Change</span> Target Panel A Assay</div>
-        <div class="spacer"></div>
-        <input class="search" placeholder="Search" />
-        <div class="icons">
-          <span class="ico-btn" data-icon="bell"></span>
-          <span class="ico-btn" data-icon="folder"></span>
-          <span class="ico-btn" data-icon="user"></span>
-          <span class="ico-btn" data-icon="settings"></span>
-          <span class="ico-btn" data-icon="grid"></span>
-        </div>
+<!-- 1. Item 목록 -->
+<div class="screen active" id="screen-itemlist"><div class="device">
+    <aside class="sidenav">
+      <div class="sidenav-logo"><div class="mark"></div>LabFlow OneSystem</div>
+      <nav>
+        <a><span class="ico" data-icon="grid"></span> Dashboard</a>
+        <a><span class="ico" data-icon="bullhorn"></span> Notice</a>
+        <a><span class="ico" data-icon="folder"></span> Projects</a>
+        <a><span class="ico" data-icon="dna"></span> Oligo Design <span class="ico" data-icon="chevdown" style="width:12px;height:12px;margin-left:auto;"></span></a>
+        <a><span class="ico" data-icon="book"></span> Library</a>
+        <a><span class="ico" data-icon="download"></span> Apps Download</a>
+        <a class="active"><span class="ico" data-icon="boxes"></span> Item Manager</a>
+      </nav>
+      <div class="sidenav-footer">
+        <div class="user-chip"><span class="av">이</span> 이하늘</div>
+        <div class="tools-link"><span class="ico" data-icon="grid" style="width:13px;height:13px;"></span> Tools</div>
       </div>
-      <div class="body-wrap">
-        <div class="lnb">
-          <div class="lnb-icon active" data-icon="home"></div>
-          <div class="lnb-icon" data-icon="box"></div>
-          <div class="lnb-icon" data-icon="flask"></div>
-          <div class="lnb-icon" data-icon="chart"></div>
-        </div>
-        <div class="content">
-          <div class="crumb">Home</div>
-          <div class="helpnote">로그인 시 최초 진입 화면 — 카테고리 진입, 진행률, 공지, 최근 작업 이력을 한 화면에서 확인</div>
+    </aside>
+<div class="main">
+      <div class="topbar">
+        <span class="userinfo"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> User</span>
+        <span class="sep-txt">|</span>
+        <span class="lang">Admin</span>
+        <span class="lang">EN</span>
+        <span class="ico-btn" data-icon="search"></span>
+        <span class="ico-btn" data-icon="bell"></span>
+        <span class="ico-btn" data-icon="headset"></span>
+        <span class="ico-btn" data-icon="settings"></span>
+        <span class="ver">V2026.08.27</span>
+        <span class="ico-btn" data-icon="logout"></span>
+      </div>
+<div class="content">
+<div class="breadcrumb-card"><span class="ico" data-icon="folder" style="width:14px;height:14px;"></span> Item Manager</div>
+<div class="item-title-row">
+  <h2>Item</h2>
+  <button class="btn primary flow-highlight" onclick="show('createitem')"><span class="ico" data-icon="plus" style="width:13px;height:13px;"></span> Create</button>
+</div>
+<div class="subtabs"><div class="st on">All Items</div><div class="st">Favorites</div></div>
+<div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+  <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--ink-60);">Period
+    <select style="border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;"><option>Select date</option></select>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--ink-60);">Keyword
+    <input placeholder="Search by Item Name" style="border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12px;width:220px;">
+  </div>
+  <span class="ico-btn" data-icon="refresh" style="width:30px;height:30px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--ink-40);"></span>
+  <button class="btn ghost sm" style="margin-left:auto;"><span class="ico" data-icon="layout" style="width:13px;height:13px;"></span> Columns</button>
+</div>
+<table>
+  <thead><tr><th></th><th>Product Category</th><th>ID</th><th>Item Name</th><th>Disease Category</th><th>Product</th><th>Regulatory Body</th><th>Purpose</th><th>Status</th><th>Created Date</th><th></th></tr></thead>
+  <tbody>
+    <tr class="clickable flow-highlight" onclick="show('itemdetail-empty')">
+      <td><span class="star-ico ico" data-icon="star" style="width:15px;height:15px;"></span></td>
+      <td><span class="tag purple">Panel A</span></td><td>5736</td><td>PCR 장비 추가 적용 - Panel A Detection</td><td>Human Papillomavirus</td><td>Panel A Detection</td><td>CE-IVDR</td><td>Product maintenance</td>
+      <td><span class="status-dot">-</span></td><td>2026-08-28</td><td><span class="ico" data-icon="trash" style="width:14px;height:14px;color:var(--ink-40);"></span></td>
+    </tr>
+    <tr class="clickable" onclick="show('itemdetail-filled')">
+      <td><span class="star-ico ico" data-icon="star" style="width:15px;height:15px;"></span></td>
+      <td><span class="tag purple">Panel B</span></td><td>5728</td><td>타깃 올리고 업데이트 - Panel B Master Assay</td><td>Respiratory Infection</td><td>Panel B Master Assay</td><td>CE-IVDD +4</td><td>Product maintenance</td>
+      <td><span class="status-dot ready">Ready</span></td><td>2026-08-26</td><td><span class="ico" data-icon="trash" style="width:14px;height:14px;color:var(--ink-40);"></span></td>
+    </tr>
+    <tr class="clickable" onclick="show('step1')">
+      <td><span class="star-ico ico" data-icon="star" style="width:15px;height:15px;"></span></td>
+      <td><span class="tag purple">Panel B</span></td><td>5727</td><td>PCR 장비 추가 적용 - Panel B Master Assay</td><td>Respiratory Infection</td><td>Panel B Master Assay</td><td>CE-IVDR</td><td>Product maintenance</td>
+      <td><span class="status-dot ready">Ready</span></td><td>2026-08-26</td><td><span class="ico" data-icon="trash" style="width:14px;height:14px;color:var(--ink-40);"></span></td>
+    </tr>
+    <tr class="clickable" onclick="show('itemdetail-empty')">
+      <td><span class="star-ico ico off" data-icon="star" style="width:15px;height:15px;"></span></td>
+      <td><span class="tag purple">Panel C</span></td><td>5704</td><td>Probe 변경 - Panel C Assay</td><td>Gastrointestinal Infection</td><td>Panel C Assay</td><td>CE-IVDR</td><td>Product renewal</td>
+      <td><span class="status-dot">-</span></td><td>2026-08-07</td><td><span class="ico" data-icon="trash" style="width:14px;height:14px;color:var(--ink-40);"></span></td>
+    </tr>
+    <tr class="clickable" onclick="show('itemdetail-empty')">
+      <td><span class="star-ico ico off" data-icon="star" style="width:15px;height:15px;"></span></td>
+      <td><span class="tag purple">Panel A</span></td><td>5673</td><td>더미 프로젝트 12222</td><td>Urinary Tract Infection</td><td>-</td><td>-</td><td>New product development</td>
+      <td><span class="status-dot">-</span></td><td>2026-07-03</td><td><span class="ico" data-icon="trash" style="width:14px;height:14px;color:var(--ink-40);"></span></td>
+    </tr>
+  </tbody>
+</table>
+<div class="pagination"><button><span class="ico" data-icon="chevleft" style="width:12px;height:12px;"></span></button><button class="on">1</button><button>2</button><button>3</button><button>4</button><button><span class="ico" data-icon="chevright" style="width:12px;height:12px;"></span></button></div>
+</div></div></div></div>
 
-          <div class="grid-2">
-            <div class="card">
-              <div class="card-head"><h3>Category</h3></div>
-              <div class="cat-section">
-                <div class="cat-subhead">참고 정보</div>
-                <div class="cat-refs">
-                  <div class="cat-ref-item"><span class="ico" data-icon="clipboard"></span><span class="label">Product information</span></div>
-                  <div class="cat-ref-item"><span class="ico" data-icon="box"></span><span class="label">Inventory</span></div>
-                </div>
-              </div>
-              <div class="cat-section">
-                <div class="cat-subhead">실험 단계</div>
-                <div class="cat-stages">
-                  <div class="stage-card" id="guide-target-home" onclick="show('labbooklist')" title="클릭하여 Feasibility 진입"><span class="ico" data-icon="flask"></span><h4>Feasibility</h4><p>25% 진행 중</p></div>
-                  <div class="stage-card disabled-nav" title="이번 포트폴리오 케이스에서는 다루지 않음"><span class="ico" data-icon="flask2"></span><h4>Prototype</h4><p>다루지 않음</p></div>
-                  <div class="stage-card disabled" title="정성(Qualitative) 제품에서만 사용"><span class="ico" data-icon="check"></span><h4>Verification</h4><p>정성 제품 전용</p></div>
-                </div>
-              </div>
-              <div style="height:22px"></div>
-              <div class="card-head"><h3>Dashboard summary</h3><span class="more">More ›</span></div>
-              <div class="utab-row"><div class="utab on">Feasibility</div><div class="utab">Prototype</div><div class="utab">Verification</div></div>
-              <div class="status-row">
-                <div class="status-pill todo"><div class="label">To do</div><div class="num">18</div></div>
-                <div class="status-pill progress"><div class="label">In progress</div><div class="num">1</div></div>
-                <div class="status-pill hold"><div class="label">On hold</div><div class="num">25</div></div>
-                <div class="status-pill done"><div class="label">Completed</div><div class="num">26</div></div>
-              </div>
-              <div class="donut-row">
-                <div class="donut"><svg width="70" height="70" viewBox="0 0 36 36"><path d="M18 2a16 16 0 1 1 0 32 16 16 0 1 1 0-32" fill="none" stroke="#E5E5E5" stroke-width="4"/><path d="M18 2a16 16 0 1 1 0 32" fill="none" stroke="#4F46E5" stroke-width="4" stroke-dasharray="12 100" stroke-linecap="round"/></svg>25% · Feasibility</div>
-                <div class="donut"><svg width="70" height="70" viewBox="0 0 36 36"><path d="M18 2a16 16 0 1 1 0 32 16 16 0 1 1 0-32" fill="none" stroke="#E5E5E5" stroke-width="4"/></svg>0% · Prototype</div>
-                <div class="donut"><svg width="70" height="70" viewBox="0 0 36 36"><path d="M18 2a16 16 0 1 1 0 32 16 16 0 1 1 0-32" fill="none" stroke="#E5E5E5" stroke-width="4"/></svg>0% · Verification</div>
-              </div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:20px;">
-              <div class="card">
-                <div class="card-head"><h3>Notice</h3><span class="more">More ›</span></div>
-                <div class="list-row"><div class="t">[공지] Feasibility v0.1.1 릴리즈 노트</div><div class="meta">2026-07-17</div></div>
-                <div class="list-row"><div class="t">[공지] Verification v0.1.1 릴리즈 노트</div><div class="meta">2026-07-17</div></div>
-                <div class="list-row"><div class="t">[공지] 사용자 매뉴얼 업데이트 (KR)</div><div class="meta">2026-07-17</div></div>
-              </div>
-              <div class="card">
-                <div class="card-head"><h3>Recent</h3><span class="more">More ›</span></div>
-                <div class="list-row"><div class="t">Feasibility › Lab-book 2 › 반제품1 안정성 테스트</div><div class="meta">16분 전<br>hdlee</div></div>
-                <div class="list-row"><div class="t">Feasibility › Lab-book 3 › Multi-target 민감도 시험</div><div class="meta">3시간 전<br>srkim</div></div>
-                <div class="list-row"><div class="t">Feasibility › Lab-book 1 › LoD 성능 평가</div><div class="meta">6일 전<br>jyoh</div></div>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- 2. Item 생성 -->
+<div class="screen" id="screen-createitem"><div class="device">
+    <aside class="sidenav">
+      <div class="sidenav-logo"><div class="mark"></div>LabFlow OneSystem</div>
+      <nav>
+        <a><span class="ico" data-icon="grid"></span> Dashboard</a>
+        <a><span class="ico" data-icon="bullhorn"></span> Notice</a>
+        <a><span class="ico" data-icon="folder"></span> Projects</a>
+        <a><span class="ico" data-icon="dna"></span> Oligo Design <span class="ico" data-icon="chevdown" style="width:12px;height:12px;margin-left:auto;"></span></a>
+        <a><span class="ico" data-icon="book"></span> Library</a>
+        <a><span class="ico" data-icon="download"></span> Apps Download</a>
+        <a class="active"><span class="ico" data-icon="boxes"></span> Item Manager</a>
+      </nav>
+      <div class="sidenav-footer">
+        <div class="user-chip"><span class="av">이</span> 이하늘</div>
+        <div class="tools-link"><span class="ico" data-icon="grid" style="width:13px;height:13px;"></span> Tools</div>
       </div>
+    </aside>
+<div class="main">
+      <div class="topbar">
+        <span class="userinfo"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> User</span>
+        <span class="sep-txt">|</span>
+        <span class="lang">Admin</span>
+        <span class="lang">EN</span>
+        <span class="ico-btn" data-icon="search"></span>
+        <span class="ico-btn" data-icon="bell"></span>
+        <span class="ico-btn" data-icon="headset"></span>
+        <span class="ico-btn" data-icon="settings"></span>
+        <span class="ver">V2026.08.27</span>
+        <span class="ico-btn" data-icon="logout"></span>
+      </div>
+<div class="content">
+<div class="breadcrumb-card"><span class="lnk" onclick="show('itemlist')">Item Manager</span><span>›</span><span class="cur">Create Item</span></div>
+<div class="item-title-row"><h2>Create Item</h2></div>
+
+<div class="fieldset">
+  <div class="sec-title">General Project</div>
+  <div class="sec-help">Link a General Project first to create an Item. Linking loads the basic information automatically.</div>
+  <div class="field-grid">
+    <div class="field"><label>General project <span class="req">*</span></label><input placeholder="Search by General project name"></div>
+    <div class="field"><label>Disease Category <span class="req">*</span></label><select><option>Select a Disease Category</option></select></div>
+    <div class="field"><label>Purpose <span class="req">*</span></label><select><option>Select a Purpose</option></select></div>
+    <div class="field"><label>Product</label><select><option>Select a General Project first</option></select></div>
+  </div>
+</div>
+
+<div class="fieldset">
+  <div class="sec-title">Basic Information</div>
+  <div class="field-grid c3" style="margin-bottom:16px;">
+    <div class="field"><label>Cat No.</label><select><option>Select a Cat No.</option></select></div>
+    <div class="field"><label>Regulatory Body</label><select><option>Select a Regulatory Body</option></select></div>
+  </div>
+  <div class="field" style="margin-bottom:16px;"><label>Item Name <span class="req">*</span></label><input placeholder="Enter the item name"><div class="charcount">0/80</div></div>
+  <div class="field">
+    <label>Item Description</label>
+    <textarea placeholder="e.g. keywords: add PCR, QuantumStudio, Australia, Sonic" style="min-height:100px;"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+      <span class="charcount" style="margin:0;">0/500 Character</span>
+      <button class="ai-draft" onclick="toast('AI 초안을 생성합니다')"><span class="ico" data-icon="edit" style="width:11px;height:11px;"></span> Generate an AI draft</button>
     </div>
   </div>
+</div>
 
-  <!-- ============ 2. FEASIBILITY - LAB-BOOK LIST ============ -->
-  <div class="screen" id="screen-labbooklist">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
+<div class="fieldset">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <div class="sec-title" style="margin:0;">Member Setting <span class="numbadge">1</span></div>
+    <button class="btn dark sm" onclick="toast('멤버 추가 화면(모달)으로 연결')"><span class="ico" data-icon="plus" style="width:11px;height:11px;"></span> Add Member</button>
+  </div>
+  <div class="pillrow" style="margin-bottom:12px;"><div class="pill on">All</div></div>
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Organization</th><th>Process Authority</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>이하늘</td><td>hnlee_1@labworks.io</td><td>전략기획 2팀</td><td><select><option>Manager</option><option>Item Info</option><option>Read only</option></select></td><td><span class="ico" data-icon="trash" style="width:14px;height:14px;color:var(--ink-40);"></span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="checklist-bar" style="justify-content:flex-end;border-top:none;padding-top:0;margin-top:0;">
+  <button class="btn ghost" onclick="show('itemlist')">Cancel</button>
+  <!-- 수정: Item 추가 완료 시 Item 목록 화면(itemlist)으로 리다이렉트 -->
+  <button class="btn primary flow-highlight" onclick="toast('Item이 추가되었습니다'); show('itemlist');">Create</button>
+</div>
+</div></div></div></div>
+
+<!-- 3. 실험 그룹 목록 (Empty) -->
+<div class="screen" id="screen-itemdetail-empty"><div class="device">
+    <aside class="sidenav">
+      <div class="sidenav-logo"><div class="mark"></div>LabFlow OneSystem</div>
+      <nav>
+        <a><span class="ico" data-icon="grid"></span> Dashboard</a>
+        <a><span class="ico" data-icon="bullhorn"></span> Notice</a>
+        <a><span class="ico" data-icon="folder"></span> Projects</a>
+        <a><span class="ico" data-icon="dna"></span> Oligo Design <span class="ico" data-icon="chevdown" style="width:12px;height:12px;margin-left:auto;"></span></a>
+        <a><span class="ico" data-icon="book"></span> Library</a>
+        <a><span class="ico" data-icon="download"></span> Apps Download</a>
+        <a class="active"><span class="ico" data-icon="boxes"></span> Item Manager</a>
+      </nav>
+      <div class="sidenav-footer">
+        <div class="user-chip"><span class="av">이</span> 이하늘</div>
+        <div class="tools-link"><span class="ico" data-icon="grid" style="width:13px;height:13px;"></span> Tools</div>
       </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span class="cur">Feasibility</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:flex-end;">
-            <div class="pagetitle">Feasibility</div>
-            <div class="set-select">Set : <select><option>Set A</option><option>Set B</option></select></div>
-          </div>
-          <div class="toolbar">
-            <div class="iconbtns">
-              <div class="iconbtn" title="Lab-book 추가" onclick="addLabBook()"><span class="ico" data-icon="plus"></span></div>
-              <div class="iconbtn" title="삭제"><span class="ico" data-icon="trash"></span></div>
-              <div class="iconbtn" title="복사"><span class="ico" data-icon="copy"></span></div>
-              <div class="iconbtn" title="업로드"><span class="ico" data-icon="upload"></span></div>
-              <div class="iconbtn" title="다운로드"><span class="ico" data-icon="download"></span></div>
-            </div>
-            <button class="btn ghost">Tutorial</button>
-          </div>
-          <table>
-            <thead><tr><th></th><th>Lab-book</th><th>Revision No.</th><th>Updated date</th><th>Status</th><th>Progress</th><th>Note</th></tr></thead>
-            <tbody id="labbookTbody">
-              <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 1</td><td>1.0</td><td>2026-04-05</td><td><span class="dot blue"></span>Completed</td><td><div class="progressbar"><div style="width:100%"></div></div></td><td>M&amp;M 13 Selected</td></tr>
-              <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab Book_안정성패널</td><td>1.0</td><td>2026-07-28</td><td><span class="dot amber"></span>On hold</td><td><div class="progressbar"><div style="width:70%"></div></div></td><td>Oligo redesign in progress</td></tr>
-              <tr class="clickable" id="guide-target-labbooklist" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 2</td><td>1.0</td><td>2026-07-28</td><td><span class="dot green"></span>In progress</td><td><div class="progressbar"><div style="width:20%"></div></div></td><td>—</td></tr>
-            </tbody>
-          </table>
-        </div>
+    </aside>
+<div class="main">
+      <div class="topbar">
+        <span class="userinfo"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> User</span>
+        <span class="sep-txt">|</span>
+        <span class="lang">Admin</span>
+        <span class="lang">EN</span>
+        <span class="ico-btn" data-icon="search"></span>
+        <span class="ico-btn" data-icon="bell"></span>
+        <span class="ico-btn" data-icon="headset"></span>
+        <span class="ico-btn" data-icon="settings"></span>
+        <span class="ver">V2026.08.27</span>
+        <span class="ico-btn" data-icon="logout"></span>
       </div>
+<div class="content">
+<div class="breadcrumb-card"><span class="lnk" onclick="show('itemlist')">Item Manager</span><span>›</span><span class="cur">PCR 장비 추가 적용 - Panel A Detection</span></div>
+<div class="item-title-row">
+  <div><h2>PCR 장비 추가 적용 - Panel A Detection</h2>
+    <div class="item-meta"><span>ID <b>5736</b></span><span>Product <b>Panel A Detection</b></span><span>Cat No. <b>CAT-10372X</b></span><span>Spec change <b>PCR 장비 추가 적용</b></span><span>Regulatory <b>CE-IVDR</b></span></div>
+  </div>
+  <button class="btn ghost"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> Item Edit</button>
+</div>
+<div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
+  <input placeholder="Search by Exp Group Name" style="flex:1;max-width:300px;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:12.5px;">
+  <span class="ico-btn" data-icon="sliders" style="width:34px;height:34px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--ink-40);"></span>
+  <button class="btn ghost sm"><span class="ico" data-icon="star" style="width:12px;height:12px;"></span> Favorites only</button>
+  <button class="btn primary flow-highlight" style="margin-left:auto;" onclick="show('step1')">+ Exp Group</button>
+</div>
+<div class="subtabs"><div class="st on">All 0</div><div class="st">Ready 0</div><div class="st">Running 0</div><div class="st">Failed 0</div><div class="st">Call 0</div><div class="st">Done 0</div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+  <div style="font-size:13.5px;font-weight:800;">Experiment Groups <span style="color:var(--accent);">0</span></div>
+  <button class="btn ghost sm"><span class="ico" data-icon="refresh" style="width:11px;height:11px;"></span> Reset</button>
+</div>
+<div class="empty-state">
+  <span class="ico" data-icon="emptybox" style="width:56px;height:56px;"></span>
+  <p>There are no Exp Groups.</p>
+</div>
+</div></div></div></div>
+
+<!-- 4. Exp Group 생성 — Step 1 -->
+<div class="screen" id="screen-step1"><div class="device">
+    <aside class="sidenav">
+      <div class="sidenav-logo"><div class="mark"></div>LabFlow OneSystem</div>
+      <nav>
+        <a><span class="ico" data-icon="grid"></span> Dashboard</a>
+        <a><span class="ico" data-icon="bullhorn"></span> Notice</a>
+        <a><span class="ico" data-icon="folder"></span> Projects</a>
+        <a><span class="ico" data-icon="dna"></span> Oligo Design <span class="ico" data-icon="chevdown" style="width:12px;height:12px;margin-left:auto;"></span></a>
+        <a><span class="ico" data-icon="book"></span> Library</a>
+        <a><span class="ico" data-icon="download"></span> Apps Download</a>
+        <a class="active"><span class="ico" data-icon="boxes"></span> Item Manager</a>
+      </nav>
+      <div class="sidenav-footer">
+        <div class="user-chip"><span class="av">이</span> 이하늘</div>
+        <div class="tools-link"><span class="ico" data-icon="grid" style="width:13px;height:13px;"></span> Tools</div>
+      </div>
+    </aside>
+<div class="main">
+      <div class="topbar">
+        <span class="userinfo"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> User</span>
+        <span class="sep-txt">|</span>
+        <span class="lang">Admin</span>
+        <span class="lang">EN</span>
+        <span class="ico-btn" data-icon="search"></span>
+        <span class="ico-btn" data-icon="bell"></span>
+        <span class="ico-btn" data-icon="headset"></span>
+        <span class="ico-btn" data-icon="settings"></span>
+        <span class="ver">V2026.08.27</span>
+        <span class="ico-btn" data-icon="logout"></span>
+      </div>
+<div class="content">
+<div class="breadcrumb-card"><span class="lnk" onclick="show('itemlist')">Item Manager</span><span>›</span><span class="lnk" onclick="show('itemdetail-empty')">PCR 장비 추가 적용 - Panel A Detection</span><span>›</span><span class="cur">Create Full-Auto Exp Group</span></div>
+<div class="item-title-row"><h2>Create Full-Auto Exp Group</h2></div>
+<div class="item-meta" style="margin:-10px 0 18px;"><span>ID <b>5736</b></span><span>Product <b>Panel A Detection</b></span><span>Cat No. <b>CAT-10372X</b></span><span>Spec change <b>PCR 장비 추가 적용</b></span><span>Regulatory <b>CE-IVDR</b></span></div>
+
+<!-- Sticky Step Navigation Bar -->
+<div class="wizard-nav">
+  <div class="wnav-step on" onclick="show('step1')"><div class="num">1</div><div class="lbl">Experiment plan</div></div>
+  <div class="wnav-step" onclick="show('step2')"><div class="num">2</div><div class="lbl">Template check</div></div>
+  <div class="wnav-step" onclick="show('step3')"><div class="num">3</div><div class="lbl">Template preparation</div></div>
+  <div class="wnav-step" onclick="show('step4')"><div class="num">4</div><div class="lbl">Input Confirmation</div></div>
+</div>
+
+<div class="fieldset">
+  <div class="sec-title">Experiment Group information</div>
+  <div class="field" style="margin-bottom:14px;"><label>Exp Group name <span class="req">*</span></label><input placeholder="Enter the experiment group name"></div>
+  <div class="field">
+    <label>Description</label>
+    <textarea placeholder="Enter the experiment description" style="min-height:80px;"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+      <span style="font-size:11px;color:var(--ink-40);">Try building an AI draft from keywords. 0/1000 Character</span>
+      <button class="ai-draft" onclick="toast('AI 초안을 생성합니다')"><span class="ico" data-icon="edit" style="width:11px;height:11px;"></span> Generate an AI draft</button>
     </div>
   </div>
+</div>
 
-  <!-- ============ 3. TEST LIST ============ -->
-  <div class="screen" id="screen-testlist">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('labbooklist')" style="cursor:pointer;text-decoration:underline;">Feasibility</span><span class="sep">›</span><span class="cur" id="curLabBookName">Lab-book 2</span></div>
-          <div class="pagetitle" id="testlistTitle">Lab-book 2</div>
-          <div class="toolbar">
-            <div class="iconbtns">
-              <div class="iconbtn" title="실험항목 추가" onclick="document.getElementById('modalAddTest').classList.add('show')"><span class="ico" data-icon="plus"></span></div>
-              <div class="iconbtn" title="삭제"><span class="ico" data-icon="trash"></span></div>
-              <div class="iconbtn" title="복사"><span class="ico" data-icon="copy"></span></div>
-              <div class="iconbtn" title="편집"><span class="ico" data-icon="edit"></span></div>
-              <div class="iconbtn" title="다운로드"><span class="ico" data-icon="download"></span></div>
-            </div>
-            <button class="btn primary" onclick="toast('저장되었습니다!')">Save</button>
-          </div>
-          <table>
-            <thead><tr><th></th><th>No.</th><th>Test</th><th>Status</th><th style="min-width:230px;">Progress</th><th>Note</th></tr></thead>
-            <tbody id="testTbody">
-              <tr class="clickable" id="guide-target-testlist" onclick="show('plan')">
-                <td><input type="checkbox"></td><td>1</td><td>3-1 반제품 소량생산 안정성 시험 (Batch test)</td><td><span class="tag progress">In progress</span></td>
-                <td>
-                  <div class="stage-progress">
-                    <div class="stage-seg"><div class="bar"><div style="width:100%"></div></div><div class="lbl">Plan 100%</div></div>
-                    <div class="stage-seg"><div class="bar"><div style="width:40%"></div></div><div class="lbl">Exp. 40%</div></div>
-                    <div class="stage-seg"><div class="bar"><div style="width:0%"></div></div><div class="lbl">Result 0%</div></div>
-                    <div class="stage-seg"><div class="bar"><div style="width:0%"></div></div><div class="lbl">Disc. 0%</div></div>
-                  </div>
-                </td>
-                <td>—</td>
-              </tr>
-              <tr class="clickable" onclick="show('plan')">
-                <td><input type="checkbox"></td><td>2</td><td>Cross-reactivity 검증</td><td><span class="tag todo">To do</span></td>
-                <td>
-                  <div class="stage-progress">
-                    <div class="stage-seg"><div class="bar"><div style="width:0%"></div></div><div class="lbl">Plan 0%</div></div>
-                    <div class="stage-seg"><div class="bar"><div style="width:0%"></div></div><div class="lbl">Exp. 0%</div></div>
-                    <div class="stage-seg"><div class="bar"><div style="width:0%"></div></div><div class="lbl">Result 0%</div></div>
-                    <div class="stage-seg"><div class="bar"><div style="width:0%"></div></div><div class="lbl">Disc. 0%</div></div>
-                  </div>
-                </td>
-                <td>—</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+<div class="fieldset">
+  <div class="sec-title">Regulatory Body</div>
+  <div class="field-grid">
+    <div class="field"><label>Regulatory Body <span class="req">*</span></label><select><option>Select a Regulatory Body</option><option>CE-IVD</option><option>CE-IVDD</option><option>MFDS</option><option>TGA</option><option>FDA</option></select></div>
+    <div class="field"><label>Country <span class="req">*</span></label><input disabled placeholder="Set automatically from the Regulatory Body you choose."></div>
+  </div>
+</div>
+
+<div class="fieldset">
+  <div class="sec-title">Experiments to run</div>
+  <div class="field"><label>Select experiments to run <span class="req">*</span></label>
+    <div class="chiprow">
+      <span class="chip">Test A <span class="x" onclick="removeChip(this)">×</span></span>
+      <span class="chip">Test B <span class="x" onclick="removeChip(this)">×</span></span>
+      <span class="chip">Test C <span class="x" onclick="removeChip(this)">×</span></span>
+      <span class="chip">Test D <span class="x" onclick="removeChip(this)">×</span></span>
+      <span class="chip">Test E <span class="x" onclick="removeChip(this)">×</span></span>
+      <span class="chip">Test F <span class="x" onclick="removeChip(this)">×</span></span>
+      <span class="ico" data-icon="chevdown" style="width:14px;height:14px;color:var(--ink-40);margin-left:auto;"></span>
     </div>
   </div>
+</div>
 
-  <!-- Add Test Modal -->
-  <div class="modal-overlay" id="modalAddTest">
-    <div class="modal-box">
-      <div class="modal-head"><h3>Add Test</h3><span class="x" onclick="document.getElementById('modalAddTest').classList.remove('show')">✕</span></div>
-      <div class="modal-body">
-        <div class="field"><label>Test <span style="color:var(--red)">*</span></label><select><option>-Select-</option><option>Sensitivity test (Batch test)</option><option>Specificity test</option></select></div>
-        <div class="field"><label>Title <span style="color:var(--red)">*</span></label><input placeholder="실험항목명 입력 (최대 100자)"></div>
+<div class="fieldset">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+    <div class="sec-title" style="margin:0;">Experiment options <span class="req">*</span></div>
+    <button class="btn ghost sm"><span class="ico" data-icon="sliders" style="width:12px;height:12px;"></span> Properties</button>
+  </div>
+  <div style="overflow-x:auto;">
+  <table style="min-width:760px;">
+    <thead><tr>
+      <th rowspan="2"></th><th rowspan="2">No.</th><th rowspan="2">Stage</th><th rowspan="2">Experiment name</th>
+      <th colspan="4" style="text-align:center;">Condition repeats per experiment</th><th rowspan="2"></th>
+    </tr>
+    <tr><th>Template</th><th>Negative Sample</th><th>NC</th><th>PC</th></tr></thead>
+    <tbody>
+      <tr><td><span class="drag-handle">⠿</span></td><td><span class="numbadge">1</span></td><td><span class="tag purple">Feasibility</span></td><td>Test A</td><td><input value="1" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><input value="-" style="width:52px;"></td><td><span class="ico" data-icon="trash" style="width:13px;height:13px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="drag-handle">⠿</span></td><td><span class="numbadge">2</span></td><td><span class="tag purple">Feasibility</span></td><td>Test B</td><td><input value="1" style="width:52px;"></td><td><input value="8" style="width:52px;"></td><td><input value="8" style="width:52px;"></td><td><input value="-" style="width:52px;"></td><td><span class="ico" data-icon="trash" style="width:13px;height:13px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="drag-handle">⠿</span></td><td><span class="numbadge">3</span></td><td><span class="tag purple">Feasibility</span></td><td>Test C</td><td><input value="-" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><input value="-" style="width:52px;"></td><td><span class="ico" data-icon="trash" style="width:13px;height:13px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="drag-handle">⠿</span></td><td><span class="numbadge">4</span></td><td><span class="tag green">Verification</span></td><td>Test D</td><td><input value="-" style="width:52px;"></td><td><input value="8" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><span class="ico" data-icon="trash" style="width:13px;height:13px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="drag-handle">⠿</span></td><td><span class="numbadge">5</span></td><td><span class="tag green">Verification</span></td><td>Test E</td><td><input value="-" style="width:52px;"></td><td><input value="3" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><span class="ico" data-icon="trash" style="width:13px;height:13px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="drag-handle">⠿</span></td><td><span class="numbadge">6</span></td><td><span class="tag green">Verification</span></td><td>Test F</td><td><input value="5" style="width:52px;"></td><td><input value="1" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><input value="2" style="width:52px;"></td><td><span class="ico" data-icon="trash" style="width:13px;height:13px;color:var(--ink-40);"></span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- Sticky Footer Bar -->
+<div class="checklist-bar" style="flex-direction:column;align-items:stretch;">
+  <div class="checklist-items">
+    <span class="ok">✓ Experiment Group information</span>
+    <span class="ok">✓ Regulatory Body</span>
+    <span class="ok">✓ Experiments to run</span>
+    <span class="ok">✓ Template final concentration</span>
+    <span class="pending">● Finished kit information</span>
+    <span class="pending">● TE information</span>
+    <span class="pending">● Negative Sample information</span>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:10px;">
+    <button class="btn ghost" onclick="show('itemdetail-empty')">Back to experiment list</button>
+    <button class="btn primary flow-highlight" onclick="show('step2')">Next</button>
+  </div>
+</div>
+</div></div></div></div>
+
+<!-- 5. Exp Group 생성 — Step 2 -->
+<div class="screen" id="screen-step2"><div class="device">
+    <aside class="sidenav">
+      <div class="sidenav-logo"><div class="mark"></div>LabFlow OneSystem</div>
+      <nav>
+        <a><span class="ico" data-icon="grid"></span> Dashboard</a>
+        <a><span class="ico" data-icon="bullhorn"></span> Notice</a>
+        <a><span class="ico" data-icon="folder"></span> Projects</a>
+        <a><span class="ico" data-icon="dna"></span> Oligo Design <span class="ico" data-icon="chevdown" style="width:12px;height:12px;margin-left:auto;"></span></a>
+        <a><span class="ico" data-icon="book"></span> Library</a>
+        <a><span class="ico" data-icon="download"></span> Apps Download</a>
+        <a class="active"><span class="ico" data-icon="boxes"></span> Item Manager</a>
+      </nav>
+      <div class="sidenav-footer">
+        <div class="user-chip"><span class="av">이</span> 이하늘</div>
+        <div class="tools-link"><span class="ico" data-icon="grid" style="width:13px;height:13px;"></span> Tools</div>
       </div>
-      <div class="modal-foot">
-        <button class="btn ghost" onclick="document.getElementById('modalAddTest').classList.remove('show')">CANCEL</button>
-        <button class="btn primary" onclick="document.getElementById('modalAddTest').classList.remove('show');show('plan')">OK</button>
+    </aside>
+<div class="main">
+      <div class="topbar">
+        <span class="userinfo"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> User</span>
+        <span class="sep-txt">|</span>
+        <span class="lang">Admin</span>
+        <span class="lang">EN</span>
+        <span class="ico-btn" data-icon="search"></span>
+        <span class="ico-btn" data-icon="bell"></span>
+        <span class="ico-btn" data-icon="headset"></span>
+        <span class="ico-btn" data-icon="settings"></span>
+        <span class="ver">V2026.08.27</span>
+        <span class="ico-btn" data-icon="logout"></span>
+      </div>
+<div class="content">
+<div class="breadcrumb-card"><span class="lnk" onclick="show('itemlist')">Item Manager</span><span>›</span><span class="lnk" onclick="show('itemdetail-empty')">PCR 장비 추가 적용 - Panel A Detection</span><span>›</span><span class="cur">Create Full-Auto Exp Group</span></div>
+<div class="item-title-row"><h2>Create Full-Auto Exp Group</h2></div>
+<div class="item-meta" style="margin:-10px 0 18px;"><span>ID <b>5736</b></span><span>Product <b>Panel A Detection</b></span><span>Cat No. <b>CAT-10372X</b></span><span>Spec change <b>PCR 장비 추가 적용</b></span><span>Regulatory <b>CE-IVDR</b></span></div>
+
+<!-- Sticky Step Navigation Bar -->
+<div class="wizard-nav">
+  <div class="wnav-step" onclick="show('step1')"><div class="num">✓</div><div class="lbl">Experiment plan</div></div>
+  <div class="wnav-step on" onclick="show('step2')"><div class="num">2</div><div class="lbl">Template check</div></div>
+  <div class="wnav-step" onclick="show('step3')"><div class="num">3</div><div class="lbl">Template preparation</div></div>
+  <div class="wnav-step" onclick="show('step4')"><div class="num">4</div><div class="lbl">Input Confirmation</div></div>
+</div>
+
+<div class="fieldset">
+  <div class="sec-title">Templates to prepare</div>
+  <div class="sec-help">These Templates must be prepared by hand before they are loaded on the instrument. Check the final concentration, dilute each Template following the dilution table for its preparation method, and load it. Press the magnifier icon at the right end to see per-experiment details for that Template — its target concentration and preparation method.</div>
+  <div style="overflow-x:auto;">
+  <table style="min-width:900px;">
+    <thead><tr><th>Type</th><th>Analyte</th><th>Template</th><th>Channel · Temp.</th><th>Preparation method</th><th>Vendor</th><th>Isolate/Strain No.</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag purple">pDNA</span></td><td>PA66</td><td>PA66_3306</td><td>FAM · Low</td><td><span class="tag blue">10⁸ Dilution</span> <span class="tag green">NS Spiking</span></td><td>Korean isolate</td><td>-</td><td><span class="ico" data-icon="search" style="width:14px;height:14px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="tag purple">pDNA</span></td><td>PA45</td><td>PA45_3403</td><td>FAM · Mid</td><td><span class="tag blue">10⁸ Dilution</span> <span class="tag green">NS Spiking</span></td><td>NIBSC</td><td>14/104</td><td><span class="ico" data-icon="search" style="width:14px;height:14px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="tag purple">pDNA</span></td><td>PA58</td><td>PA58_3366</td><td>FAM · High</td><td><span class="tag blue">10⁸ Dilution</span> <span class="tag green">NS Spiking</span></td><td>NIBSC</td><td>14/264</td><td><span class="ico" data-icon="search" style="width:14px;height:14px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="tag purple">pDNA</span></td><td>PA51</td><td>PA51_3642</td><td>HEX · Low</td><td><span class="tag blue">10⁸ Dilution</span> <span class="tag green">NS Spiking</span></td><td>Korean isolate</td><td>-</td><td><span class="ico" data-icon="search" style="width:14px;height:14px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="tag purple">pDNA</span></td><td>PA59</td><td>PA59_3427</td><td>HEX · Mid</td><td><span class="tag blue">10⁸ Dilution</span> <span class="tag green">NS Spiking</span></td><td>Korean isolate</td><td>-</td><td><span class="ico" data-icon="search" style="width:14px;height:14px;color:var(--ink-40);"></span></td></tr>
+      <tr><td><span class="tag amber">Strain</span></td><td>PA16</td><td>Ref. Strain A</td><td>HEX · High</td><td><span class="tag green">NS Spiking</span></td><td>CellBank Korea</td><td>30035</td><td><span class="ico" data-icon="search" style="width:14px;height:14px;color:var(--ink-40);"></span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- Sticky Footer Bar -->
+<div class="checklist-bar" style="justify-content:flex-end;">
+  <button class="btn ghost" onclick="show('step1')">Back</button>
+  <button class="btn primary flow-highlight" onclick="show('step3')">Next</button>
+</div>
+</div></div></div></div>
+
+<!-- 6. Exp Group 생성 — Step 3 -->
+<div class="screen" id="screen-step3"><div class="device">
+    <aside class="sidenav">
+      <div class="sidenav-logo"><div class="mark"></div>LabFlow OneSystem</div>
+      <nav>
+        <a><span class="ico" data-icon="grid"></span> Dashboard</a>
+        <a><span class="ico" data-icon="bullhorn"></span> Notice</a>
+        <a><span class="ico" data-icon="folder"></span> Projects</a>
+        <a><span class="ico" data-icon="dna"></span> Oligo Design <span class="ico" data-icon="chevdown" style="width:12px;height:12px;margin-left:auto;"></span></a>
+        <a><span class="ico" data-icon="book"></span> Library</a>
+        <a><span class="ico" data-icon="download"></span> Apps Download</a>
+        <a class="active"><span class="ico" data-icon="boxes"></span> Item Manager</a>
+      </nav>
+      <div class="sidenav-footer">
+        <div class="user-chip"><span class="av">이</span> 이하늘</div>
+        <div class="tools-link"><span class="ico" data-icon="grid" style="width:13px;height:13px;"></span> Tools</div>
+      </div>
+    </aside>
+<div class="main">
+      <div class="topbar">
+        <span class="userinfo"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> User</span>
+        <span class="sep-txt">|</span>
+        <span class="lang">Admin</span>
+        <span class="lang">EN</span>
+        <span class="ico-btn" data-icon="search"></span>
+        <span class="ico-btn" data-icon="bell"></span>
+        <span class="ico-btn" data-icon="headset"></span>
+        <span class="ico-btn" data-icon="settings"></span>
+        <span class="ver">V2026.08.27</span>
+        <span class="ico-btn" data-icon="logout"></span>
+      </div>
+<div class="content">
+<div class="breadcrumb-card"><span class="lnk" onclick="show('itemlist')">Item Manager</span><span>›</span><span class="lnk" onclick="show('itemdetail-empty')">PCR 장비 추가 적용 - Panel A Detection</span><span>›</span><span class="cur">Create Full-Auto Exp Group</span></div>
+<div class="item-title-row"><h2>Create Full-Auto Exp Group</h2></div>
+<div class="item-meta" style="margin:-10px 0 18px;"><span>ID <b>5736</b></span><span>Product <b>Panel A Detection</b></span><span>Cat No. <b>CAT-10372X</b></span><span>Spec change <b>PCR 장비 추가 적용</b></span><span>Regulatory <b>CE-IVDR</b></span></div>
+
+<!-- Sticky Step Navigation Bar -->
+<div class="wizard-nav">
+  <div class="wnav-step" onclick="show('step1')"><div class="num">✓</div><div class="lbl">Experiment plan</div></div>
+  <div class="wnav-step" onclick="show('step2')"><div class="num">✓</div><div class="lbl">Template check</div></div>
+  <div class="wnav-step on" onclick="show('step3')"><div class="num">3</div><div class="lbl">Template preparation</div></div>
+  <div class="wnav-step" onclick="show('step4')"><div class="num">4</div><div class="lbl">Input Confirmation</div></div>
+</div>
+
+<div id="s3group">
+<div class="fieldset">
+  <div class="sec-title">Negative Sample Spiking</div>
+  <div class="sec-help">Prepared like a real specimen by spiking the Template into a Negative Sample and extracting it.</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+    <div class="pillrow" style="margin:0;"><div class="pill on">Test D</div><div class="pill">Test E</div><div class="pill">Test F</div><div class="pill">Test A</div><div class="pill">Test B</div><div class="pill">Test C</div></div>
+    <div style="display:flex;gap:8px;"><button class="btn ghost sm">Mock input</button><button class="btn primary sm" onclick="toast('전체 항목을 계산합니다')">Calculate All</button></div>
+  </div>
+  <div style="overflow-x:auto;">
+  <table style="min-width:820px;">
+    <thead><tr><th>Template</th><th>Status</th><th colspan="2">Stock Conc.</th><th>Spiking factor</th><th>Final volume (µL)</th><th>Final conc. <span style="text-transform:none;font-weight:600;">(1×LoD)</span></th></tr></thead>
+    <tbody>
+      <tr><td>PA66_3306</td><td><span class="tag gray">Not calculated</span></td><td><input placeholder="Stock conc." style="width:80px;"></td><td><select style="width:70px;"><option>copies</option></select> /mL</td><td><input placeholder="e.g. 100"></td><td><input placeholder="e.g. 800"></td><td>3,941 copies/mL</td></tr>
+      <tr><td>PA45_3403</td><td><span class="tag gray">Not calculated</span></td><td><input placeholder="Stock conc." style="width:80px;"></td><td><select style="width:70px;"><option>IU</option></select> /mL</td><td><input placeholder="e.g. 100"></td><td><input placeholder="e.g. 800"></td><td>5,643 IU/mL</td></tr>
+      <tr><td>PA58_3366</td><td><span class="tag gray">Not calculated</span></td><td><input placeholder="Stock conc." style="width:80px;"></td><td><select style="width:70px;"><option>IU</option></select> /mL</td><td><input placeholder="e.g. 100"></td><td><input placeholder="e.g. 800"></td><td>2,263 IU/mL</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>
+
+<div id="s3group2" style="display:none;">
+<div class="fieldset">
+  <div class="sec-title">10⁸ copies/reaction Dilution</div>
+  <div class="sec-help">Prepared by diluting the Template step by step to 10⁸ copies/reaction. The target concentration is fixed at 10⁸ copies/reaction, so it does not depend on which experiments are selected.</div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px;"><button class="btn ghost sm">Mock input</button><button class="btn primary sm" onclick="toast('전체 항목을 계산합니다')">Calculate All</button></div>
+  <div style="overflow-x:auto;">
+  <table style="min-width:760px;">
+    <thead><tr><th>Template</th><th>Status</th><th>Lot No. <span class="tag amber">Required to run</span></th><th>Stock Conc.</th><th>Clone size (bp)</th><th colspan="2">Stage 3 result · 10⁸ cp/rxn</th></tr></thead>
+    <tbody>
+      <tr><td>PA66_3306 <span style="color:var(--ink-40);font-size:10.5px;">Rep.</span></td><td><span class="tag gray">Not calculated</span></td><td><input placeholder="Input Lot No."></td><td><input placeholder="Stock Conc."> ng/µL</td><td><input placeholder="bp"></td><td>Template -</td><td>TE -</td></tr>
+      <tr><td>PA45_3403 <span style="color:var(--ink-40);font-size:10.5px;">Rep.</span></td><td><span class="tag gray">Not calculated</span></td><td><input placeholder="Input Lot No."></td><td><input placeholder="Stock Conc."> ng/µL</td><td><input placeholder="bp"></td><td>Template -</td><td>TE -</td></tr>
+      <tr><td>PA58_3366 <span style="color:var(--ink-40);font-size:10.5px;">Rep.</span></td><td><span class="tag gray">Not calculated</span></td><td><input placeholder="Input Lot No."></td><td><input placeholder="Stock Conc."> ng/µL</td><td><input placeholder="bp"></td><td>Template -</td><td>TE -</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>
+
+<!-- Sticky Footer Bar -->
+<div class="checklist-bar" style="flex-direction:column;align-items:stretch;">
+  <div class="checklist-items">
+    <span class="pending" id="s3-status-1">● Negative Sample Spiking · 30 inputs left</span>
+    <span class="pending" id="s3-status-2">● 10⁸ copies/reaction Dilution · 29 inputs left</span>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:10px;">
+    <button class="btn ghost" onclick="show('step2')">Back</button>
+    <button class="btn primary flow-highlight" onclick="show('step4')">Next</button>
+  </div>
+</div>
+</div></div></div></div>
+
+<!-- 7. Exp Group 생성 — Step 4 -->
+<div class="screen" id="screen-step4"><div class="device">
+    <aside class="sidenav">
+      <div class="sidenav-logo"><div class="mark"></div>LabFlow OneSystem</div>
+      <nav>
+        <a><span class="ico" data-icon="grid"></span> Dashboard</a>
+        <a><span class="ico" data-icon="bullhorn"></span> Notice</a>
+        <a><span class="ico" data-icon="folder"></span> Projects</a>
+        <a><span class="ico" data-icon="dna"></span> Oligo Design <span class="ico" data-icon="chevdown" style="width:12px;height:12px;margin-left:auto;"></span></a>
+        <a><span class="ico" data-icon="book"></span> Library</a>
+        <a><span class="ico" data-icon="download"></span> Apps Download</a>
+        <a class="active"><span class="ico" data-icon="boxes"></span> Item Manager</a>
+      </nav>
+      <div class="sidenav-footer">
+        <div class="user-chip"><span class="av">이</span> 이하늘</div>
+        <div class="tools-link"><span class="ico" data-icon="grid" style="width:13px;height:13px;"></span> Tools</div>
+      </div>
+    </aside>
+<div class="main">
+      <div class="topbar">
+        <span class="userinfo"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> User</span>
+        <span class="sep-txt">|</span>
+        <span class="lang">Admin</span>
+        <span class="lang">EN</span>
+        <span class="ico-btn" data-icon="search"></span>
+        <span class="ico-btn" data-icon="bell"></span>
+        <span class="ico-btn" data-icon="headset"></span>
+        <span class="ico-btn" data-icon="settings"></span>
+        <span class="ver">V2026.08.27</span>
+        <span class="ico-btn" data-icon="logout"></span>
+      </div>
+<div class="content">
+<div class="breadcrumb-card"><span class="lnk" onclick="show('itemlist')">Item Manager</span><span>›</span><span class="lnk" onclick="show('itemdetail-empty')">PCR 장비 추가 적용 - Panel A Detection</span><span>›</span><span class="cur">Create Full-Auto Exp Group</span></div>
+<div class="item-title-row"><h2>Create Full-Auto Exp Group</h2></div>
+<div class="item-meta" style="margin:-10px 0 18px;"><span>ID <b>5736</b></span><span>Product <b>Panel A Detection</b></span><span>Cat No. <b>CAT-10372X</b></span><span>Spec change <b>PCR 장비 추가 적용</b></span><span>Regulatory <b>CE-IVDR</b></span></div>
+
+<!-- Sticky Step Navigation Bar -->
+<div class="wizard-nav">
+  <div class="wnav-step" onclick="show('step1')"><div class="num">✓</div><div class="lbl">Experiment plan</div></div>
+  <div class="wnav-step" onclick="show('step2')"><div class="num">✓</div><div class="lbl">Template check</div></div>
+  <div class="wnav-step" onclick="show('step3')"><div class="num">✓</div><div class="lbl">Template preparation</div></div>
+  <div class="wnav-step on" onclick="show('step4')"><div class="num">4</div><div class="lbl">Input Confirmation</div></div>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <div class="subtabs" id="s4tabs" style="flex:1;">
+    <div class="st on" onclick="switchSubtab(this,'#s4panes','panel')">Template panel build</div>
+    <div class="st" onclick="switchSubtab(this,'#s4panes','well')">Well Information</div>
+    <div class="st" onclick="switchSubtab(this,'#s4panes','pcr')">PCR Information</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;">
+    <span class="ico-btn" data-icon="layout" style="width:32px;height:32px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--ink-40);"></span>
+    <button class="btn dark sm" onclick="toast('확정되었습니다!')">Confirm</button>
+  </div>
+</div>
+
+<div id="s4panes">
+
+<div data-pane="panel" style="display:block;">
+  <div class="fieldset">
+    <div class="pillrow"><div class="pill on">Stock</div><div class="pill">General</div><div class="pill">Test A</div><div class="pill">IC spiking</div></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;">
+      <select style="border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;"><option>All</option></select>
+      <select style="border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;"><option>Consumption by experiment</option></select>
+    </div>
+    <table>
+      <thead><tr><th>Template</th><th>Concentration</th><th>Test A combination</th><th>IC spiking</th><th>Consumption by experiment</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag green">Stock</span> PA26</td><td>10⁸ copies/rxn</td><td>-</td><td>-</td><td style="color:var(--ink-40);">Used after dilution · no direct consumption</td><td>-</td></tr>
+        <tr><td><span class="tag green">Stock</span> PA66</td><td>10⁸ copies/rxn</td><td>-</td><td>-</td><td style="color:var(--ink-40);">Used after dilution · no direct consumption</td><td>-</td></tr>
+        <tr><td><span class="tag green">Stock</span> PA45</td><td>10⁸ copies/rxn</td><td>-</td><td>-</td><td style="color:var(--ink-40);">Used after dilution · no direct consumption</td><td>-</td></tr>
+        <tr><td><span class="tag green">Stock</span> PA69</td><td>10⁸ copies/rxn</td><td>-</td><td>-</td><td style="color:var(--ink-40);">Used after dilution · no direct consumption</td><td>-</td></tr>
+        <tr><td><span class="tag green">Stock</span> PA58</td><td>10⁸ copies/rxn</td><td>-</td><td>-</td><td style="color:var(--ink-40);">Used after dilution · no direct consumption</td><td>-</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div data-pane="well" style="display:none;">
+  <div class="fieldset">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <span class="ico" data-icon="chevleft" style="width:14px;height:14px;color:var(--ink-40);cursor:pointer;"></span>
+      <b style="font-size:13px;">Plate 1</b>
+      <span class="ico" data-icon="chevright" style="width:14px;height:14px;color:var(--ink-40);cursor:pointer;"></span>
+      <div class="legend-row" style="margin:0 0 0 16px;"><span><span class="sw" style="background:#5B54E8"></span>PA66</span><span><span class="sw" style="background:#2F9E5B"></span>PA45</span><span><span class="sw" style="background:#B8860B"></span>PA58</span></div>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <select style="border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;"><option>Test A</option></select>
+        <select style="border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;"><option>Plate 1</option></select>
       </div>
     </div>
+    <div class="wellgrid-wrap"><div class="wellgrid" id="wellgrid1"></div></div>
   </div>
+</div>
 
-  <!-- ============ 4. MATERIAL & METHOD ============ -->
-  <div class="screen" id="screen-plan">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('labbooklist')" style="cursor:pointer;text-decoration:underline;">Feasibility</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Sensitivity test (Batch test)</span></div>
-
-          <div class="wizard-steps">
-            <div class="wstep current" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('method')">3. 실험 방법</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('discussion')">6. Discussion</div>
-          </div>
-
-          <div class="form-title">Material &amp; Method</div>
-
-          <fieldset class="fieldset">
-            <legend>자동 연동 항목 (Inventory 연동 · 수정 불가)</legend>
-            <div class="field-grid">
-              <div class="field"><label>Template <span class="lock ico" data-icon="lock"></span></label><input disabled value="pDNA-Target-A_lot12"></div>
-              <div class="field"><label>PCR NC <span class="lock ico" data-icon="lock"></span></label><input disabled value="RNase-free water"></div>
-              <div class="field"><label>PC <span class="lock ico" data-icon="lock"></span></label><input disabled value="Positive control mix"></div>
-              <div class="field"><label>IC <span class="lock ico" data-icon="lock"></span></label><input disabled value="Internal control mix"></div>
-              <div class="field"><label>Oligomix <span class="lock ico" data-icon="lock"></span></label><input disabled value="OMX-2026-014"></div>
-              <div class="field"><label>Enzyme &amp; Buffer <span class="lock ico" data-icon="lock"></span></label><input disabled value="Taq Pol / 2X Buffer"></div>
-              <div class="field"><label>PCR component <span class="lock ico" data-icon="lock"></span></label><input disabled value="20 µL reaction"></div>
-              <div class="field"><label>PCR tube type <span class="lock ico" data-icon="lock"></span></label><input disabled value="0.2 mL 8-strip"></div>
-            </div>
-          </fieldset>
-
-          <fieldset class="fieldset">
-            <legend>사용자 입력 항목 — pDNA</legend>
-            <div class="field-grid">
-              <div class="field"><label>pDNA name</label><select><option>pDNA_TargetA_std</option><option>pDNA_TargetA_alt</option></select></div>
-              <div class="field"><label>Average Melt Tm (°C)</label><input placeholder="예: 82.4" maxlength="5"></div>
-              <div class="field"><label>pDNA name (Additional)</label><select><option>—</option><option>pDNA_TargetB_std</option></select></div>
-              <div class="field"><label>Average Melt Tm (°C)</label><input placeholder="예: 79.1" maxlength="5"></div>
-            </div>
-            <div class="add-row-btn"><span class="ico" data-icon="plus" style="width:14px;height:14px;"></span> Additional pDNA 추가</div>
-          </fieldset>
-
-          <fieldset class="fieldset">
-            <legend>Note</legend>
-            <textarea class="note-box" placeholder="실험 관련 특이사항 기재 (최대 5,000자)"></textarea>
-          </fieldset>
-
-          <!-- 3. 하단 고정 Footer 적용 -->
-          <div class="wizard-actions">
-            <button class="btn ghost" onclick="show('testlist')">Prev</button>
-            <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
-            <button class="btn primary" id="guide-target-plan" onclick="show('wellinfo')">Next</button>
-          </div>
-        </div>
-      </div>
-    </div>
+<div data-pane="pcr" style="display:none;">
+  <div class="fieldset">
+    <div class="pillrow"><div class="pill on">PCR protocol</div><div class="pill">PCR components</div><div class="pill">PCR tube types</div><div class="pill">PCR instruments</div></div>
+    <div class="sec-title" style="margin-top:6px;">PCR protocol</div>
+    <table style="margin-bottom:20px;">
+      <thead><tr><th>Step</th><th>No. of cycles</th><th>Temperature</th><th>Duration</th><th>Plate Read</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>1</td><td>50 °C</td><td>2 min</td><td>NO</td></tr>
+        <tr><td>2</td><td>1</td><td>95 °C</td><td>15 min</td><td>NO</td></tr>
+        <tr><td>3</td><td>45</td><td>95 °C</td><td>3 sec</td><td>NO</td></tr>
+        <tr><td>4</td><td>45</td><td>60 °C</td><td>10 sec</td><td>YES</td></tr>
+        <tr><td>5</td><td>45</td><td>72 °C</td><td>10 sec</td><td>YES</td></tr>
+        <tr><td>6</td><td>45</td><td>83 °C</td><td>5 sec</td><td>YES</td></tr>
+      </tbody>
+    </table>
+    <div class="sec-title">PCR components</div>
+    <table>
+      <thead><tr><th>PCR reagent</th><th>PCR Name</th><th>Vol. (µL)</th></tr></thead>
+      <tbody><tr><td>Oligomix</td><td>Panel A MOM or B MOM</td><td>5</td></tr></tbody>
+    </table>
   </div>
-
-  <!-- ============ 5. WELL INFORMATION ============ -->
-  <div class="screen" id="screen-wellinfo">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Sensitivity test</span></div>
-
-          <div class="wizard-steps">
-            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
-            <div class="wstep current" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('method')">3. 실험 방법</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('discussion')">6. Discussion</div>
-          </div>
-
-          <div class="form-title">Well information <span style="font-size:12px;color:var(--ink-40);font-weight:500;">— Current data: Material &amp; Method (1)</span></div>
-          <div class="helpnote">Material &amp; Method에서 입력한 정보를 기반으로 96-well plate에 Mastermix/Template 배치가 자동 생성됨</div>
-
-          <div class="plate-wrap">
-            <div class="plate">
-              <h4>Plate 1 — Mastermix plate</h4>
-              <div class="plate-grid" id="plateMM"></div>
-              <div class="legend">
-                <span><span class="sw" style="background:#4F46E5"></span>M1 Mastermix 1 (Pre-lot)</span>
-                <span><span class="sw" style="background:#45526B"></span>M2 Mastermix 2 (New-lot 1)</span>
-                <span><span class="sw" style="background:#3FA772"></span>M3 Mastermix 3 (New-lot 2)</span>
-              </div>
-            </div>
-            <div class="plate">
-              <h4>Plate 1 — Template plate</h4>
-              <div class="plate-grid" id="plateT"></div>
-              <div class="legend"><span><span class="sw" style="background:#F2A93B"></span>T1–T3 pDNA_TargetA_std 희석계열</span></div>
-            </div>
-            <div class="well-info-panel">
-              <h4 style="margin-bottom:10px;">Mastermix 상세</h4>
-              <div class="row"><span>M1</span><span>Mastermix 1 · Pre-lot</span></div>
-              <div class="row"><span>M2</span><span>Mastermix 2 · New-lot 1</span></div>
-              <div class="row"><span>M3</span><span>Mastermix 3 · New-lot 2</span></div>
-            </div>
-          </div>
-
-          <!-- 3. 하단 고정 Footer 적용 -->
-          <div class="wizard-actions">
-            <button class="btn ghost" onclick="show('plan')">Prev</button>
-            <button class="btn primary" id="guide-target-wellinfo" onclick="show('method')">Next</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ 6. 실험 방법 선택 (Template preparation / PCR Setup 허브) ============ -->
-  <div class="screen" id="screen-method">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Sensitivity test</span></div>
-
-          <div class="wizard-steps">
-            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
-            <div class="wstep current" style="cursor:pointer;" onclick="show('method')">3. 실험 방법</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('discussion')">6. Discussion</div>
-          </div>
-
-          <div class="form-title">Experiment</div>
-          <div class="helpnote">Well information을 기반으로 진행할 하위 프로세스를 선택. 각 프로세스는 완료 후 이 화면으로 돌아와 다음 프로세스로 진행함.</div>
-
-          <div class="method-row">
-            <div class="stage-card" style="width:290px;padding:26px;" onclick="show('tprep')">
-              <span class="ico" data-icon="flask" style="width:32px;height:32px;color:var(--accent);margin:0 auto 12px;display:block;"></span>
-              <h4 style="font-size:16px;">Template preparation</h4>
-              <p style="font-size:12.5px;">Template 희석/제조 — 수기 진행</p>
-              <span class="done-badge" id="tprepBadge" style="display:none;">✓ 완료</span>
-            </div>
-            <div class="stage-card" style="width:290px;padding:26px;" onclick="show('pcrsetup')">
-              <span class="ico" data-icon="robot" style="width:32px;height:32px;color:var(--accent);margin:0 auto 12px;display:block;"></span>
-              <h4 style="font-size:16px;">PCR Setup</h4>
-              <p style="font-size:12.5px;">Mastermix/Template 분주 — 수기 또는 자동화 장비 선택</p>
-              <span class="done-badge" id="pcrBadge" style="display:none;">✓ 완료</span>
-            </div>
-          </div>
-
-          <!-- 3. 하단 고정 Footer 적용 -->
-          <div class="wizard-actions">
-            <button class="btn ghost" onclick="show('wellinfo')">Prev</button>
-            <button class="btn primary" id="guide-target-method" onclick="show('dataupload')">Next</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ 7. TEMPLATE PREPARATION ============ -->
-  <div class="screen" id="screen-tprep">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span onclick="show('method')" style="cursor:pointer;text-decoration:underline;">Experiment</span><span class="sep">›</span><span class="cur">Template preparation</span></div>
-
-          <div class="form-title">Template preparation — Manual</div>
-          <div class="helpnote">Template manufacturing → Serial dilution 순으로 수기 진행. 완료 후 Save를 누르면 실험 방법 선택 화면으로 돌아감.</div>
-
-          <fieldset class="fieldset">
-            <legend>Template manufacturing</legend>
-            <div class="field-grid">
-              <div class="field"><label>Stock pDNA</label><input value="pDNA_TargetA_std"></div>
-              <div class="field"><label>Stock 농도 (copies/µL)</label><input value="1.0E+08"></div>
-              <div class="field"><label>제조 Volume (µL)</label><input value="100"></div>
-              <div class="field"><label>Buffer</label><input value="TE Buffer"></div>
-            </div>
-          </fieldset>
-
-          <fieldset class="fieldset">
-            <legend>Serial dilution (10-fold)</legend>
-            <table class="dilution-table">
-              <thead><tr><th>Tube label</th><th>Dilution ratio</th><th>최종 농도 (copies/µL)</th><th>Volume (µL)</th><th>비고</th></tr></thead>
-              <tbody>
-                <tr><td><input value="T1"></td><td><input value="Neat"></td><td><input value="1.0E+08"></td><td><input value="20"></td><td><input placeholder="—"></td></tr>
-                <tr><td><input value="T2"></td><td><input value="1:10"></td><td><input value="1.0E+07"></td><td><input value="20"></td><td><input placeholder="—"></td></tr>
-                <tr><td><input value="T3"></td><td><input value="1:100"></td><td><input value="1.0E+06"></td><td><input value="20"></td><td><input placeholder="—"></td></tr>
-              </tbody>
-            </table>
-            <div class="add-row-btn"><span class="ico" data-icon="plus" style="width:14px;height:14px;"></span> 희석 단계 추가</div>
-          </fieldset>
-
-          <!-- 3. 하단 고정 Footer 적용 -->
-          <div class="wizard-actions">
-            <button class="btn ghost" onclick="show('method')">Prev</button>
-            <button class="btn primary" id="guide-target-tprep" onclick="markDone('tprep');show('method')">Save &amp; 완료 처리</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ 8. PCR SETUP ============ -->
-  <div class="screen" id="screen-pcrsetup">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span onclick="show('method')" style="cursor:pointer;text-decoration:underline;">Experiment</span><span class="sep">›</span><span class="cur">PCR Setup</span></div>
-
-          <div class="form-title">PCR Setup — 실행 방법 선택</div>
-          <div class="helpnote">Mastermix/Template을 Well information 배치대로 분주하는 단계. 수기로 진행할지 자동화 장비로 진행할지 선택.</div>
-
-          <div class="method-row">
-            <div class="method-card selected" id="cardManual" onclick="selectMethod('manual')">
-              <div class="ico" data-icon="hand" style="width:34px;height:34px;margin:0 auto 12px;"></div>
-              <h4>Manual</h4>
-              <p>연구원이 직접 피펫팅하여 Plate 준비. Well 별 위치를 육안으로 확인하며 진행.</p>
-            </div>
-            <div class="method-card" id="cardAuto" onclick="selectMethod('auto')">
-              <div class="ico" data-icon="robot" style="width:34px;height:34px;margin:0 auto 12px;"></div>
-              <h4>자동화 장비</h4>
-              <p>Liquid handler 프로토콜 파일을 생성해 장비로 분주. Well information과 동일한 배치 파일 자동 출력.</p>
-            </div>
-          </div>
-
-          <!-- 3. 하단 고정 Footer 적용 -->
-          <div class="wizard-actions">
-            <button class="btn ghost" onclick="show('method')">Prev</button>
-            <button class="btn primary" id="guide-target-pcrsetup" onclick="markDone('pcrsetup');show('method')">Save &amp; 완료 처리</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ 9. 데이터 업로드 ============ -->
-  <div class="screen" id="screen-dataupload">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Sensitivity test</span></div>
-
-          <div class="wizard-steps">
-            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('method')">3. 실험 방법</div>
-            <div class="wstep current" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('discussion')">6. Discussion</div>
-          </div>
-
-          <div class="helpnote">실험 후 산출된 PCR raw data를 업로드. 업로드한 데이터는 타 연동 프로그램(분석 소프트웨어)에서 분석 후 결과정리 화면에서 불러와 정리함.</div>
-          <div class="utab-row"><div class="utab on">Data file</div><div class="utab">Document</div></div>
-          <div class="toolbar"><div class="iconbtns"><div class="iconbtn"><span class="ico" data-icon="plus"></span></div><div class="iconbtn"><span class="ico" data-icon="trash"></span></div><div class="iconbtn"><span class="ico" data-icon="download"></span></div></div></div>
-          <table>
-            <thead><tr><th></th><th>File name</th><th colspan="2">PCR raw data</th><th>Well information</th><th>PCR instrument</th><th>Note</th><th>★</th></tr></thead>
-            <tbody>
-              <tr><td><input type="checkbox"></td><td>admin_2026-07-23_14-25_BR205025_plate1</td><td>Nobaseline ✕</td><td>Baseline ✓</td><td>Well information 1 / Plate 1</td><td>CFX96</td><td>Retest</td><td><span class="ico" data-icon="star"></span></td></tr>
-              <tr><td><input type="checkbox"></td><td>admin_2026-07-23_14-26_BR205030_plate2</td><td>Nobaseline ✓</td><td>Baseline ✓</td><td>Well information 1 / Plate 2</td><td>CFX96</td><td>—</td><td><span class="ico" data-icon="star"></span></td></tr>
-            </tbody>
-          </table>
-
-          <!-- 3. 하단 고정 Footer 적용 -->
-          <div class="wizard-actions">
-            <button class="btn ghost" onclick="show('method')">Prev</button>
-            <button class="btn primary" id="guide-target-dataupload" onclick="show('result')">Next</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ 10. RESULT ============ -->
-  <div class="screen" id="screen-result">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Result</span></div>
-
-          <div class="wizard-steps">
-            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('method')">3. 실험 방법</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
-            <div class="wstep current" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
-            <div class="wstep" style="cursor:pointer;" onclick="show('discussion')">6. Discussion</div>
-          </div>
-
-          <div class="result-layout">
-            <div class="pane">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                <h4 style="margin:0;">Page</h4>
-                <div class="iconbtns"><div class="iconbtn" title="Page 추가" onclick="document.getElementById('modalCreatePage').classList.add('show')"><span class="ico" data-icon="plus"></span></div><div class="iconbtn" title="삭제"><span class="ico" data-icon="trash"></span></div></div>
-              </div>
-              <div class="page-row on"><span>Page 1 for test 1</span><span class="complete-badge">✓ Complete</span></div>
-              <div class="page-row"><span>Page 2 for test 1</span><span></span></div>
-            </div>
-
-            <div class="pane">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                <h4 style="margin:0;">Page 1 for test 1</h4>
-                <button class="btn ghost" style="padding:6px 12px;font-size:11.5px;">NOTE</button>
-              </div>
-              <table style="font-size:11.5px;">
-                <thead><tr><th>Well</th><th>Fluorophore</th><th>Analyte</th><th>Ct</th><th>Melt Tm</th><th>Result</th></tr></thead>
-                <tbody>
-                  <tr><td>A1</td><td>FAM</td><td>Analyte 1</td><td>24.3</td><td>82.1</td><td><span class="tag done">Positive</span></td></tr>
-                  <tr><td>A2</td><td>HEX</td><td>Analyte 2</td><td>26.7</td><td>79.4</td><td><span class="tag done">Positive</span></td></tr>
-                  <tr><td>A3</td><td>Cal Red 610</td><td>Analyte 3</td><td>-</td><td>-</td><td><span class="tag hold">Negative</span></td></tr>
-                  <tr><td>A4</td><td>Quasar 670</td><td>IC</td><td>29.5</td><td>-</td><td><span class="tag done">Valid</span></td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="pane">
-              <h4>분석 데이터 (타 프로그램 연동)</h4>
-              <div class="data-file"><input type="checkbox"> analyzed_2026-06-30_plate2.csv</div>
-              <div class="data-file"><input type="checkbox"> analyzed_2026-06-30_plate3.csv</div>
-            </div>
-          </div>
-
-          <!-- 3. 하단 고정 Footer 적용 -->
-          <div class="wizard-actions">
-            <button class="btn ghost" onclick="show('dataupload')">Prev</button>
-            <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
-            <button class="btn primary" id="guide-target-result" onclick="show('discussion')">Next</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Create Page Modal -->
-  <div class="modal-overlay" id="modalCreatePage">
-    <div class="modal-box" style="width:640px;">
-      <div class="modal-head"><h3>Create page</h3><span class="x" onclick="document.getElementById('modalCreatePage').classList.remove('show')">✕</span></div>
-      <div class="modal-body">
-        <div style="display:flex;gap:10px;align-items:center;">
-          <select style="flex:1;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px;"><option>Well information 1</option></select>
-          <button class="btn ghost" style="padding:6px 14px;font-size:11.5px;">ALL</button>
-        </div>
-        <table class="modal-table">
-          <thead><tr><th>Well information</th><th>Plate</th><th>PCR instrument</th><th>Page name</th><th></th></tr></thead>
-          <tbody>
-            <tr><td>Well information 1</td><td>Plate 1</td><td>CFX96</td><td><input style="width:100%;border:1px solid var(--line);border-radius:6px;padding:4px 6px;" value="Plate 1_Template A"></td><td><span class="ico" data-icon="trash"></span></td></tr>
-            <tr><td>Well information 1</td><td>Plate 2</td><td>CFX96</td><td><input style="width:100%;border:1px solid var(--line);border-radius:6px;padding:4px 6px;" value="Plate 2_Template A"></td><td><span class="ico" data-icon="trash"></span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-foot">
-        <button class="btn ghost" onclick="document.getElementById('modalCreatePage').classList.remove('show')">CANCEL</button>
-        <button class="btn primary" onclick="document.getElementById('modalCreatePage').classList.remove('show')">OK</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ 11. DISCUSSION ============ -->
-  <div class="screen" id="screen-discussion">
-    <div class="device">
-      <div class="gnb">
-        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
-        <div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" />
-        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
-      </div>
-      <div class="body-wrap">
-        <div class="lnb"><div class="lnb-icon" data-icon="home" onclick="show('home')" style="cursor:pointer;"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
-        <div class="content">
-          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Discussion</span></div>
-
-          <div class="wizard-steps">
-            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('method')">3. 실험 방법</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
-            <div class="wstep done" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
-            <div class="wstep current" style="cursor:pointer;" onclick="show('discussion')">6. Discussion</div>
-          </div>
-
-          <div class="form-title">Discussion</div>
-          <div class="helpnote">결과정리 화면에서 정리한 데이터를 불러와 참고하며, 실험 결론을 서술형으로 작성하는 단계.</div>
-
-          <div style="margin-bottom:14px;">
-            <span class="import-btn" onclick="document.getElementById('modalImport').classList.add('show')"><span class="ico" data-icon="download" style="width:14px;height:14px;"></span> 결과 불러오기</span>
-          </div>
-
-          <div id="importedArea"></div>
-
-          <fieldset class="fieldset" style="margin-top:16px;">
-            <legend>결론 (Conclusion)</legend>
-            <textarea class="discussion-editor" placeholder="실험 결과를 바탕으로 결론을 작성하세요. ex) 3개 Analyte 모두 Positive 판정 기준을 만족하였으며, IC 결과도 유효함을 확인함. Multi-target 조건에서도 민감도 저하가 관찰되지 않아 다음 단계(Prototype) 진행 가능."></textarea>
-          </fieldset>
-
-          <!-- 3. 하단 고정 Footer 적용 -->
-          <div class="wizard-actions">
-            <button class="btn ghost" onclick="show('result')">Prev</button>
-            <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
-            <button class="btn primary" id="guide-target-discussion" onclick="show('testlist');toast('완료되었습니다!')">Complete</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Import Results Modal -->
-  <div class="modal-overlay" id="modalImport">
-    <div class="modal-box" style="width:560px;">
-      <div class="modal-head"><h3>결과 불러오기</h3><span class="x" onclick="document.getElementById('modalImport').classList.remove('show')">✕</span></div>
-      <div class="modal-body">
-        <div class="helpnote" style="margin:0 0 4px;">참고할 결과 Page를 선택하면 Discussion 화면에 요약 테이블로 삽입됩니다.</div>
-        <div class="modal-checklist">
-          <label><input type="checkbox" checked value="Page 1 for test 1"> Page 1 for test 1 — Sensitivity test (Batch test)</label>
-          <label><input type="checkbox" value="Page 2 for test 1"> Page 2 for test 1 — Sensitivity test (Batch test)</label>
-          <label><input type="checkbox" value="Page 1 for test 2"> Page 1 for test 2 — Cross-reactivity 검증</label>
-        </div>
-      </div>
-      <div class="modal-foot">
-        <button class="btn ghost" onclick="document.getElementById('modalImport').classList.remove('show')">CANCEL</button>
-        <button class="btn primary" onclick="importResults()">가져오기</button>
-      </div>
-    </div>
-  </div>
+</div>
 
 </div>
 
-<div class="note-toggle" onclick="document.getElementById('notePanel').classList.toggle('show')">💡 기획 포인트</div>
-<div class="note-panel" id="notePanel"><h4>재기획 핵심 포인트</h4><ul id="noteList"></ul></div>
+<!-- Sticky Footer Bar -->
+<div class="checklist-bar" style="flex-direction:column;align-items:stretch;">
+  <div class="checklist-items">
+    <span class="ok">✓ Template panel build</span>
+    <span class="ok">✓ Well Information</span>
+    <span class="pending">● PCR Information</span>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:10px;">
+    <button class="btn ghost" onclick="show('step3')">Back</button>
+    <button class="btn primary flow-highlight" onclick="show('itemdetail-filled')">Done</button>
+  </div>
+</div>
+</div></div></div></div>
+
+<!-- 8. 실험 그룹 목록 (생성 완료) -->
+<div class="screen" id="screen-itemdetail-filled"><div class="device">
+    <aside class="sidenav">
+      <div class="sidenav-logo"><div class="mark"></div>LabFlow OneSystem</div>
+      <nav>
+        <a><span class="ico" data-icon="grid"></span> Dashboard</a>
+        <a><span class="ico" data-icon="bullhorn"></span> Notice</a>
+        <a><span class="ico" data-icon="folder"></span> Projects</a>
+        <a><span class="ico" data-icon="dna"></span> Oligo Design <span class="ico" data-icon="chevdown" style="width:12px;height:12px;margin-left:auto;"></span></a>
+        <a><span class="ico" data-icon="book"></span> Library</a>
+        <a><span class="ico" data-icon="download"></span> Apps Download</a>
+        <a class="active"><span class="ico" data-icon="boxes"></span> Item Manager</a>
+      </nav>
+      <div class="sidenav-footer">
+        <div class="user-chip"><span class="av">이</span> 이하늘</div>
+        <div class="tools-link"><span class="ico" data-icon="grid" style="width:13px;height:13px;"></span> Tools</div>
+      </div>
+    </aside>
+<div class="main">
+      <div class="topbar">
+        <span class="userinfo"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> User</span>
+        <span class="sep-txt">|</span>
+        <span class="lang">Admin</span>
+        <span class="lang">EN</span>
+        <span class="ico-btn" data-icon="search"></span>
+        <span class="ico-btn" data-icon="bell"></span>
+        <span class="ico-btn" data-icon="headset"></span>
+        <span class="ico-btn" data-icon="settings"></span>
+        <span class="ver">V2026.08.27</span>
+        <span class="ico-btn" data-icon="logout"></span>
+      </div>
+<div class="content">
+<div class="breadcrumb-card"><span class="lnk" onclick="show('itemlist')">Item Manager</span><span>›</span><span class="cur">PCR 장비 추가 적용 - Panel A Detection</span></div>
+<div class="item-title-row">
+  <div><h2>PCR 장비 추가 적용 - Panel A Detection</h2>
+    <div class="item-meta"><span>ID <b>5736</b></span><span>Product <b>Panel A Detection</b></span><span>Cat No. <b>CAT-10372X</b></span><span>Spec change <b>PCR 장비 추가 적용</b></span><span>Regulatory <b>CE-IVDR</b></span></div>
+  </div>
+  <button class="btn ghost"><span class="ico" data-icon="edit" style="width:13px;height:13px;"></span> Item Edit</button>
+</div>
+<div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
+  <input placeholder="Search by Exp Group Name" style="flex:1;max-width:300px;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:12.5px;">
+  <span class="ico-btn" data-icon="sliders" style="width:34px;height:34px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--ink-40);"></span>
+  <button class="btn ghost sm"><span class="ico" data-icon="star" style="width:12px;height:12px;"></span> Favorites only</button>
+  <button class="btn primary" style="margin-left:auto;" onclick="show('step1')">+ Exp Group</button>
+</div>
+<div class="subtabs"><div class="st on">All 1</div><div class="st">Ready 1</div><div class="st">Running 0</div><div class="st">Failed 0</div><div class="st">Call 0</div><div class="st">Done 0</div></div>
+<div class="expgroup-layout">
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:13.5px;font-weight:800;">Experiment Groups <span style="color:var(--accent);">1</span></div>
+      <button class="btn ghost sm"><span class="ico" data-icon="refresh" style="width:11px;height:11px;"></span> Reset</button>
+    </div>
+    <div class="expgroup-card">
+      <div class="top"><div class="name">Exp Group 1 <span class="tag purple">Full Auto</span></div><span class="star-ico ico" data-icon="star" style="width:15px;height:15px;"></span></div>
+      <div style="margin-top:8px;"><span class="tag blue">Ready</span></div>
+      <div class="runbtn"><button class="btn primary sm flow-highlight" style="width:100%;justify-content:center;" onclick="toast('구동을 시작합니다')">Run</button></div>
+    </div>
+  </div>
+  <div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <span class="ico" data-icon="chevleft" style="width:14px;height:14px;color:var(--ink-40);"></span>
+      <div style="font-size:13.5px;font-weight:800;">Detailed Experiments <span style="color:var(--accent);">5</span></div>
+    </div>
+    <div class="exprow"><span class="no">Exp01</span> Common Reagent Preparation (Serial Dilution) <span class="tag blue" style="margin-left:auto;">Ready</span></div>
+    <div class="exprow"><span class="no">Exp02</span> Test A <span class="tag blue" style="margin-left:auto;">Ready</span></div>
+    <div class="exprow"><span class="no">Exp03</span> Test B <span class="tag blue" style="margin-left:auto;">Ready</span></div>
+    <div class="exprow"><span class="no">Exp04</span> Test C <span class="tag blue" style="margin-left:auto;">Ready</span></div>
+    <div class="exprow"><span class="no">Exp05</span> Test D <span class="tag blue" style="margin-left:auto;">Ready</span></div>
+  </div>
+</div>
+</div></div></div></div>
+
+</div>
+
 <div class="toast" id="toastEl"></div>
 
 <script>
-  const screens = ['home','labbooklist','testlist','plan','wellinfo','method','tprep','pcrsetup','dataupload','result','discussion'];
-  
-  // 각 화면별 가이드 튜토리얼 하이라이트 타겟 지정
-  const guideSteps = {
-    home: 'guide-target-home',
-    labbooklist: 'guide-target-labbooklist',
-    testlist: 'guide-target-testlist',
-    plan: 'guide-target-plan',
-    wellinfo: 'guide-target-wellinfo',
-    method: 'guide-target-method',
-    tprep: 'guide-target-tprep',
-    pcrsetup: 'guide-target-pcrsetup',
-    dataupload: 'guide-target-dataupload',
-    result: 'guide-target-result',
-    discussion: 'guide-target-discussion'
-  };
+const screens = ['itemlist','createitem','itemdetail-empty','step1','step2','step3','step4','itemdetail-filled'];
+const notes = {
+  'itemlist': [
+    '즐겨찾기(★), 기간/키워드 필터, Status·Regulatory Body 등 헤더 필터로 대량의 Item을 빠르게 좁혀볼 수 있음',
+    'Item 추가 시 Create 버튼을 눌러 생성 후 바로 이 목록 화면으로 복귀',
+    '행 클릭 시 해당 Item의 실험 그룹(Exp Group) 목록으로 이동'
+  ],
+  'createitem': [
+    'General Project를 먼저 연결해야 Disease Category/Product 등 기본 정보가 자동으로 인계되는 구조 — 중복 입력 방지',
+    'Item Description은 AI 초안 생성 버튼으로 반복 작성 부담을 줄이는 지점',
+    '생성(Create) 완료 시 Exp Group이 아니라 Item 목록 화면으로 이동'
+  ],
+  'itemdetail-empty': [
+    'Exp Group이 없는 초기 상태를 별도 Empty state로 명확히 안내',
+    'Favorites only 토글과 검색으로 Exp Group이 많아졌을 때도 탐색 가능하도록 미리 대비'
+  ],
+  'step1': [
+    'Create Full-Auto Exp Group 화면: 상단 스텝 탭 및 하단 checklist-bar를 Sticky 고정하여 스크롤 중에도 위치 유지',
+    'Experiment plan 한 화면에 정보 입력 + 구동실험 선택 + 옵션 설정 + 참고정보(TE/Negative Sample) 제공'
+  ],
+  'step2': [
+    'Template check는 실제 준비해야 할 Template 목록을 Type(pDNA/Strain)별로 정리하고, 준비 방법 태그로 한눈에 구분'
+  ],
+  'step3': [
+    'Template preparation은 실험 목적 필 버튼으로 필터링해 필요한 항목만 집중 입력',
+    'Mock input / Calculate All 버튼으로 반복 수치 입력을 자동화'
+  ],
+  'step4': [
+    'Input Confirmation은 Template panel build → Well Information → PCR Information 확정 단계 제공',
+    'Done 클릭 시 Exp Group 목록(생성 완료) 화면으로 이동하여 즉시 Run 실행 가능'
+  ],
+  'itemdetail-filled': [
+    'Exp Group 생성이 끝나면 Ready 상태로 목록에 반영되고, Run 버튼으로 즉시 구동 실행 가능'
+  ]
+};
 
-  const notes = {
-    home: [
-      '카테고리를 "참고 정보"와 "실험 단계"로 분리해 첫 화면의 정보 위계를 명확히 함',
-      '이번 포트폴리오 케이스에서는 Prototype 카드를 비활성화하고 Feasibility 흐름만 다룸'
-    ],
-    labbooklist: [
-      'Set(제품 내 여러 조합) 단위로 Lab-book을 필터링할 수 있도록 상단에 Set 선택 노출',
-      '+ 버튼으로 새 Lab-book을 리스트 최상단에 바로 추가 — 이름 입력 후 클릭하면 실험항목 리스트로 진입'
-    ],
-    testlist: [
-      '진행률을 단일 %가 아니라 Plan/Experiment/Result/Discussion 4단계로 분해해 보여줌 — 실제 화면설계서의 핵심 차별점',
-      '+ 버튼으로 Add Test 모달을 띄우고, 저장 즉시 실험계획 입력 화면으로 연결'
-    ],
-    plan: [
-      'Material & Method는 Inventory 자동 연동값(잠금 아이콘)과 사용자 입력값을 시각적으로 분리',
-      'Prototype 케이스와 동일한 패턴을 재사용해 두 시나리오 간 학습 비용을 최소화함'
-    ],
-    wellinfo: [
-      '연구원이 직접 그리던 웰맵을 Material & Method 입력값 기반 자동생성으로 대체',
-      'Mastermix/Template plate를 분리 표시, 우측 패널에서 Lot 정보 확인 가능'
-    ],
-    method: [
-      '실험 방법을 Template preparation / PCR Setup 두 개의 하위 프로세스로 분리 — 각각 별도 화면에서 진행 후 이 허브로 복귀',
-      '완료된 프로세스는 "완료" 배지로 표시해 진행 상황을 한눈에 확인'
-    ],
-    tprep: [
-      'Template preparation은 항상 수기 진행 — Template manufacturing과 Serial dilution을 하나의 화면에서 순서대로 기록',
-      '희석 단계는 "행 추가" 패턴으로 필요한 만큼 확장 가능'
-    ],
-    pcrsetup: [
-      'PCR Setup은 Manual/자동화 장비 중 선택 — 선택에 따라 이후 데이터 업로드 항목이 달라짐',
-      'Template preparation과 달리 실행 방식을 연구원이 결정해야 하는 지점이라 카드형 선택 UI로 명확히 분리'
-    ],
-    dataupload: [
-      'PCR 원본 데이터를 업로드하면 Well information/Plate와 자동 매칭됨',
-      '업로드된 데이터는 타 분석 프로그램에서 분석 후 결과정리 화면에서 다시 불러오는 구조'
-    ],
-    result: [
-      '3분할 레이아웃(Page 목록 / 결과 테이블 / 분석 데이터)으로 여러 Plate 결과를 한 화면에서 정리',
-      'Save는 토스트 알림만 띄우고 화면 흐름은 유지 — Next를 눌러야 다음 단계(Discussion)로 진행'
-    ],
-    discussion: [
-      '"결과 불러오기" 버튼으로 Result 단계에서 정리한 Page를 선택해 요약 테이블 형태로 삽입 — 결과와 결론을 오가며 재작성할 필요를 줄임',
-      'Complete를 눌러야 실험목록(Test list) 화면으로 돌아가 이 실험항목의 전체 사이클이 종료됨'
-    ]
-  };
+function show(id){
+  screens.forEach(function(s){ document.getElementById('screen-'+s).classList.remove('active'); });
+  document.getElementById('screen-'+id).classList.add('active');
+  var _js = document.getElementById('jumpSelect'); if (_js) _js.value = id;
+  renderNotes(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-  function updateGuideHighlight(id){
-    // 이전 하이라이트 클래스 제거
-    document.querySelectorAll('.guide-highlight').forEach(el => el.classList.remove('guide-highlight'));
-    
-    // 현 단계에 대응하는 하이라이트 타겟 설정
-    const targetId = guideSteps[id];
-    if(targetId){
-      const targetEl = document.getElementById(targetId);
-      if(targetEl){
-        targetEl.classList.add('guide-highlight');
-      }
-    }
-  }
+function renderNotes(id){
+  var _nl = document.getElementById('noteList');
+  if (!_nl) return;
+  _nl.innerHTML = (notes[id]||[]).map(function(n){return '<li>'+n+'</li>';}).join('');
+}
 
-  function show(id){
-    screens.forEach(function(s){ document.getElementById('screen-'+s).classList.remove('active'); });
-    document.getElementById('screen-'+id).classList.add('active');
-    document.getElementById('jumpSelect').value = id;
-    renderNotes(id);
-    updateGuideHighlight(id);
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-
-  function renderNotes(id){
-    document.getElementById('noteList').innerHTML = (notes[id]||[]).map(function(n){return '<li>'+n+'</li>';}).join('');
-  }
-  function selectMethod(kind){
-    document.getElementById('cardManual').classList.toggle('selected', kind==='manual');
-    document.getElementById('cardAuto').classList.toggle('selected', kind==='auto');
-  }
-  let toastTimer = null;
-  function toast(msg){
-    const el = document.getElementById('toastEl');
-    el.textContent = msg;
-    el.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
-  }
-  let newLabBookCount = 0;
-  function addLabBook(){
-    newLabBookCount++;
-    const name = 'Lab-book ' + (3 + newLabBookCount - 1);
-    const tbody = document.getElementById('labbookTbody');
-    const tr = document.createElement('tr');
-    tr.className = 'clickable';
-    tr.onclick = function(){
-      document.getElementById('curLabBookName').textContent = name;
-      document.getElementById('testlistTitle').textContent = name;
-      show('testlist');
-    };
-    tr.innerHTML = '<td><input type="checkbox"></td><td>'+name+'</td><td>1.0</td><td>2026-08-27</td><td><span class="dot"></span>To do</td><td><div class="progressbar"><div style="width:0%"></div></div></td><td>—</td>';
-    tbody.insertBefore(tr, tbody.firstChild);
-    toast(name + ' 이(가) 추가되었습니다!');
-  }
-  function markDone(kind){
-    const badge = document.getElementById(kind === 'tprep' ? 'tprepBadge' : 'pcrBadge');
-    if(badge){ badge.style.display = 'inline-block'; }
-    toast('저장되었습니다!');
-  }
-  function importResults(){
-    const checked = Array.prototype.slice.call(document.querySelectorAll('#modalImport input[type=checkbox]:checked')).map(function(c){return c.value;});
-    const area = document.getElementById('importedArea');
-    let html = '';
-    checked.forEach(function(name){
-      html += '<div class="imported-block"><h5>'+name+'</h5>'+
-        '<table style="font-size:11px;width:100%;"><thead><tr><th style="text-align:left;padding:4px;">Well</th><th style="text-align:left;padding:4px;">Analyte</th><th style="text-align:left;padding:4px;">Result</th></tr></thead>'+
-        '<tbody><tr><td style="padding:4px;">A1</td><td style="padding:4px;">Analyte 1</td><td style="padding:4px;">Positive</td></tr>'+
-        '<tr><td style="padding:4px;">A2</td><td style="padding:4px;">Analyte 2</td><td style="padding:4px;">Positive</td></tr></tbody></table></div>';
-    });
-    area.innerHTML = html;
-    document.getElementById('modalImport').classList.remove('show');
-    toast(checked.length + '개 결과를 불러왔습니다!');
-  }
-  function renderPlate(elId, colorFn){
-    const el = document.getElementById(elId);
-    let html='';
-    for(let r=0;r<8;r++){
-      for(let c=0;c<12;c++){
-        const cell = colorFn(r,c);
-        html += '<div class="well" style="background:'+cell.bg+'">'+cell.label+'</div>';
-      }
-    }
-    el.innerHTML = html;
-  }
-  renderPlate('plateMM', function(r,c){
-    const palette = ['#4F46E5','#45526B','#3FA772'];
-    if(c%4===3) return {bg:'#EDEDED', label:''};
-    const idx = c%3;
-    return {bg:palette[idx], label:'M'+(idx+1)};
+function switchSubtab(btn, groupSel, key){
+  const parent = btn.parentElement;
+  Array.prototype.forEach.call(parent.children, function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  document.querySelectorAll(groupSel+' > div[data-pane]').forEach(function(p){
+    p.style.display = (p.dataset.pane === key) ? 'block' : 'none';
   });
-  renderPlate('plateT', function(r,c){
-    if(c%4===3) return {bg:'#EDEDED', label:''};
-    return {bg:'#F2A93B', label:'T'+((c%3)+1)};
-  });
-  
-  // 최초 진입 가이드 및 노이트 설정
-  show('home');
+}
 
-  // ---- Icon library (line-style, matches neutral design system) ----
-  const ICONS = {
-    bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
-    folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>',
-    user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.4 7-5.4s5.8 1.8 7 5.4"/></svg>',
-    settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9c.2.7.7 1.2 1.5 1.4h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>',
-    grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
-    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>',
-    box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.3 7 8.7-4 8.7 4-8.7 4-8.7-4Z"/><path d="M3.3 7v10l8.7 4 8.7-4V7"/><path d="M12 11v10"/></svg>',
-    flask: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V3"/><path d="M7.5 15h9"/></svg>',
-    flask2: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8"/><path d="M9 2v7.2L3.6 18a2.2 2.2 0 0 0 1.9 3.3h13a2.2 2.2 0 0 0 1.9-3.3L15 9.2V2"/><path d="M6.5 14h11"/></svg>',
-    chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg>',
-    clipboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="1.5"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>',
-    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5.5"/></svg>',
-    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
-    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6.5 7 7.3 19a1.5 1.5 0 0 0 1.5 1.4h6.4a1.5 1.5 0 0 0 1.5-1.4L18.5 7"/><path d="M10 11v6M14 11v6"/></svg>',
-    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="1.5"/><path d="M5.5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1.5"/></svg>',
-    upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m7 8.5 5-4.5 5 4.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>',
-    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="m7 11.5 5 4.5 5-4.5"/><path d="M4 19h16"/></svg>',
-    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a2 2 0 0 0 0-2.8L16.8 5a2 2 0 0 0-2.8 0L4 15v5Z"/><path d="M13 6.5 17.5 11"/></svg>',
-    lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
-    star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.8 6.3.6-4.7 4.3 1.3 6.3L12 17l-5.6 3 1.3-6.3-4.7-4.3 6.3-.6L12 3Z"/></svg>',
-    hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12V6a1.5 1.5 0 0 1 3 0v5"/><path d="M11 11V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M14 11.2V6a1.5 1.5 0 0 1 3 0v7"/><path d="M17 12v-2a1.5 1.5 0 0 1 3 0v6c0 3.3-2.2 6-6 6h-2c-3 0-4.2-1-5.7-3L4 15.4c-.6-.9-.3-1.9.5-2.4.8-.4 1.7-.2 2.3.5L8 15"/></svg>',
-    robot: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V4"/><circle cx="12" cy="3" r="1.2" fill="currentColor" stroke="none"/><path d="M2 13h2M20 13h2"/><circle cx="9" cy="13" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="currentColor" stroke="none"/><path d="M9 17h6"/></svg>'
-  };
+let toastTimer = null;
+function toast(msg){
+  const el = document.getElementById('toastEl');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
+}
+
+function removeChip(el){
+  el.parentElement.remove();
+}
+
+function renderWellGrid(elId, cols, rows, dataFn){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  let html = '<div class="hcell"></div>';
+  for(let c=1;c<=cols;c++){ html += '<div class="hcell">'+c+'</div>'; }
+  const rowLabels = 'ABCDEFGH'.slice(0,rows).split('');
+  rowLabels.forEach(function(rl, ri){
+    html += '<div class="rcell">'+rl+'</div>';
+    for(let c=0;c<cols;c++){
+      const cell = dataFn(ri, c);
+      html += cell ? ('<div class="wcell" style="'+(cell.bg?('background:'+cell.bg+';'):'')+'">'+cell.label+'</div>') : '<div class="wcell blank"></div>';
+    }
+  });
+  el.style.gridTemplateColumns = '34px repeat('+cols+', minmax(74px,1fr))';
+  el.innerHTML = html;
+}
+
+const levels = ['High','Mid','Low','None'];
+renderWellGrid('wellgrid1', 8, 8, function(r,c){
+  if(c>=8) return null;
+  const combo = [levels[c%4], levels[(c+r)%4], levels[(r)%2===0?2:3]];
+  const highlight = (r===3 && (c===6||c===7));
+  return { label: combo.join(' + '), bg: highlight ? '#EEEDFD' : (r%2===0?'#FAFAFB':'#fff') };
+});
+
+// ---- Icon library ----
+const ICONS = {
+  bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+  headset: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M20 19a3 3 0 0 1-3 3h-2"/></svg>',
+  settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9c.2.7.7 1.2 1.5 1.4h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+  logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
+  grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  bullhorn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h1l3 5V6l-3 5H5a2 2 0 0 0-2 2Z"/><path d="M14 8a4 4 0 0 1 0 8"/><path d="M17 5a8 8 0 0 1 0 14"/></svg>',
+  folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>',
+  dna: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3c0 6 12 12 12 18M18 3c0 6-12 12-12 18"/><path d="M8 7h8M7 12h10M6 17h12"/></svg>',
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  chevdown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  chevleft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>',
+  chevright: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>',
+  layout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>',
+  emptybox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>',
+  boxes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l6 3.43a2 2 0 0 0 2.06 0l6-3.43a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L11.03 9.49a2 2 0 0 0-2.06 0l-6 3.43Z"/><path d="m12 12 6-3.43a2 2 0 0 0 .97-1.71V3.62a2 2 0 0 0-.97-1.71l-6-3.43a2 2 0 0 0-2.06 0l-6 3.43A2 2 0 0 0 3 3.62v3.24a2 2 0 0 0 .97 1.71L10 12"/><path d="M12 22V12"/></svg>',
+  sliders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>'
+};
+
+document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('[data-icon]').forEach(function(el){
-    el.innerHTML = ICONS[el.dataset.icon] || '';
+    const name = el.getAttribute('data-icon');
+    if(ICONS[name]){
+      el.innerHTML = ICONS[name];
+    }
   });
-
+  renderNotes('itemlist');
+});
 </script>
 </body>
 </html>
 </template>
-<!-- ▲▲▲ [프로젝트 02] 끝 ▲▲▲ -->
+<!-- ▲▲▲ [프로젝트 01] 끝 ▲▲▲ -->
 
 
 <!-- ┌─────────────────────────────────────────────────────────────────────────┐
@@ -4617,8 +4556,7 @@
     '.gnb .icons .ico-btn:hover{background:rgba(255,255,255,.14);color:#fff}',
     '.lnb{background:#EEF0F3;border-right-color:#E1E4EA}',
     '.lnb .lnb-icon{color:#8A8F99}',
-    '.lnb .lnb-icon:hover{background:#E1E4EA;color:#2C2C2C}',
-    '.lnb .lnb-icon.active{background:#DBDFE7;color:#2C2C2C;box-shadow:none}'
+    '.lnb .lnb-icon.active{background:#DBDFE7;color:#2C2C2C}'
   ].join('');
 
   // Applied AFTER the reference screen is measured (so it can't skew that
