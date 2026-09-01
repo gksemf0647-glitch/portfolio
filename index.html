@@ -1240,6 +1240,10 @@
      see the lightbox binding in the script below. Placeholders stay inert. */
   .img-placeholder[data-real-src] { cursor: zoom-in; border-style: solid; }
 
+  /* …except work-list thumbnails, which just open the case study (no lightbox). */
+  .work-thumb .img-placeholder[data-real-src],
+  .more-work-thumb .img-placeholder[data-real-src] { cursor: inherit; }
+
   .img-placeholder .ph-icon {
     width: 34px;
     height: 34px;
@@ -2401,6 +2405,13 @@
     border-top:1px solid var(--line);
     background:var(--surface);
   }
+  /* -- 튜토리얼: 사용자 시나리오상 다음에 눌러야 할 요소 하이라이트(맥동) -- */
+  @keyframes pulseHighlight {
+    0%   { box-shadow: 0 0 0 0 rgba(31,111,184,.55); transform: scale(1); }
+    50%  { box-shadow: 0 0 0 8px rgba(31,111,184,0);  transform: scale(1.02); }
+    100% { box-shadow: 0 0 0 0 rgba(31,111,184,0);    transform: scale(1); }
+  }
+  .flow-highlight{ animation: pulseHighlight 2s infinite ease-in-out; border-color: var(--blue) !important; position: relative; z-index: 5; }
 </style>
 </head>
 <body>
@@ -2495,7 +2506,7 @@
           </div>
           <div class="wizard-actions" style="justify-content:space-between;align-items:center;">
             <span style="font-size:12px;color:var(--ink-40);font-weight:600;">Prototype 단계 · Lab-book 3건 · 진행 중 1건</span>
-            <button class="btn primary" onclick="show('labbooklist')">Prototype Lab-book 열기</button>
+            <button class="btn primary flow-highlight" onclick="show('labbooklist')">Prototype Lab-book 열기</button>
           </div>
         </div>
       </div>
@@ -2523,7 +2534,7 @@
           <table>
             <thead><tr><th></th><th>Lab-book</th><th>Revision No.</th><th>Updated date</th><th>Status</th><th>Progress</th><th>Note</th></tr></thead>
             <tbody>
-              <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 2</td><td>1.0</td><td>2026-07-28</td><td><span class="dot green"></span>In progress</td><td><div class="progressbar"><div style="width:20%"></div></div></td><td>—</td></tr>
+              <tr class="clickable flow-highlight" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 2</td><td>1.0</td><td>2026-07-28</td><td><span class="dot green"></span>In progress</td><td><div class="progressbar"><div style="width:20%"></div></div></td><td>—</td></tr>
               <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab Book_안정성패널</td><td>1.0</td><td>2026-07-28</td><td><span class="dot amber"></span>On hold</td><td><div class="progressbar"><div style="width:70%"></div></div></td><td>Oligo redesign in progress</td></tr>
               <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 1</td><td>1.0</td><td>2026-04-05</td><td><span class="dot blue"></span>Completed</td><td><div class="progressbar"><div style="width:100%"></div></div></td><td>M&amp;M 13 Selected</td></tr>
             </tbody>
@@ -2554,7 +2565,7 @@
           <table>
             <thead><tr><th></th><th>No.</th><th>Test</th><th>Status</th><th>Progress</th><th>Note</th></tr></thead>
             <tbody>
-              <tr class="clickable" onclick="show('plan')"><td><input type="checkbox"></td><td>1</td><td>3-1 반제품 소량생산 안정성 시험 (Batch test)</td><td><span class="tag progress">In progress</span></td><td><div class="progressbar"><div style="width:40%"></div></div></td><td>—</td></tr>
+              <tr class="clickable flow-highlight" onclick="show('plan')"><td><input type="checkbox"></td><td>1</td><td>3-1 반제품 소량생산 안정성 시험 (Batch test)</td><td><span class="tag progress">In progress</span></td><td><div class="progressbar"><div style="width:40%"></div></div></td><td>—</td></tr>
               <tr class="clickable" onclick="show('plan')"><td><input type="checkbox"></td><td>2</td><td>Cross-reactivity 검증</td><td><span class="tag todo">To do</span></td><td><div class="progressbar"><div style="width:0%"></div></div></td><td>—</td></tr>
               <tr class="clickable" onclick="show('plan')"><td><input type="checkbox"></td><td>-</td><td>2차 Multi-target 선정_민감도 (Customized test)</td><td><span class="tag todo">To do</span></td><td><div class="progressbar"><div style="width:0%"></div></div></td><td>—</td></tr>
             </tbody>
@@ -2629,7 +2640,7 @@
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('testlist')">Prev</button>
-            <button class="btn primary" onclick="show('wellinfo')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('wellinfo')">Next</button>
           </div>
         </div>
       </div>
@@ -2683,7 +2694,7 @@
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('plan')">Prev</button>
-            <button class="btn primary" onclick="show('method')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('method')">Next</button>
           </div>
         </div>
       </div>
@@ -2725,7 +2736,7 @@
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('wellinfo')">Prev</button>
-            <button class="btn primary" onclick="show('dataupload')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('dataupload')">Next</button>
           </div>
         </div>
       </div>
@@ -2763,7 +2774,7 @@
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('method')">Prev</button>
-            <button class="btn primary" onclick="show('result')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('result')">Next</button>
           </div>
         </div>
       </div>
@@ -2827,7 +2838,7 @@
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('dataupload')">Prev</button>
             <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
-            <button class="btn primary" onclick="show('criteria')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('criteria')">Next</button>
           </div>
         </div>
       </div>
@@ -2901,7 +2912,7 @@
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('result')">Prev</button>
             <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
-            <button class="btn dark" onclick="show('testlist');toast('완료되었습니다!')">Complete</button>
+            <button class="btn dark flow-highlight" onclick="show('testlist');toast('완료되었습니다!')">Complete</button>
           </div>
         </div>
       </div>
@@ -3050,7 +3061,6 @@
 </script>
 </body>
 </html>
-
 </template>
 <!-- ▲▲▲ [프로젝트 04] 끝 ▲▲▲ -->
 
@@ -3127,6 +3137,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sa
 .topbar .ver{font-size:11px;color:var(--ink-40);font-weight:600;}
 [data-icon] svg{width:100%;height:100%;display:block;}
 .ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;vertical-align:-3px;}
+/* Standalone icon buttons (outside .topbar): glyph stays a fixed readable
+   size instead of stretching edge-to-edge in the button box. */
+.ico-btn{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
+.ico-btn svg{width:16px;height:16px;}
 .topbar .ico-btn svg{width:16px;height:16px;}
 
 /* Content Layout for Sticky Navigation & Footer */
@@ -4234,9 +4248,9 @@ document.addEventListener('DOMContentLoaded', function(){
   .stage{max-width:1440px;margin:14px auto 60px;padding:0 40px;position:relative;}
   .screen{display:none;}
   .screen.active{display:block;}
-  .device{background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);}
+  .device{background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);display:flex;flex-direction:column;height:720px;}
 
-  .gnb{background:#fff;color:var(--ink);display:flex;align-items:center;padding:0 24px;height:60px;gap:18px;border-bottom:1px solid var(--line);}
+  .gnb{background:#fff;color:var(--ink);display:flex;align-items:center;padding:0 24px;height:60px;gap:18px;border-bottom:1px solid var(--line);flex-shrink:0;}
   .gnb .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;}
   .gnb .brand .dot{width:28px;height:28px;border-radius:var(--radius-sm);background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
   .gnb .divider{width:1px;height:22px;background:var(--line);}
@@ -4250,13 +4264,13 @@ document.addEventListener('DOMContentLoaded', function(){
   .gnb .icons .ico-btn:hover{background:var(--bg);color:var(--ink);}
   .ico svg{display:block;width:18px;height:18px;}
 
-  .body-wrap{display:flex;background:#FAFAFB;min-height:660px;}
+  .body-wrap{display:flex;background:#FAFAFB;flex:1;min-height:0;overflow:hidden;}
   .lnb{width:52px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:18px;}
   .lnb .lnb-icon{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-40);cursor:pointer;}
   .lnb .lnb-icon svg{width:18px;height:18px;}
   .lnb .lnb-icon.active{background:var(--brand-soft);color:var(--brand);}
 
-  .content{flex:1;padding:22px 26px 36px;}
+  .content{flex:1;min-height:0;overflow-y:auto;padding:22px 26px 36px;}
   .crumb{font-size:12.5px;color:var(--ink-40);margin-bottom:6px;font-weight:600;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
   .crumb .cur{color:var(--accent);font-weight:700;}
   .crumb .sep{opacity:.5;}
@@ -4449,6 +4463,20 @@ document.addEventListener('DOMContentLoaded', function(){
   .stage-card.disabled-nav{opacity:.55;cursor:not-allowed;}
   .stage-card.disabled-nav:hover{border-color:var(--line);background:#fff;}
 
+  /* -- Wizard 화면: 하단 Prev/Next Footer 고정, 그 사이 본문만 스크롤 -- */
+  .content.wizard{display:flex;flex-direction:column;padding-bottom:0;overflow:hidden;}
+  .content.wizard > .crumb,
+  .content.wizard > .wizard-steps{flex:0 0 auto;}
+  .content.wizard > .wizard-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:2px 14px 12px 0;}
+  .content.wizard > .wizard-actions{flex:0 0 auto;margin-top:0;padding:16px 0 6px;border-top:1px solid var(--line);background:var(--surface);}
+
+  /* -- 튜토리얼: 다음에 눌러야 할 요소 하이라이트(맥동) -- */
+  @keyframes pulseHighlight {
+    0%   { box-shadow: 0 0 0 0 rgba(79,70,229,.55); transform: scale(1); }
+    50%  { box-shadow: 0 0 0 8px rgba(79,70,229,0);  transform: scale(1.02); }
+    100% { box-shadow: 0 0 0 0 rgba(79,70,229,0);    transform: scale(1); }
+  }
+  .flow-highlight{ animation: pulseHighlight 2s infinite ease-in-out; border-color: var(--accent) !important; position: relative; z-index: 5; }
 </style>
 </head>
 <body>
@@ -4498,7 +4526,7 @@ document.addEventListener('DOMContentLoaded', function(){
               <div class="cat-section">
                 <div class="cat-subhead">실험 단계</div>
                 <div class="cat-stages">
-                  <div class="stage-card" onclick="show('labbooklist')" title="클릭하여 Feasibility 진입"><span class="ico" data-icon="flask"></span><h4>Feasibility</h4><p>25% 진행 중</p></div>
+                  <div class="stage-card flow-highlight" onclick="show('labbooklist')" title="클릭하여 Feasibility 진입"><span class="ico" data-icon="flask"></span><h4>Feasibility</h4><p>25% 진행 중</p></div>
                   <div class="stage-card disabled-nav" title="이번 포트폴리오 케이스에서는 다루지 않음"><span class="ico" data-icon="flask2"></span><h4>Prototype</h4><p>다루지 않음</p></div>
                   <div class="stage-card disabled" title="정성(Qualitative) 제품에서만 사용"><span class="ico" data-icon="check"></span><h4>Verification</h4><p>정성 제품 전용</p></div>
                 </div>
@@ -4567,7 +4595,7 @@ document.addEventListener('DOMContentLoaded', function(){
           <table>
             <thead><tr><th></th><th>Lab-book</th><th>Revision No.</th><th>Updated date</th><th>Status</th><th>Progress</th><th>Note</th></tr></thead>
             <tbody id="labbookTbody">
-              <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 1</td><td>1.0</td><td>2026-04-05</td><td><span class="dot blue"></span>Completed</td><td><div class="progressbar"><div style="width:100%"></div></div></td><td>M&amp;M 13 Selected</td></tr>
+              <tr class="clickable flow-highlight" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 1</td><td>1.0</td><td>2026-04-05</td><td><span class="dot blue"></span>Completed</td><td><div class="progressbar"><div style="width:100%"></div></div></td><td>M&amp;M 13 Selected</td></tr>
               <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab Book_안정성패널</td><td>1.0</td><td>2026-07-28</td><td><span class="dot amber"></span>On hold</td><td><div class="progressbar"><div style="width:70%"></div></div></td><td>Oligo redesign in progress</td></tr>
               <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 2</td><td>1.0</td><td>2026-07-28</td><td><span class="dot green"></span>In progress</td><td><div class="progressbar"><div style="width:20%"></div></div></td><td>—</td></tr>
             </tbody>
@@ -4603,7 +4631,7 @@ document.addEventListener('DOMContentLoaded', function(){
           <table>
             <thead><tr><th></th><th>No.</th><th>Test</th><th>Status</th><th style="min-width:230px;">Progress</th><th>Note</th></tr></thead>
             <tbody id="testTbody">
-              <tr class="clickable" onclick="show('plan')">
+              <tr class="clickable flow-highlight" onclick="show('plan')">
                 <td><input type="checkbox"></td><td>1</td><td>3-1 반제품 소량생산 안정성 시험 (Batch test)</td><td><span class="tag progress">In progress</span></td>
                 <td>
                   <div class="stage-progress">
@@ -4706,7 +4734,7 @@ document.addEventListener('DOMContentLoaded', function(){
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('testlist')">Prev</button>
             <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
-            <button class="btn primary" onclick="show('wellinfo')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('wellinfo')">Next</button>
           </div>
         </div>
       </div>
@@ -4763,7 +4791,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('plan')">Prev</button>
-            <button class="btn primary" onclick="show('method')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('method')">Next</button>
           </div>
         </div>
       </div>
@@ -4796,13 +4824,13 @@ document.addEventListener('DOMContentLoaded', function(){
           <div class="helpnote">Well information을 기반으로 진행할 하위 프로세스를 선택. 각 프로세스는 완료 후 이 화면으로 돌아와 다음 프로세스로 진행함.</div>
 
           <div class="method-row">
-            <div class="stage-card" style="width:290px;padding:26px;" onclick="show('tprep')">
+            <div class="stage-card flow-highlight" id="mCardTprep" style="width:290px;padding:26px;" onclick="show('tprep')">
               <span class="ico" data-icon="flask" style="width:32px;height:32px;color:var(--accent);margin:0 auto 12px;display:block;"></span>
               <h4 style="font-size:16px;">Template preparation</h4>
               <p style="font-size:12.5px;">Template 희석/제조 — 수기 진행</p>
               <span class="done-badge" id="tprepBadge" style="display:none;">✓ 완료</span>
             </div>
-            <div class="stage-card" style="width:290px;padding:26px;" onclick="show('pcrsetup')">
+            <div class="stage-card" id="mCardPcr" style="width:290px;padding:26px;" onclick="show('pcrsetup')">
               <span class="ico" data-icon="robot" style="width:32px;height:32px;color:var(--accent);margin:0 auto 12px;display:block;"></span>
               <h4 style="font-size:16px;">PCR Setup</h4>
               <p style="font-size:12.5px;">Mastermix/Template 분주 — 수기 또는 자동화 장비 선택</p>
@@ -4812,7 +4840,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('wellinfo')">Prev</button>
-            <button class="btn primary" onclick="show('dataupload')">Next</button>
+            <button class="btn primary" id="mMethodNext" onclick="show('dataupload')">Next</button>
           </div>
         </div>
       </div>
@@ -4860,7 +4888,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('method')">Prev</button>
-            <button class="btn primary" onclick="markDone('tprep');show('method')">Save &amp; 완료 처리</button>
+            <button class="btn primary flow-highlight" onclick="markDone('tprep');show('method')">Save &amp; 완료 처리</button>
           </div>
         </div>
       </div>
@@ -4898,7 +4926,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('method')">Prev</button>
-            <button class="btn primary" onclick="markDone('pcrsetup');show('method')">Save &amp; 완료 처리</button>
+            <button class="btn primary flow-highlight" onclick="markDone('pcrsetup');show('method')">Save &amp; 완료 처리</button>
           </div>
         </div>
       </div>
@@ -4940,7 +4968,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('method')">Prev</button>
-            <button class="btn primary" onclick="show('result')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('result')">Next</button>
           </div>
         </div>
       </div>
@@ -5005,7 +5033,7 @@ document.addEventListener('DOMContentLoaded', function(){
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('dataupload')">Prev</button>
             <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
-            <button class="btn primary" onclick="show('discussion')">Next</button>
+            <button class="btn primary flow-highlight" onclick="show('discussion')">Next</button>
           </div>
         </div>
       </div>
@@ -5075,7 +5103,7 @@ document.addEventListener('DOMContentLoaded', function(){
           <div class="wizard-actions">
             <button class="btn ghost" onclick="show('result')">Prev</button>
             <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
-            <button class="btn primary" onclick="show('testlist')">Complete</button>
+            <button class="btn primary flow-highlight" onclick="toast('완료되었습니다!'); show('testlist')">Complete</button>
           </div>
         </div>
       </div>
@@ -5194,6 +5222,14 @@ document.addEventListener('DOMContentLoaded', function(){
   function markDone(kind){
     const badge = document.getElementById(kind === 'tprep' ? 'tprepBadge' : 'pcrBadge');
     if(badge){ badge.style.display = 'inline-block'; }
+    // 튜토리얼 하이라이트: 완료한 카드 -> 다음 할 일로 이동
+    if(kind === 'tprep'){
+      var a = document.getElementById('mCardTprep'); if(a) a.classList.remove('flow-highlight');
+      var b = document.getElementById('mCardPcr');   if(b) b.classList.add('flow-highlight');
+    } else {
+      var b = document.getElementById('mCardPcr');   if(b) b.classList.remove('flow-highlight');
+      var n = document.getElementById('mMethodNext');if(n) n.classList.add('flow-highlight');
+    }
     toast('저장되었습니다!');
   }
   function importResults(){
@@ -5260,6 +5296,22 @@ document.addEventListener('DOMContentLoaded', function(){
   };
   document.querySelectorAll('[data-icon]').forEach(function(el){
     el.innerHTML = ICONS[el.dataset.icon] || '';
+  });
+
+  // wizard-actions(Footer)를 가진 화면: 상단 고정영역(crumb/wizard-steps) 아래부터
+  // Footer 전까지를 .wizard-body 로 감싸 스크롤 영역으로 만들고 .content 에 .wizard 부여.
+  document.querySelectorAll('.screen .content').forEach(function(c){
+    var actions = c.querySelector(':scope > .wizard-actions');
+    if(!actions) return;
+    c.classList.add('wizard');
+    var sc = c.closest('.screen'); if(sc) sc.classList.add('has-wizard');
+    var anchor = c.querySelector(':scope > .wizard-steps') || c.querySelector(':scope > .crumb');
+    var start = anchor ? anchor.nextElementSibling : c.firstElementChild;
+    var body = document.createElement('div');
+    body.className = 'wizard-body';
+    var n = start;
+    while(n && n !== actions){ var nx = n.nextElementSibling; body.appendChild(n); n = nx; }
+    c.insertBefore(body, actions);
   });
 
 </script>
@@ -5724,6 +5776,27 @@ document.addEventListener('DOMContentLoaded', function(){
           fit();
           if (window.ResizeObserver) new ResizeObserver(fit).observe(frame);
           win.addEventListener('resize', fit);
+
+          // Keep the site's custom cursor alive while the pointer is over the
+          // embedded mockup — the parent window's own mousemove never fires there.
+          const pc = window.__portfolioCursor;
+          if (pc) {
+            const hoverSel = 'a,button,input,select,textarea,label,[onclick],[role="button"],' +
+              '.clickable,tr.clickable,.stage-card,.method-card,.radio-card,.wstep,.utab,.st,.pill,' +
+              '.iconbtn,.ico-btn,.page-row,.cat-ref-item,.import-btn,.add-row-btn,.flow-highlight';
+            doc.addEventListener('mousemove', function (e) {
+              const r = frame.getBoundingClientRect();
+              pc.moveTo(r.left + e.clientX, r.top + e.clientY);
+              pc.setVisible(true);
+            });
+            doc.addEventListener('mouseover', function (e) {
+              pc.setHover(!!(e.target.closest && e.target.closest(hoverSel)));
+            });
+            doc.addEventListener('mouseout', function () { pc.setHover(false); });
+            const cstyle = doc.createElement('style');
+            cstyle.textContent = '*{cursor:none!important;}';
+            doc.head.appendChild(cstyle);
+          }
         } catch (e) { /* leave the raw mockup in the frame */ }
       });
     });
@@ -6096,6 +6169,9 @@ document.addEventListener('DOMContentLoaded', function(){
     root.querySelectorAll('.img-placeholder[data-real-src]').forEach(el => {
       if (el.dataset.lightboxBound) return;
       el.dataset.lightboxBound = '1';
+      // A thumbnail inside a case-study link just opens the case study — no
+      // lightbox zoom detour. Lightbox stays on for standalone detail images.
+      if (el.closest('a.work-item, a.more-work-item')) return;
       el.addEventListener('click', () => {
         openLightbox(`<img src="${el.dataset.realSrc}" alt="${el.dataset.lightboxLabel || ''}" style="max-width:100%;max-height:76vh;border-radius:8px;">`);
       });
@@ -6117,12 +6193,25 @@ document.addEventListener('DOMContentLoaded', function(){
     let ringX = mouseX, ringY = mouseY;
     let started = false;
 
-    window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+    function moveTo(x, y) {
+      mouseX = x;
+      mouseY = y;
       dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
       if (!started) { ringX = mouseX; ringY = mouseY; started = true; }
-    });
+    }
+
+    window.addEventListener('mousemove', (e) => moveTo(e.clientX, e.clientY));
+
+    // Exposed so embedded prototype iframes can keep this cursor alive over them
+    // (see hydratePrototypeEmbeds — the parent's mousemove doesn't fire there).
+    window.__portfolioCursor = {
+      moveTo,
+      setHover(on) { ring.classList.toggle('is-hover', !!on); },
+      setVisible(on) {
+        dot.style.opacity = on ? '1' : '0';
+        ring.style.opacity = on ? '0.75' : '0';
+      }
+    };
 
     function raf() {
       ringX += (mouseX - ringX) * 0.18;
