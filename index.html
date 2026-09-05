@@ -1475,6 +1475,10 @@
 
   @media (min-width: 700px) {
     .detail-image-row { grid-template-columns: 1fr 1fr; }
+    /* An odd item left alone on the last row (e.g. a wide flow diagram that
+       doesn't pair well with object-fit:cover) spans the full row instead of
+       being squeezed into a half-width cell next to an empty column. */
+    .detail-image-row > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
   }
 
   .detail-nav-row {
@@ -7035,9 +7039,17 @@ renderNotes('productlist');
       ],
       validation: null,
       tools: ["Jira", "Confluence", "Slack"],
-      thumbnail: img("assets/projects/qc-report-automation/thumbnail.png"),
-      detailImages: [img("assets/projects/qc-report-automation/detail-01.png")],
-      workflowImages: [img("assets/projects/qc-report-automation/workflow-01.png")]
+      thumbnail: imgReady("assets/projects/qc-report-automation/thumbnail.png"),
+      detailImages: [],
+      // Ordered so the two images sharing row 1 of the 2-col grid have similar
+      // aspect ratios (menu-structure ~1.7:1, user-flow ~1.5:1) — object-fit:
+      // cover on mismatched-aspect siblings crops heavily, so the much wider
+      // screen-flow diagram (~2.9:1) goes alone on row 2 to avoid that.
+      workflowImages: [
+        imgReady("assets/projects/qc-report-automation/menu-structure.png"),
+        imgReady("assets/projects/qc-report-automation/user-flow.png"),
+        imgReady("assets/projects/qc-report-automation/screen-flow.png")
+      ]
     },
     {
       major: true,
