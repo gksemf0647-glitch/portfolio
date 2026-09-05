@@ -5327,9 +5327,20 @@ document.addEventListener('DOMContentLoaded', function(){
      원본 목업: DDS CORE 1.0 Prototype_QCreport 목업.html
      수정 사항:
        · 상단 설명영역(portfolio-head / jumpbar) 제거 — 화면만 노출
-       · QC Report(screen-qcinfo)를 기본 활성 화면으로 고정
-       · 진행 흐름(STEP1 리포트 정보 → STEP2 합격기준 확인 → STEP3 합격기준
-         편집 → STEP4 Export) 을 순차적으로 강조하는 애니메이션 추가
+       · Product List(screen-productlist)를 기본 활성 화면으로 고정
+       · Product List에 "+ Product 추가" 버튼과 Add Product 모달 추가
+       · Information / Well Information / Experiment / QC report 4개
+         탭이 모두 이동 가능한 subtabbar를 각 화면에 추가(Well
+         Information 화면은 원래 subtabbar가 없어 새로 추가)
+       · Experiment의 Data file 썸네일 "Well Info ›"는 화면 이동 대신
+         모달(modalWellInfoView)로 표시하도록 변경, Data file 추가(+)
+         버튼 추가
+       · Product List → Product 추가 → 제품 선택 → Information 입력 →
+         추가 실험 선택 → Well Information 확인 → Experiment(실험
+         선택 · 결과 확인 · Data file · Well Info 모달 · 저장 · 합격
+         기준 설정 · Export) → QC Report 작성 · Export 까지 전체
+         워크플로우를 실제 화면 전환/모달 오픈으로 순서대로 강조하는
+         가이드 투어 애니메이션으로 교체
 ========================================================================= -->
 <template id="prototype-embed--qc-report-automation">
 <!DOCTYPE html>
@@ -5616,7 +5627,7 @@ tbody tr.clickable:hover{background:var(--bg);}
 
 
 <div class="stage">
-<div class="screen" id="screen-productlist"><div class="frame-16x9">
+<div class="screen active" id="screen-productlist"><div class="frame-16x9">
       <div class="titlebar"><div class="dots"><span></span><span></span><span></span></div>LabFlow Result Viewer</div>
       <div class="topnav">
         <div class="brand"><div class="mark"></div>LabFlow</div>
@@ -5636,7 +5647,10 @@ tbody tr.clickable:hover{background:var(--bg);}
 
         <div class="plist-row">
           <div class="step-title" style="margin:0;text-decoration:none;">Prototype Build Records</div>
-          <div class="searchbox"><svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search by product name"></div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="searchbox"><svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search by product name"></div>
+            <button class="btn primary sm" id="btnAddProduct" onclick="document.getElementById('modalAddProduct').classList.add('show')">+ Product 추가</button>
+          </div>
         </div>
         <table>
           <thead><tr><th>Product</th><th>Regulatory</th><th>Last Run</th><th>Experiments</th><th>Handoff Status</th><th>DMR</th><th></th></tr></thead>
@@ -5657,7 +5671,7 @@ tbody tr.clickable:hover{background:var(--bg);}
         <div class="spacer"></div>
         <div class="userinfo"><span>👤 user1(user1)</span><span>Log Out</span><span>About</span></div>
       </div>
-<div class="frame-body"><div class="frame-scroll"><div class="content"><div class="breadcrumbbar"><span class="lnk" style="cursor:pointer;" onclick="show('productlist')">Product List</span><span class="sep">›</span><span class="lnk" style="cursor:pointer;" onclick="show('information')">Panel D Multiplex (EU)</span><span class="sep">›</span><span class="cur">Information</span></div><div class="subtabbar"><div class="stb on">Information</div><div class="stb">Experiment</div><div class="stb">QC report</div></div>
+<div class="frame-body"><div class="frame-scroll"><div class="content"><div class="breadcrumbbar"><span class="lnk" style="cursor:pointer;" onclick="show('productlist')">Product List</span><span class="sep">›</span><span class="lnk" style="cursor:pointer;" onclick="show('information')">Panel D Multiplex (EU)</span><span class="sep">›</span><span class="cur">Information</span></div><div class="subtabbar"><div class="stb on" onclick="show('information')">Information</div><div class="stb" onclick="show('wellinfo')">Well Information</div><div class="stb" onclick="show('experiment')">Experiment</div><div class="stb" onclick="show('qcinfo')">QC report</div></div>
         <div class="info-section">
           <div class="sec-num">1. Product Abbreviation</div>
           <input style="width:413px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px;" placeholder="e.g. PAND">
@@ -5746,7 +5760,7 @@ tbody tr.clickable:hover{background:var(--bg);}
         <div class="spacer"></div>
         <div class="userinfo"><span>👤 user1(user1)</span><span>Log Out</span><span>About</span></div>
       </div>
-<div class="frame-body"><div class="frame-scroll"><div class="content"><div class="breadcrumbbar"><span class="lnk" style="cursor:pointer;" onclick="show('productlist')">Product List</span><span class="sep">›</span><span class="lnk" style="cursor:pointer;" onclick="show('information')">Panel D Multiplex (EU)</span><span class="sep">›</span><span class="cur">Well Info.</span></div>
+<div class="frame-body"><div class="frame-scroll"><div class="content"><div class="breadcrumbbar"><span class="lnk" style="cursor:pointer;" onclick="show('productlist')">Product List</span><span class="sep">›</span><span class="lnk" style="cursor:pointer;" onclick="show('information')">Panel D Multiplex (EU)</span><span class="sep">›</span><span class="cur">Well Info.</span></div><div class="subtabbar"><div class="stb" onclick="show('information')">Information</div><div class="stb on" onclick="show('wellinfo')">Well Information</div><div class="stb" onclick="show('experiment')">Experiment</div><div class="stb" onclick="show('qcinfo')">QC report</div></div>
         <div class="step-title">Well Information — Mastermix &amp; Template Map</div>
         <div class="helpbanner" style="margin-bottom:14px;">📌 앞서 입력한 실험계획(Reagent/PCR Mix 정보)을 기반으로 96-well plate에 어떤 Mastermix와 Template이 배치되는지 자동으로 생성된 맵입니다. 실제 장비에 Plate를 로딩하기 전 최종 확인 단계입니다.</div>
         <div class="exp-toolbar-top" style="margin-bottom:12px;">
@@ -5786,7 +5800,7 @@ tbody tr.clickable:hover{background:var(--bg);}
         <div class="spacer"></div>
         <div class="userinfo"><span>👤 user1(user1)</span><span>Log Out</span><span>About</span></div>
       </div>
-<div class="frame-body"><div class="frame-scroll"><div class="content"><div class="breadcrumbbar"><span class="lnk" style="cursor:pointer;" onclick="show('productlist')">Product List</span><span class="sep">›</span><span class="lnk" style="cursor:pointer;" onclick="show('information')">Panel D Multiplex (EU)</span><span class="sep">›</span><span class="cur">Experiment</span></div><div class="subtabbar"><div class="stb">Information</div><div class="stb on">Experiment</div><div class="stb">QC report</div></div>
+<div class="frame-body"><div class="frame-scroll"><div class="content"><div class="breadcrumbbar"><span class="lnk" style="cursor:pointer;" onclick="show('productlist')">Product List</span><span class="sep">›</span><span class="lnk" style="cursor:pointer;" onclick="show('information')">Panel D Multiplex (EU)</span><span class="sep">›</span><span class="cur">Experiment</span></div><div class="subtabbar"><div class="stb" onclick="show('information')">Information</div><div class="stb" onclick="show('wellinfo')">Well Information</div><div class="stb on" onclick="show('experiment')">Experiment</div><div class="stb" onclick="show('qcinfo')">QC report</div></div>
         <div class="exp-toolbar-top">
           <div></div>
           <div class="grp">
@@ -5833,6 +5847,7 @@ tbody tr.clickable:hover{background:var(--bg);}
             <div class="exp-col-head" style="display:flex;justify-content:space-between;align-items:center;">
               <span>Data file</span>
               <span style="display:flex;gap:2px;">
+                <button class="btn outline sm" id="btnAddDatafile" style="padding:2px 8px;" onclick="toast('데이터 파일을 추가합니다')">+</button>
                 <button class="btn outline sm" style="padding:2px 8px;" onclick="toast('이전 파일로 이동')">▲</button>
                 <button class="btn outline sm" style="padding:2px 8px;" onclick="toast('다음 파일로 이동')">▼</button>
               </span>
@@ -5840,7 +5855,7 @@ tbody tr.clickable:hover{background:var(--bg);}
             <div id="datafileThumbs" style="flex:1;overflow-y:auto;"></div>
           </div>
         </div>
-</div></div><div class="frame-footer"><span class="step-hint">STEP 3 OF 4 &middot; EXPERIMENT</span><div class="btnrow"><button class="btn outline nav" onclick="show('wellinfo')">Prev</button><button class="btn primary nav" onclick="show('qcinfo')">Next</button></div></div></div></div></div><div class="screen active" id="screen-qcinfo"><div class="frame-16x9">
+</div></div><div class="frame-footer"><span class="step-hint">STEP 3 OF 4 &middot; EXPERIMENT</span><div class="btnrow"><button class="btn outline nav" onclick="show('wellinfo')">Prev</button><button class="btn primary nav" onclick="show('qcinfo')">Next</button></div></div></div></div></div><div class="screen" id="screen-qcinfo"><div class="frame-16x9">
       <div class="titlebar"><div class="dots"><span></span><span></span><span></span></div>LabFlow Result Viewer</div>
       <div class="topnav">
         <div class="brand"><div class="mark"></div>LabFlow</div>
@@ -5851,7 +5866,7 @@ tbody tr.clickable:hover{background:var(--bg);}
         <div class="spacer"></div>
         <div class="userinfo"><span>👤 user1(user1)</span><span>Log Out</span><span>About</span></div>
       </div>
-<div class="frame-body"><div class="frame-scroll"><div class="content"><div class="breadcrumbbar"><span class="lnk" style="cursor:pointer;" onclick="show('productlist')">Product List</span><span class="sep">›</span><span class="lnk" style="cursor:pointer;" onclick="show('information')">Panel D Multiplex (EU)</span><span class="sep">›</span><span class="cur">QC Report</span></div><div class="subtabbar"><div class="stb">Information</div><div class="stb">Experiment</div><div class="stb on">QC report</div></div>
+<div class="frame-body"><div class="frame-scroll"><div class="content"><div class="breadcrumbbar"><span class="lnk" style="cursor:pointer;" onclick="show('productlist')">Product List</span><span class="sep">›</span><span class="lnk" style="cursor:pointer;" onclick="show('information')">Panel D Multiplex (EU)</span><span class="sep">›</span><span class="cur">QC Report</span></div><div class="subtabbar"><div class="stb" onclick="show('information')">Information</div><div class="stb" onclick="show('wellinfo')">Well Information</div><div class="stb" onclick="show('experiment')">Experiment</div><div class="stb on" onclick="show('qcinfo')">QC report</div></div>
         <div class="step-title">1. QC Report Information</div>
         <div class="info-field-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px;">
           <div class="cell head">Lot No.</div><div class="cell head">Reviewer</div><div class="cell head">Review Date</div>
@@ -5899,6 +5914,23 @@ tbody tr.clickable:hover{background:var(--bg);}
     <div class="modal-foot">
       <button class="btn" onclick="document.getElementById('modalAddStrain').classList.remove('show')">Cancel</button>
       <button class="btn primary" onclick="document.getElementById('modalAddStrain').classList.remove('show');toast('Strain이 추가되었습니다')">Add</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalAddProduct">
+  <div class="modal-box" style="width:480px;">
+    <div class="modal-head"><h3>Add Product</h3><span class="x" onclick="document.getElementById('modalAddProduct').classList.remove('show')">✕</span></div>
+    <div class="modal-body" style="display:block;">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div><label style="font-size:11.5px;font-weight:700;color:var(--ink-60);">Product Name</label><input id="addProductName" style="width:100%;border:1px solid var(--line);border-radius:7px;padding:9px 11px;font-size:12.5px;margin-top:4px;" placeholder="e.g. Panel E Multiplex (US)"></div>
+        <div><label style="font-size:11.5px;font-weight:700;color:var(--ink-60);">Regulatory</label><input style="width:100%;border:1px solid var(--line);border-radius:7px;padding:9px 11px;font-size:12.5px;margin-top:4px;" placeholder="e.g. FDA-IVD"></div>
+        <div><label style="font-size:11.5px;font-weight:700;color:var(--ink-60);">Cat No.</label><input style="width:100%;border:1px solid var(--line);border-radius:7px;padding:9px 11px;font-size:12.5px;margin-top:4px;" placeholder="e.g. CAT-7700Z"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="document.getElementById('modalAddProduct').classList.remove('show')">Cancel</button>
+      <button class="btn primary" onclick="document.getElementById('modalAddProduct').classList.remove('show');toast('제품이 추가되었습니다')">Add</button>
     </div>
   </div>
 </div>
@@ -5964,6 +5996,34 @@ tbody tr.clickable:hover{background:var(--bg);}
   </div>
 </div>
 
+<div class="modal-overlay" id="modalWellInfoView">
+  <div class="modal-box" style="width:820px;">
+    <div class="modal-head"><h3 id="wiModalLabel">Well Info. — Plate 1 of 3</h3><span class="x" onclick="document.getElementById('modalWellInfoView').classList.remove('show')">✕</span></div>
+    <div class="modal-body" style="display:block;">
+      <div class="helpbanner" style="margin-bottom:14px;">📌 이 Data file이 측정된 Plate의 Mastermix · Template 배치입니다.</div>
+      <div class="wellinfo-layout" style="grid-template-columns:1fr 1fr 200px;">
+        <div class="wi-plate">
+          <div class="exp-toolbar-top"><b style="font-size:12.5px;">Mastermix 분주 가이드</b></div>
+          <div class="wi-grid" id="wiGridMMModal"></div>
+        </div>
+        <div class="wi-plate">
+          <div class="exp-toolbar-top"><b style="font-size:12.5px;">Template 분주 가이드</b></div>
+          <div class="wi-grid" id="wiGridTplModal"></div>
+        </div>
+        <div class="wi-legend">
+          <div class="wi-legend-item"><span class="sw" style="background:var(--teal);"></span>Mastermix 1 (Pre-lot)</div>
+          <div class="wi-legend-item"><span class="sw" style="background:#5B6B4F;"></span>Mastermix 2 (New-lot 1)</div>
+          <div class="wi-legend-item"><span class="sw" style="background:var(--amber);"></span>Mastermix 3 (New-lot 2)</div>
+          <div class="wi-legend-item"><span class="sw" style="background:#8C97A5;"></span>Template A_std</div>
+          <div class="wi-legend-item"><span class="sw" style="background:#8C7A5C;"></span>Template B_std</div>
+          <div class="wi-legend-item"><span class="sw" style="background:#C23A3A;"></span>NC / Empty</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="document.getElementById('modalWellInfoView').classList.remove('show')">Close</button></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalExport">
   <div class="modal-box" style="width:900px;">
     <div class="modal-head"><h3>Export</h3><span class="x" onclick="document.getElementById('modalExport').classList.remove('show')">✕</span></div>
@@ -5971,7 +6031,7 @@ tbody tr.clickable:hover{background:var(--bg);}
       <div class="pathrow">
         <input readonly value="C:\\Users\\user1\\Documents\\LabFlow\\Export">
         <button class="btn sm">Browse</button>
-        <button class="btn primary sm" onclick="toast('내보내기를 시작합니다')">Export</button>
+        <button class="btn primary sm" onclick="toast('내보내기를 시작합니다');document.getElementById('modalExport').classList.remove('show')">Export</button>
       </div>
       <div>
         <div style="display:flex;gap:20px;margin-bottom:10px;font-size:13px;font-weight:700;">
@@ -6204,8 +6264,14 @@ function buildExpList(activeIdx){
   return testNames.map(function(n,i){
     const st = testStates[i];
     const sym = st==='pass' ? 'O' : 'X';
-    return '<div class="exp-item'+(i===activeIdx?' on':'')+'"><span class="flag"></span><span style="flex:1;margin:0 8px;">'+(i+1)+'. '+n+'</span><span class="res '+st+'">'+sym+'</span></div>';
+    return '<div class="exp-item'+(i===activeIdx?' on':'')+'" onclick="selectExpItem('+i+')"><span class="flag"></span><span style="flex:1;margin:0 8px;">'+(i+1)+'. '+n+'</span><span class="res '+st+'">'+sym+'</span></div>';
   }).join('');
+}
+// 실험 목록에서 항목을 선택하면 해당 실험에 맞는 결과정리 페이지(Step2)가
+// 활성화된 것처럼 보이도록 선택 상태만 갱신한다.
+function selectExpItem(idx){
+  const el = document.getElementById('expListMain');
+  if(el) el.innerHTML = buildExpList(idx);
 }
 function renderExportChecklist(){
   const el = document.getElementById('exportChecklist');
@@ -6235,10 +6301,13 @@ function changeWiPlate(dir){
   renderWiGrid();
   toast('Plate '+(wiPlateIndex+1)+'로 이동');
 }
-function renderWiGrid(){
+// Mastermix/Template 96-well 맵 렌더러. mmElId/tplElId 를 인자로 받아 메인
+// Well Info 화면과, Experiment의 Data file 썸네일에서 여는 Well Info 모달
+// 양쪽에서 재사용한다.
+function renderWiGridInto(mmElId, tplElId, offset){
   const mmPalette = ['#B5652D','#5B6B4F','#8C97A5'];
   const tplPalette = ['#5B6B4F','#8C7A5C'];
-  const offset = wiPlateIndex || 0;
+  offset = offset || 0;
   function buildGrid(fn){
     let html = '';
     for(let i=0;i<96;i++){
@@ -6249,20 +6318,32 @@ function renderWiGrid(){
     }
     return html;
   }
-  const mmEl = document.getElementById('wiGridMM');
+  const mmEl = document.getElementById(mmElId);
   if(mmEl){
     mmEl.innerHTML = buildGrid(function(col){
       const idx = (col+offset) % 3;
       return '<div class="wi-well" style="background:'+mmPalette[idx]+';">M'+(idx+1)+'</div>';
     });
   }
-  const tplEl = document.getElementById('wiGridTpl');
+  const tplEl = document.getElementById(tplElId);
   if(tplEl){
     tplEl.innerHTML = buildGrid(function(col){
       const idx = (col+offset) % 2;
       return '<div class="wi-well" style="background:'+tplPalette[idx]+';">T'+(idx+1)+'</div>';
     });
   }
+}
+function renderWiGrid(){
+  renderWiGridInto('wiGridMM', 'wiGridTpl', wiPlateIndex || 0);
+}
+// Data file 썸네일의 "Well Info ›" 를 누르면 화면 이동 대신 해당 Plate의
+// Well Info를 모달로 보여준다.
+function openWellInfoModal(plateIdx){
+  const label = document.getElementById('wiModalLabel');
+  if(label) label.textContent = 'Well Info. — Plate ' + (plateIdx + 1) + ' of ' + WI_PLATE_TOTAL;
+  renderWiGridInto('wiGridMMModal', 'wiGridTplModal', plateIdx);
+  const m = document.getElementById('modalWellInfoView');
+  if(m) m.classList.add('show');
 }
 
 // ---- Amplification curve SVG (stylized sigmoid) ----
@@ -6369,7 +6450,7 @@ function renderDatafileThumbs(){
       const color = r < 6 ? '#8D96A3' : (r < 9 ? '#B5652D' : '#B23A34');
       wells += '<div class="miniwell" style="background:'+color+';"></div>';
     }
-    html += '<div class="datafile-thumb" style="cursor:pointer;" onclick="show(\'wellinfo\')" title="클릭하여 Well Info.에서 이 Plate의 Mastermix/Template 배치 확인">'+
+    html += '<div class="datafile-thumb" style="cursor:pointer;" onclick="openWellInfoModal('+fi+')" title="클릭하여 이 Plate의 Well Info.를 모달로 확인">'+
             '<div class="fname">#'+(fi+1)+' Well Plate &middot; '+f+'</div><div class="miniplate">'+wells+'</div>'+
             '<div style="font-size:8.5px;color:var(--teal);font-weight:700;margin-top:5px;text-align:right;">#'+(fi+1)+' Well Info \u203a</div></div>';
   });
@@ -6387,134 +6468,188 @@ renderNotes('productlist');
 
 </script>
 <style>
-/* ===== QC Report 진행 흐름 순차 강조 애니메이션 (포트폴리오 임베드 전용) ===== */
-#screen-qcinfo .content{overflow:visible;}
-#screen-qcinfo .frame-scroll{position:relative;}
-.qc-flow-step{position:relative;border-radius:12px;padding:12px 16px;margin:0 0 6px;
-  transition:background .45s ease, box-shadow .45s ease, opacity .45s ease;}
-.qc-flow-step.flow-idle{opacity:.5;}
-.qc-flow-step.flow-active{opacity:1;background:var(--teal-soft);
-  box-shadow:0 0 0 2px var(--teal), 0 10px 30px rgba(0,113,227,.18);
-  animation:qcFlowPulse 1.7s ease-in-out infinite;}
-.qc-flow-step.flow-done{opacity:1;background:var(--green-soft);
-  box-shadow:0 0 0 1px rgba(36,138,61,.35);}
-@keyframes qcFlowPulse{
-  0%,100%{box-shadow:0 0 0 2px var(--teal), 0 10px 30px rgba(0,113,227,.16);}
-  50%{box-shadow:0 0 0 6px rgba(0,113,227,.26), 0 10px 34px rgba(0,113,227,.26);}
+/* ===== 전체 워크플로우 가이드 투어 (포트폴리오 임베드 전용) =====
+   Product List -> Product 추가 -> 제품 선택 -> Information 입력 -> 추가
+   실험 선택 -> Well Information 확인 -> Experiment(실험 선택 / 결과 확인 /
+   Data file / Well Info 모달 / 저장 / 합격기준 설정 / Export) -> QC Report
+   작성 / Export 까지, 실제 화면 전환과 모달 오픈을 그대로 트리거하며
+   순서대로 강조한다. */
+.tour-hl{outline:3px solid rgba(0,113,227,.95) !important;outline-offset:2px;border-radius:6px;
+  position:relative;z-index:5;animation:tourRing 1.3s ease-in-out infinite;}
+@keyframes tourRing{
+  0%,100%{outline-color:rgba(0,113,227,.95);box-shadow:0 0 0 0 rgba(0,113,227,.35);}
+  50%{outline-color:rgba(0,113,227,.55);box-shadow:0 0 16px 5px rgba(0,113,227,.30);}
 }
-.qc-flow-badge{position:absolute;top:-11px;right:14px;display:inline-flex;align-items:center;
-  height:22px;padding:0 12px;border-radius:999px;background:var(--ink-40);color:#fff;
-  font-size:10px;font-weight:700;letter-spacing:.04em;white-space:nowrap;
-  opacity:0;transform:translateY(6px) scale(.9);transition:.32s ease;pointer-events:none;
-  box-shadow:0 4px 12px rgba(0,0,0,.14);}
-.qc-flow-step.flow-active .qc-flow-badge{opacity:1;transform:translateY(0) scale(1);background:var(--teal);}
-.qc-flow-step.flow-done .qc-flow-badge{opacity:1;transform:translateY(0) scale(1);background:var(--green);}
-.qc-flow-step.flow-active::before{content:'\25B8';position:absolute;left:4px;top:50%;
-  transform:translateY(-50%);color:var(--teal);font-size:15px;font-weight:700;
-  animation:qcFlowArrow 1s ease-in-out infinite;}
-@keyframes qcFlowArrow{0%,100%{transform:translateY(-50%) translateX(0);}50%{transform:translateY(-50%) translateX(3px);}}
-.frame-footer .btn.primary.flow-active{box-shadow:0 0 0 3px rgba(0,113,227,.32);
-  animation:qcFlowBtn 1.25s ease-in-out infinite;}
-@keyframes qcFlowBtn{0%,100%{box-shadow:0 0 0 3px rgba(0,113,227,.30);}50%{box-shadow:0 0 0 9px rgba(0,113,227,.10);}}
+@keyframes tourDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
 @media (prefers-reduced-motion: reduce){
-  .qc-flow-step.flow-active,.qc-flow-step.flow-active::before,
-  .frame-footer .btn.primary.flow-active{animation:none;}
+  .tour-hl{animation:none;}
+  .tour-hud-dot{animation:none;}
 }
 </style>
 <script>
 (function(){
-  var scr = document.getElementById('screen-qcinfo');
-  if(!scr) return;
-  var content = scr.querySelector('.content');
-  if(!content) return;
+  // 부모(포트폴리오 index.html)가 이 iframe 문서를 #__embedCanvas 로 감싸고
+  // 스케일을 적용하는 hydratePrototypeEmbeds() 실행 이후에 투어를 시작해야
+  // 스크롤/강조 위치 보정이 가능하다.
+  function whenCanvasReady(fn){
+    var c = document.getElementById('__embedCanvas');
+    if(c){ fn(c); return; }
+    setTimeout(function(){ whenCanvasReady(fn); }, 60);
+  }
 
-  var labels = ['STEP 1 \u00b7 \uB9AC\uD3EC\uD2B8 \uC815\uBCF4',
-                'STEP 2 \u00b7 \uD569\uACA9\uAE30\uC900 \uD655\uC778',
-                'STEP 3 \u00b7 \uD569\uACA9\uAE30\uC900 \uD3B8\uC9D1',
-                'STEP 4 \u00b7 QC \uB9AC\uD3EC\uD2B8 \uCD9C\uB825'];
+  whenCanvasReady(function(canvas){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // 진행 스텝(1·2·3) 섹션을 감싸는 래퍼를 동적 생성
-  var titles = [].slice.call(content.querySelectorAll(':scope > .step-title'));
-  titles.forEach(function(t, i){
-    var wrap = document.createElement('div');
-    wrap.className = 'qc-flow-step';
-    wrap.setAttribute('data-flow', String(i + 1));
-    content.insertBefore(wrap, t);
-    var node = t;
-    while(node){
-      var next = node.nextElementSibling;
-      wrap.appendChild(node);
-      if(!next || next.classList.contains('step-title')) break;
-      node = next;
-    }
-    var badge = document.createElement('span');
-    badge.className = 'qc-flow-badge';
-    badge.textContent = labels[i] || ('STEP ' + (i + 1));
-    wrap.appendChild(badge);
-  });
+    // ---- 상시 표시되는 진행 상태 HUD. 캔버스가 아니라 body 에 바로 붙여서
+    // transform:scale 의 영향을 받지 않고 iframe 뷰포트 기준으로 고정한다. ----
+    var hud = document.createElement('div');
+    hud.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);'+
+      'background:rgba(29,29,31,.92);color:#fff;font:600 11.5px/1 -apple-system,BlinkMacSystemFont,'+
+      '"Segoe UI",sans-serif;padding:9px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.28);'+
+      'z-index:99999;display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none;'+
+      'letter-spacing:.02em;';
+    var dot = document.createElement('span');
+    dot.className = 'tour-hud-dot';
+    dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:#34D399;display:inline-block;animation:tourDot 1.4s ease-in-out infinite;';
+    var hudText = document.createElement('span');
+    hud.appendChild(dot); hud.appendChild(hudText);
+    document.body.appendChild(hud);
+    function setPhase(t){ if(t && hudText.textContent !== t) hudText.textContent = t; }
 
-  var steps = [].slice.call(content.querySelectorAll('.qc-flow-step'));
-  if(!steps.length) return;
-  var exportBtn = scr.querySelector('.frame-footer .btn.primary');
-  var scroller = scr.querySelector('.frame-scroll');
-  var seq = steps.slice();
-  if(exportBtn) seq.push(exportBtn);
-
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var i = -1, timer = null;
-
-  function paint(active){
-    steps.forEach(function(s, si){
-      s.classList.remove('flow-active', 'flow-done', 'flow-idle');
-      var b = s.querySelector('.qc-flow-badge');
-      if(active === -1){ if(b) b.textContent = labels[si]; return; }  /* 리셋: 완전 중립 상태 */
-      if(si < active || active === steps.length){
-        s.classList.add('flow-done');
-        if(b) b.textContent = '\u2713 \uC644\uB8CC';
-      } else if(si === active){
-        s.classList.add('flow-active');
-        if(b) b.textContent = labels[si];
-      } else {
-        s.classList.add('flow-idle');
-        if(b) b.textContent = labels[si];
+    // ---- 스크롤 컨테이너(.frame-scroll 또는 모달의 .modal-body)를 찾아
+    // transform:scale 된 캔버스 안에서도 정확한 위치로 스크롤한다. ----
+    function scrollContainerFor(el){
+      var p = el && el.parentElement;
+      while(p && p !== document.body){
+        var cs = getComputedStyle(p);
+        if((cs.overflowY === 'auto' || cs.overflowY === 'scroll') && p.scrollHeight > p.clientHeight + 2) return p;
+        p = p.parentElement;
       }
-    });
-    if(exportBtn) exportBtn.classList.toggle('flow-active', active === steps.length);
-  }
-
-  // 프레임 안쪽(.frame-scroll)만 스크롤 — 바깥 포트폴리오 페이지는 건드리지 않음.
-  // 정상 브라우저에서는 네이티브 smooth 스크롤을 쓰고, transform:scale 되었거나
-  // 포커스가 없는 iframe 처럼 smooth 가 무시되는 환경에서는 짧은 지연 뒤 값을
-  // 직접 지정(스냅)해 항상 목표 위치로 맞춘다.
-  var scrollSnap = null;
-  function animScroll(to){
-    if(!scroller) return;
-    to = Math.max(0, Math.min(to, scroller.scrollHeight - scroller.clientHeight));
-    try { scroller.scrollTo({top: to, behavior: reduce ? 'auto' : 'smooth'}); } catch(e){}
-    clearTimeout(scrollSnap);
-    scrollSnap = setTimeout(function(){ scroller.scrollTop = to; }, reduce ? 0 : 280);
-  }
-  function focusEl(el){
-    if(!el || el === exportBtn) return;
-    animScroll(el.offsetTop - 36);
-  }
-
-  function tick(){
-    i++;
-    if(i >= seq.length){
-      i = -1;
-      paint(-1);
-      animScroll(0);
-      timer = setTimeout(tick, 1100);
-      return;
+      return null;
     }
-    paint(i);
-    focusEl(seq[i]);
-    timer = setTimeout(tick, seq[i] === exportBtn ? 2800 : 2500);
-  }
+    function scaleOf(){
+      var r = canvas.getBoundingClientRect();
+      return (r.width / canvas.offsetWidth) || 1;
+    }
+    function scrollIntoContainer(el){
+      var container = scrollContainerFor(el);
+      if(!container) return;
+      var s = scaleOf();
+      var er = el.getBoundingClientRect(), cr = container.getBoundingClientRect();
+      var delta = (er.top - cr.top) / s;
+      var target = container.scrollTop + delta - 40;
+      target = Math.max(0, Math.min(target, container.scrollHeight - container.clientHeight));
+      try { container.scrollTo({top: target, behavior: reduce ? 'auto' : 'smooth'}); } catch(e){}
+      clearTimeout(container.__tourSnap);
+      container.__tourSnap = setTimeout(function(){ container.scrollTop = target; }, reduce ? 0 : 280);
+    }
 
-  paint(-1);
-  timer = setTimeout(tick, 1200);
+    // ---- 강조 표시 ----
+    var hlEl = null;
+    function clearHl(){ if(hlEl){ hlEl.classList.remove('tour-hl'); hlEl = null; } }
+    function highlight(el){
+      clearHl();
+      if(!el) return;
+      el.classList.add('tour-hl');
+      hlEl = el;
+      scrollIntoContainer(el);
+    }
+
+    // ---- 텍스트로 대상을 찾는 헬퍼. Information 화면의 섹션처럼 화면 내
+    // 위치가 아니라 내용으로 식별해야 안전한 대상에 사용한다. ----
+    function findByText(scopeSel, childSel, text){
+      var scope = document.querySelector(scopeSel);
+      if(!scope) return null;
+      var nodes = scope.querySelectorAll(childSel);
+      for(var i = 0; i < nodes.length; i++){
+        if(nodes[i].textContent.indexOf(text) > -1) return nodes[i];
+      }
+      return null;
+    }
+    function resolve(st){
+      if(st.find) return findByText(st.find.scope, st.find.child, st.find.text);
+      return document.querySelector(st.sel);
+    }
+    function fillValue(sel, text){
+      var input = document.querySelector(sel);
+      if(!input) return;
+      input.value = text;
+      try { input.dispatchEvent(new Event('input', {bubbles:true})); } catch(e){}
+    }
+
+    // ---- 전체 흐름 스텝 정의 -------------------------------------------
+    // Product List -> Product 추가 -> 제품 선택 -> Information 입력 -> 추가
+    // 실험 선택 -> Well Information 확인 -> Experiment(실험 선택 / 결과
+    // 확인 / Data file 업로드 / Well Info 모달 / 저장 / 합격기준 설정 /
+    // Export) -> QC Report 작성 / Export -> 처음으로
+    var steps = [
+      {phase:'① Product List', sel:'#screen-productlist .plist-row', hold:1500},
+      {phase:'② Product 추가', sel:'#btnAddProduct', hold:1400, click:true},
+      {phase:'② Product 추가', sel:'#modalAddProduct .modal-body', hold:1500,
+        fills:[{sel:'#addProductName', text:'Panel E Multiplex (US)'}]},
+      {phase:'② Product 추가', sel:'#modalAddProduct .modal-foot .btn.primary', hold:1100, click:true},
+      {phase:'① Product List', sel:'#screen-productlist tbody tr:nth-child(1) td:nth-child(1)', hold:1500, click:true},
+      {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'1. Product Abbreviation'}, hold:1400,
+        fills:[{sel:'#screen-information input[placeholder="e.g. PAND"]', text:'PAND'}]},
+      {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'2. Product Information'}, hold:1700},
+      {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'6. Channel and Analyte Information'}, hold:1900},
+      {phase:'③ Information 입력', sel:'#screen-information .frame-footer .btn.primary', hold:1300, click:true},
+      {phase:'④ 추가 실험 선택', sel:'#modalIcTest .confirm-check-list', hold:1700},
+      {phase:'④ 추가 실험 선택', sel:'#modalIcTest .modal-foot .btn.primary', hold:1100, click:true},
+      {phase:'⑤ Well Information 확인', sel:'#screen-wellinfo .wellinfo-layout', hold:2100},
+      {phase:'⑤ Well Information 확인', sel:'#screen-wellinfo .frame-footer .btn.primary', hold:1300, click:true},
+      {phase:'⑥ Experiment · 실험 선택', sel:'#expListMain .exp-item:nth-child(15)', hold:1700, click:true},
+      {phase:'⑥ Experiment · 결과 확인', sel:'#screen-experiment .console-panel', hold:1900},
+      {phase:'⑥ Experiment · 결과 확인', sel:'#screen-experiment .results-table-wrap', hold:1700},
+      {phase:'⑦ Data file 업로드', sel:'#btnAddDatafile', hold:1300, click:true},
+      {phase:'⑦ Data file 업로드', sel:'#datafileThumbs .datafile-thumb:nth-child(1)', hold:1500, click:true},
+      {phase:'⑦ Well Info. 확인 (모달)', sel:'#modalWellInfoView .modal-body', hold:1900},
+      {phase:'⑦ Well Info. 확인 (모달)', sel:'#modalWellInfoView .modal-foot .btn', hold:900, click:true},
+      {phase:'⑥ Experiment · 저장', sel:'#screen-experiment button[onclick*="저장되었습니다"]', hold:1400, click:true},
+      {phase:'⑧ 합격 기준 설정', sel:'#screen-experiment button[onclick*="modalSetCriteria"]', hold:1300, click:true},
+      {phase:'⑧ 합격 기준 설정', sel:'#modalSetCriteria .criteria-table', hold:1900},
+      {phase:'⑧ 합격 기준 설정', sel:'#modalSetCriteria .modal-foot .btn.primary', hold:1200, click:true},
+      {phase:'⑨ 결과 Export', sel:'#screen-experiment button[onclick*="modalExport"]', hold:1300, click:true},
+      {phase:'⑨ 결과 Export', sel:'#modalExport .pathrow', hold:1700},
+      {phase:'⑨ 결과 Export', sel:'#modalExport .pathrow .btn.primary', hold:1300, click:true},
+      {phase:'⑨ 결과 Export', sel:'#screen-experiment .frame-footer .btn.primary', hold:1300, click:true},
+      {phase:'⑩ QC Report 작성', sel:'#screen-qcinfo .info-field-grid', hold:1500,
+        fills:[
+          {sel:'#screen-qcinfo input[placeholder="e.g. RUN1001"]', text:'RUN1001'},
+          {sel:'#screen-qcinfo input[placeholder="e.g. user1"]', text:'user1'}
+        ]},
+      {phase:'⑩ QC Report 작성', sel:'#screen-qcinfo table.small-table', hold:1700},
+      {phase:'⑩ QC Report 작성', sel:'#screen-qcinfo table.criteria-table', hold:1900},
+      {phase:'⑩ QC Report Export', sel:'#screen-qcinfo .frame-footer .btn.primary', hold:1400, click:true},
+      {phase:'⑩ QC Report Export', sel:'#modalQcExport .side-checks', hold:1900},
+      {phase:'⑩ QC Report Export', sel:'#modalQcExport .modal-foot .btn.primary', hold:1300, click:true},
+      // onclick 값이 홑따옴표를 포함하므로(show('productlist')) 따옴표 없는
+      // 식별자 매칭([onclick*=productlist])으로 우회한다.
+      {phase:'① Product List', sel:'#screen-qcinfo .frame-footer button[onclick*=productlist]', hold:1000, click:true}
+    ];
+
+    var idx = -1, timer = null;
+    function tick(){
+      idx++;
+      if(idx >= steps.length){
+        idx = -1;
+        clearHl();
+        timer = setTimeout(tick, 900);
+        return;
+      }
+      var st = steps[idx];
+      var el = resolve(st);
+      if(st.phase) setPhase(st.phase);
+      if(!el){ timer = setTimeout(tick, 60); return; }
+      highlight(el);
+      if(st.fills) st.fills.forEach(function(f){ fillValue(f.sel, f.text); });
+      timer = setTimeout(function(){
+        if(st.click){ try { el.click(); } catch(e){} }
+        timer = setTimeout(tick, 320);
+      }, st.hold || 1600);
+    }
+    timer = setTimeout(tick, 1200);
+  });
 })();
 </script>
 </body>
