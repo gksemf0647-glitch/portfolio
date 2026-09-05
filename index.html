@@ -5602,9 +5602,17 @@ tbody tr.clickable:hover{background:var(--bg);}
 .wi-legend-item .sw{width:12px;height:12px;border-radius:4px;flex-shrink:0;}
 
 /* ---- Experiment screen ---- */
-.exp-layout{display:grid;grid-template-columns:230px 1fr 190px;gap:20px;height:100%;}
+/* 실제 작업 순서(실험 선택 -> Data file 업로드 -> 결과 분석)를 그대로
+   따라가도록 Step1(선택) -> Step2(Data file) -> Step3(분석) 순으로 배치 */
+.exp-layout{display:grid;grid-template-columns:230px 190px 1fr;gap:20px;height:100%;}
 .exp-col{min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden;}
 .exp-col-head{font-size:11px;font-weight:600;color:var(--ink-40);margin-bottom:8px;}
+/* 실험을 선택하기 전 Step3 분석 영역에 보여주는 빈 상태 */
+.results-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:60px 16px;color:var(--ink-40);border:1px dashed var(--line);border-radius:10px;flex:1;}
+.results-empty-icon{font-size:26px;margin-bottom:10px;opacity:.55;}
+.results-empty-title{font-size:13px;font-weight:700;color:var(--ink-60);margin-bottom:6px;}
+.results-empty-desc{font-size:11.5px;line-height:1.7;}
 .exp-toolbar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
 .exp-toolbar-top .grp{display:flex;gap:8px;}
 .datafile-thumb{border:none;border-bottom:1px solid var(--line);border-radius:0;padding:10px 2px;margin-bottom:0;}
@@ -5818,34 +5826,8 @@ tbody tr.clickable:hover{background:var(--bg);}
           </div>
 
           <div class="exp-col">
-            <div class="exp-col-head">Step2. Analysis</div>
-            <div class="exp-toolbar-top" style="margin-bottom:8px;">
-              <div class="grp"><button class="btn outline sm" onclick="toast('데이터 파일을 업로드합니다')">Upload</button><button class="btn outline sm" onclick="show('wellinfo')">Well info.</button></div>
-              <div class="grp"><button class="btn outline sm" id="commentBtn" onclick="toggleComment()">Add Comment</button></div>
-            </div>
-            <select style="width:100%;border:1px solid var(--line);border-radius:7px;padding:8px 10px;font-size:12px;margin-bottom:10px;"><option>14. Reagent stability test 2 (optional) / Control sample_PC Sensitivity</option></select>
-
-            <div class="exp-toolbar-top" style="margin-bottom:8px;">
-              <div class="grp"><button class="btn outline sm" onclick="toast('결과를 다시 적용합니다')">Apply</button><button class="btn outline sm" onclick="toast('Ct/RFU 값을 재계산합니다')">Calculate</button><button class="btn outline sm" onclick="toast('입력값이 초기화되었습니다')">Reset</button><button class="btn primary sm" onclick="toast('저장되었습니다!')">Save</button></div>
-              <label class="toggle-row" style="font-size:11px;"><input type="checkbox" checked onchange="toast(this.checked?'RFU 값 기준으로 전환':'Ct 값 기준으로 전환')"> Use RFU value</label>
-            </div>
-
-            <div class="console-panel">
-              <div class="console-head"><span>Result — Amplification Curves</span><span class="mono">40 CYCLES</span></div>
-              <div id="curveGridWrap" style="overflow-x:auto;"></div>
-            </div>
-
-            <div class="results-table-wrap">
-              <div style="font-size:10.5px;font-weight:700;color:var(--ink-40);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Ct Sensitivity Table</div>
-              <table class="results-table" id="resultsTableCt"></table>
-              <div style="font-size:10.5px;font-weight:700;color:var(--ink-40);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 4px;">RFU Sensitivity Table</div>
-              <table class="results-table" id="resultsTableRfu"></table>
-            </div>
-          </div>
-
-          <div class="exp-col">
             <div class="exp-col-head" style="display:flex;justify-content:space-between;align-items:center;">
-              <span>Data file</span>
+              <span>Step2. Data file</span>
               <span style="display:flex;gap:2px;">
                 <button class="btn outline sm" id="btnAddDatafile" style="padding:2px 8px;" onclick="toast('데이터 파일을 추가합니다')">+</button>
                 <button class="btn outline sm" style="padding:2px 8px;" onclick="toast('이전 파일로 이동')">▲</button>
@@ -5853,6 +5835,38 @@ tbody tr.clickable:hover{background:var(--bg);}
               </span>
             </div>
             <div id="datafileThumbs" style="flex:1;overflow-y:auto;"></div>
+          </div>
+
+          <div class="exp-col">
+            <div class="exp-col-head">Step3. Analysis</div>
+            <div class="exp-toolbar-top" style="margin-bottom:8px;">
+              <div class="grp"><button class="btn outline sm" onclick="toast('데이터 파일을 업로드합니다')">Upload</button><button class="btn outline sm" onclick="show('wellinfo')">Well info.</button></div>
+              <div class="grp"><button class="btn outline sm" id="commentBtn" onclick="toggleComment()">Add Comment</button></div>
+            </div>
+            <select id="expSubSelect" style="width:100%;border:1px solid var(--line);border-radius:7px;padding:8px 10px;font-size:12px;margin-bottom:10px;"><option>Step1에서 실험 항목을 선택하세요</option></select>
+
+            <div class="exp-toolbar-top" style="margin-bottom:8px;">
+              <div class="grp"><button class="btn outline sm" onclick="toast('결과를 다시 적용합니다')">Apply</button><button class="btn outline sm" onclick="toast('Ct/RFU 값을 재계산합니다')">Calculate</button><button class="btn outline sm" onclick="toast('입력값이 초기화되었습니다')">Reset</button><button class="btn primary sm" onclick="toast('저장되었습니다!')">Save</button></div>
+              <label class="toggle-row" style="font-size:11px;"><input type="checkbox" checked onchange="toast(this.checked?'RFU 값 기준으로 전환':'Ct 값 기준으로 전환')"> Use RFU value</label>
+            </div>
+
+            <div class="results-empty" id="resultsEmpty">
+              <div class="results-empty-icon">🧪</div>
+              <div class="results-empty-title">No data</div>
+              <div class="results-empty-desc">Step1에서 실험 항목을 선택하면<br>해당 실험의 결과 정리 양식이 표시됩니다.</div>
+            </div>
+
+            <div class="console-panel" id="resultsContent" style="display:none;">
+              <div class="console-head"><span>Result — Amplification Curves</span><span class="mono">40 CYCLES</span></div>
+              <div id="curveGridWrap" style="overflow-x:auto;"></div>
+            </div>
+
+            <div class="results-table-wrap" id="resultsTableWrap" style="display:none;">
+              <div style="font-size:10.5px;font-weight:700;color:var(--ink-40);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Ct Sensitivity Table</div>
+              <table class="results-table" id="resultsTableCt"></table>
+              <div style="font-size:10.5px;font-weight:700;color:var(--ink-40);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 4px;">RFU Sensitivity Table</div>
+              <table class="results-table" id="resultsTableRfu"></table>
+            </div>
           </div>
         </div>
 </div></div><div class="frame-footer"><span class="step-hint">STEP 3 OF 4 &middot; EXPERIMENT</span><div class="btnrow"><button class="btn outline nav" onclick="show('wellinfo')">Prev</button><button class="btn primary nav" onclick="show('qcinfo')">Next</button></div></div></div></div></div><div class="screen" id="screen-qcinfo"><div class="frame-16x9">
@@ -6267,11 +6281,23 @@ function buildExpList(activeIdx){
     return '<div class="exp-item'+(i===activeIdx?' on':'')+'" onclick="selectExpItem('+i+')"><span class="flag"></span><span style="flex:1;margin:0 8px;">'+(i+1)+'. '+n+'</span><span class="res '+st+'">'+sym+'</span></div>';
   }).join('');
 }
-// 실험 목록에서 항목을 선택하면 해당 실험에 맞는 결과정리 페이지(Step2)가
-// 활성화된 것처럼 보이도록 선택 상태만 갱신한다.
+// 실험 목록에서 항목을 선택하면 해당 실험에 맞는 결과정리 페이지(Step3)가
+// 나타나도록 선택 상태를 갱신하고 결과 영역을 노출한다. 선택 전에는
+// showResultsFor() 를 거치지 않으므로 Step3는 "No data" 상태로 남는다.
 function selectExpItem(idx){
   const el = document.getElementById('expListMain');
   if(el) el.innerHTML = buildExpList(idx);
+  showResultsFor(idx);
+}
+function showResultsFor(idx){
+  const empty = document.getElementById('resultsEmpty');
+  const panel = document.getElementById('resultsContent');
+  const tableWrap = document.getElementById('resultsTableWrap');
+  if(empty) empty.style.display = 'none';
+  if(panel) panel.style.display = '';
+  if(tableWrap) tableWrap.style.display = '';
+  const sel = document.getElementById('expSubSelect');
+  if(sel && sel.options[0] && testNames[idx]) sel.options[0].textContent = (idx + 1) + '. ' + testNames[idx];
 }
 function renderExportChecklist(){
   const el = document.getElementById('exportChecklist');
@@ -6457,7 +6483,8 @@ function renderDatafileThumbs(){
   el.innerHTML = html;
 }
 
-document.getElementById('expListMain') && (document.getElementById('expListMain').innerHTML = buildExpList(13));
+// 초기 상태는 선택된 실험이 없음(-1) — Step3 결과 영역은 "No data"로 시작한다.
+document.getElementById('expListMain') && (document.getElementById('expListMain').innerHTML = buildExpList(-1));
 renderExportChecklist();
 renderSummaryList();
 renderWiGrid();
@@ -6472,17 +6499,25 @@ renderNotes('productlist');
    Product List -> Product 추가 -> 제품 선택 -> Information 입력 -> 추가
    실험 선택 -> Well Information 확인 -> Experiment(실험 선택 / 결과 확인 /
    Data file / Well Info 모달 / 저장 / 합격기준 설정 / Export) -> QC Report
-   작성 / Export 까지, 실제 화면 전환과 모달 오픈을 그대로 트리거하며
-   순서대로 강조한다. */
+   작성 / Export 까지 안내한다. 화면·모달 전환이 필요한 단계는 자동으로
+   진행하지 않고, 강조된 버튼을 사용자가 실제로 클릭해야만 다음 단계로
+   넘어간다(내용만 살펴보는 단계는 잠깐 강조 후 자동으로 넘어간다). */
 .tour-hl{outline:3px solid rgba(0,113,227,.95) !important;outline-offset:2px;border-radius:6px;
-  position:relative;z-index:5;animation:tourRing 1.3s ease-in-out infinite;}
+  position:relative;z-index:5;animation:tourRing 1.3s ease-in-out infinite;cursor:default;}
 @keyframes tourRing{
   0%,100%{outline-color:rgba(0,113,227,.95);box-shadow:0 0 0 0 rgba(0,113,227,.35);}
   50%{outline-color:rgba(0,113,227,.55);box-shadow:0 0 16px 5px rgba(0,113,227,.30);}
 }
+/* 사용자의 실제 클릭을 기다리는 단계 — 주황색 링 + 손가락 커서로
+   "여기를 눌러야 진행됩니다"를 명확히 구분한다. */
+.tour-hl.tour-wait{outline-color:rgba(245,158,11,.95) !important;animation:tourRingWait .9s ease-in-out infinite;cursor:pointer;}
+@keyframes tourRingWait{
+  0%,100%{outline-color:rgba(245,158,11,.95);box-shadow:0 0 0 0 rgba(245,158,11,.45);}
+  50%{outline-color:rgba(245,158,11,.6);box-shadow:0 0 18px 6px rgba(245,158,11,.38);}
+}
 @keyframes tourDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
 @media (prefers-reduced-motion: reduce){
-  .tour-hl{animation:none;}
+  .tour-hl,.tour-hl.tour-wait{animation:none;}
   .tour-hud-dot{animation:none;}
 }
 </style>
@@ -6514,7 +6549,13 @@ renderNotes('productlist');
     var hudText = document.createElement('span');
     hud.appendChild(dot); hud.appendChild(hudText);
     document.body.appendChild(hud);
-    function setPhase(t){ if(t && hudText.textContent !== t) hudText.textContent = t; }
+    // waitingForClick 이 true 면 "여기를 클릭하세요" 문구 + 주황 점으로,
+    // 아닐 때는 초록 점(자동 진행)으로 표시한다.
+    function setPhase(t, waitingForClick){
+      var label = t + (waitingForClick ? ' · 강조된 버튼을 클릭하세요' : '');
+      if(hudText.textContent !== label) hudText.textContent = label;
+      dot.style.background = waitingForClick ? '#F59E0B' : '#34D399';
+    }
 
     // ---- 스크롤 컨테이너(.frame-scroll 또는 모달의 .modal-body)를 찾아
     // transform:scale 된 캔버스 안에서도 정확한 위치로 스크롤한다. ----
@@ -6546,11 +6587,12 @@ renderNotes('productlist');
 
     // ---- 강조 표시 ----
     var hlEl = null;
-    function clearHl(){ if(hlEl){ hlEl.classList.remove('tour-hl'); hlEl = null; } }
-    function highlight(el){
+    function clearHl(){ if(hlEl){ hlEl.classList.remove('tour-hl', 'tour-wait'); hlEl = null; } }
+    function highlight(el, waitingForClick){
       clearHl();
       if(!el) return;
       el.classList.add('tour-hl');
+      if(waitingForClick) el.classList.add('tour-wait');
       hlEl = el;
       scrollIntoContainer(el);
     }
@@ -6577,78 +6619,166 @@ renderNotes('productlist');
       try { input.dispatchEvent(new Event('input', {bubbles:true})); } catch(e){}
     }
 
-    // ---- 전체 흐름 스텝 정의 -------------------------------------------
-    // Product List -> Product 추가 -> 제품 선택 -> Information 입력 -> 추가
-    // 실험 선택 -> Well Information 확인 -> Experiment(실험 선택 / 결과
-    // 확인 / Data file 업로드 / Well Info 모달 / 저장 / 합격기준 설정 /
-    // Export) -> QC Report 작성 / Export -> 처음으로
-    var steps = [
-      {phase:'① Product List', sel:'#screen-productlist .plist-row', hold:1500},
-      {phase:'② Product 추가', sel:'#btnAddProduct', hold:1400, click:true},
-      {phase:'② Product 추가', sel:'#modalAddProduct .modal-body', hold:1500,
-        fills:[{sel:'#addProductName', text:'Panel E Multiplex (US)'}]},
-      {phase:'② Product 추가', sel:'#modalAddProduct .modal-foot .btn.primary', hold:1100, click:true},
-      {phase:'① Product List', sel:'#screen-productlist tbody tr:nth-child(1) td:nth-child(1)', hold:1500, click:true},
-      {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'1. Product Abbreviation'}, hold:1400,
-        fills:[{sel:'#screen-information input[placeholder="e.g. PAND"]', text:'PAND'}]},
-      {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'2. Product Information'}, hold:1700},
-      {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'6. Channel and Analyte Information'}, hold:1900},
-      {phase:'③ Information 입력', sel:'#screen-information .frame-footer .btn.primary', hold:1300, click:true},
-      {phase:'④ 추가 실험 선택', sel:'#modalIcTest .confirm-check-list', hold:1700},
-      {phase:'④ 추가 실험 선택', sel:'#modalIcTest .modal-foot .btn.primary', hold:1100, click:true},
-      {phase:'⑤ Well Information 확인', sel:'#screen-wellinfo .wellinfo-layout', hold:2100},
-      {phase:'⑤ Well Information 확인', sel:'#screen-wellinfo .frame-footer .btn.primary', hold:1300, click:true},
-      {phase:'⑥ Experiment · 실험 선택', sel:'#expListMain .exp-item:nth-child(15)', hold:1700, click:true},
-      {phase:'⑥ Experiment · 결과 확인', sel:'#screen-experiment .console-panel', hold:1900},
-      {phase:'⑥ Experiment · 결과 확인', sel:'#screen-experiment .results-table-wrap', hold:1700},
-      {phase:'⑦ Data file 업로드', sel:'#btnAddDatafile', hold:1300, click:true},
-      {phase:'⑦ Data file 업로드', sel:'#datafileThumbs .datafile-thumb:nth-child(1)', hold:1500, click:true},
-      {phase:'⑦ Well Info. 확인 (모달)', sel:'#modalWellInfoView .modal-body', hold:1900},
-      {phase:'⑦ Well Info. 확인 (모달)', sel:'#modalWellInfoView .modal-foot .btn', hold:900, click:true},
-      {phase:'⑥ Experiment · 저장', sel:'#screen-experiment button[onclick*="저장되었습니다"]', hold:1400, click:true},
-      {phase:'⑧ 합격 기준 설정', sel:'#screen-experiment button[onclick*="modalSetCriteria"]', hold:1300, click:true},
-      {phase:'⑧ 합격 기준 설정', sel:'#modalSetCriteria .criteria-table', hold:1900},
-      {phase:'⑧ 합격 기준 설정', sel:'#modalSetCriteria .modal-foot .btn.primary', hold:1200, click:true},
-      {phase:'⑨ 결과 Export', sel:'#screen-experiment button[onclick*="modalExport"]', hold:1300, click:true},
-      {phase:'⑨ 결과 Export', sel:'#modalExport .pathrow', hold:1700},
-      {phase:'⑨ 결과 Export', sel:'#modalExport .pathrow .btn.primary', hold:1300, click:true},
-      {phase:'⑨ 결과 Export', sel:'#screen-experiment .frame-footer .btn.primary', hold:1300, click:true},
-      {phase:'⑩ QC Report 작성', sel:'#screen-qcinfo .info-field-grid', hold:1500,
-        fills:[
-          {sel:'#screen-qcinfo input[placeholder="e.g. RUN1001"]', text:'RUN1001'},
-          {sel:'#screen-qcinfo input[placeholder="e.g. user1"]', text:'user1'}
-        ]},
-      {phase:'⑩ QC Report 작성', sel:'#screen-qcinfo table.small-table', hold:1700},
-      {phase:'⑩ QC Report 작성', sel:'#screen-qcinfo table.criteria-table', hold:1900},
-      {phase:'⑩ QC Report Export', sel:'#screen-qcinfo .frame-footer .btn.primary', hold:1400, click:true},
-      {phase:'⑩ QC Report Export', sel:'#modalQcExport .side-checks', hold:1900},
-      {phase:'⑩ QC Report Export', sel:'#modalQcExport .modal-foot .btn.primary', hold:1300, click:true},
-      // onclick 값이 홑따옴표를 포함하므로(show('productlist')) 따옴표 없는
-      // 식별자 매칭([onclick*=productlist])으로 우회한다.
-      {phase:'① Product List', sel:'#screen-qcinfo .frame-footer button[onclick*=productlist]', hold:1000, click:true}
-    ];
+    // ---- 화면별 가이드 정의 ---------------------------------------------
+    // 가이드 애니메이션은 "화면"에만 종속된다 — 5개 화면(Product List /
+    // Information / Well Info / Experiment / QC Report) 각각이 자기 자신의
+    // 스텝 목록을 갖는다. 그 화면 위에서 여닫는 모달의 스텝은 별도 컨텍스트가
+    // 아니라 같은 화면 목록 "안에" 이어서 들어있다 — 모달이 열리고 닫혀도
+    // 그 화면(.screen.active)은 그대로이므로, 모달을 여닫는 것만으로는
+    // 다른 컨텍스트로 취급되지 않고 같은 시나리오가 그대로 이어진다.
+    // (예: Product List에서 "Product 추가" 모달을 닫으면 모달을 또 열라고
+    // 하는 게 아니라 바로 다음 스텝인 "제품 클릭"으로 넘어간다.)
+    // 반대로 실제 화면 전환(show())이 일어나면 — 가이드된 버튼을 눌렀든
+    // Prev/Next·subtab처럼 다른 경로로 이동했든 — 그 화면의 가이드를 처음
+    // 부터 다시 보여준다.
+    var GUIDES = {
+      'screen:productlist': [
+        {phase:'① Product List', sel:'#screen-productlist .plist-row', hold:1500},
+        {phase:'② Product 추가', sel:'#btnAddProduct', hold:1400, click:true},
+        {phase:'② Product 추가', sel:'#modalAddProduct .modal-body', hold:1500,
+          fills:[{sel:'#addProductName', text:'Panel E Multiplex (US)'}]},
+        {phase:'② Product 추가', sel:'#modalAddProduct .modal-foot .btn.primary', hold:1100, click:true},
+        {phase:'① Product List', sel:'#screen-productlist tbody tr:nth-child(1) td:nth-child(1)', hold:1500, click:true}
+      ],
+      'screen:information': [
+        {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'1. Product Abbreviation'}, hold:1400,
+          fills:[{sel:'#screen-information input[placeholder="e.g. PAND"]', text:'PAND'}]},
+        {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'2. Product Information'}, hold:1600},
+        {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'3. Reagent Information'}, hold:1600},
+        {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'4. PCR Mix'}, hold:1600},
+        {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'5. PCR Protocol'}, hold:1600},
+        {phase:'③ Information 입력', find:{scope:'#screen-information', child:'.info-section', text:'6. Channel and Analyte Information'}, hold:1800},
+        {phase:'③ Information 입력', sel:'#screen-information .frame-footer .btn.primary', hold:1300, click:true},
+        {phase:'④ 추가 실험 선택', sel:'#modalIcTest .confirm-check-list', hold:1700},
+        {phase:'④ 추가 실험 선택', sel:'#modalIcTest .modal-foot .btn.primary', hold:1100, click:true}
+      ],
+      'screen:wellinfo': [
+        {phase:'⑤ Well Information 확인', sel:'#screen-wellinfo .wellinfo-layout', hold:2100},
+        {phase:'⑤ Well Information 확인', sel:'#screen-wellinfo .frame-footer .btn.primary', hold:1300, click:true}
+      ],
+      // Experiment 화면 순서: 실험 항목 선택 -> Data file 업로드 -> Well
+      // Info 모달 확인 -> 결과 확인 -> 저장 -> 합격기준 설정 -> Export
+      'screen:experiment': [
+        {phase:'⑥ Experiment · 실험 항목 선택', sel:'#expListMain .exp-item:nth-child(15)', hold:1700, click:true},
+        {phase:'⑦ Experiment · Data file 업로드', sel:'#btnAddDatafile', hold:1300, click:true},
+        {phase:'⑦ Experiment · Data file 업로드', sel:'#datafileThumbs .datafile-thumb:nth-child(1)', hold:1500, click:true},
+        {phase:'⑧ Well Info. 확인 (모달)', sel:'#modalWellInfoView .modal-body', hold:1900},
+        {phase:'⑧ Well Info. 확인 (모달)', sel:'#modalWellInfoView .modal-foot .btn', hold:900, click:true},
+        {phase:'⑨ Experiment · 결과 확인', sel:'#screen-experiment .console-panel', hold:1900},
+        {phase:'⑨ Experiment · 결과 확인', sel:'#screen-experiment .results-table-wrap', hold:1700},
+        {phase:'⑨ Experiment · 저장', sel:'#screen-experiment button[onclick*="저장되었습니다"]', hold:1400, click:true},
+        {phase:'⑩ 합격 기준 설정', sel:'#screen-experiment button[onclick*="modalSetCriteria"]', hold:1300, click:true},
+        {phase:'⑩ 합격 기준 설정', sel:'#modalSetCriteria .criteria-table', hold:1900},
+        {phase:'⑩ 합격 기준 설정', sel:'#modalSetCriteria .modal-foot .btn.primary', hold:1200, click:true},
+        {phase:'⑪ 결과 Export', sel:'#screen-experiment button[onclick*="modalExport"]', hold:1300, click:true},
+        {phase:'⑪ 결과 Export', sel:'#modalExport .pathrow', hold:1700},
+        {phase:'⑪ 결과 Export', sel:'#modalExport .pathrow .btn.primary', hold:1300, click:true},
+        {phase:'⑪ 결과 Export', sel:'#screen-experiment .frame-footer .btn.primary', hold:1300, click:true}
+      ],
+      'screen:qcinfo': [
+        {phase:'⑫ QC Report 작성', sel:'#screen-qcinfo .info-field-grid', hold:1500,
+          fills:[
+            {sel:'#screen-qcinfo input[placeholder="e.g. RUN1001"]', text:'RUN1001'},
+            {sel:'#screen-qcinfo input[placeholder="e.g. user1"]', text:'user1'}
+          ]},
+        {phase:'⑫ QC Report 작성', sel:'#screen-qcinfo table.small-table', hold:1700},
+        {phase:'⑫ QC Report 작성', sel:'#screen-qcinfo table.criteria-table', hold:1900},
+        {phase:'⑬ QC Report Export', sel:'#screen-qcinfo .frame-footer .btn.primary', hold:1400, click:true},
+        {phase:'⑬ QC Report Export', sel:'#modalQcExport .side-checks', hold:1900},
+        {phase:'⑬ QC Report Export', sel:'#modalQcExport .modal-foot .btn.primary', hold:1300, click:true},
+        // onclick 값이 홑따옴표를 포함하므로(show('productlist')) 따옴표
+        // 없는 식별자 매칭([onclick*=productlist])으로 우회한다.
+        {phase:'① Product List', sel:'#screen-qcinfo .frame-footer button[onclick*=productlist]', hold:1000, click:true}
+      ]
+    };
 
-    var idx = -1, timer = null;
-    function tick(){
-      idx++;
-      if(idx >= steps.length){
-        idx = -1;
-        clearHl();
-        timer = setTimeout(tick, 900);
+    // 지금 활성화된 화면을 "screen:xxx" 키로 돌려준다. 모달은 화면에
+    // 종속되어 있으므로(위 GUIDES 참고) 모달이 열려 있는지 여부는 컨텍스트
+    // 판단에 관여하지 않는다 — 어떤 모달이 열려 있든 그 아래 활성 화면이
+    // 곧 지금의 컨텍스트다.
+    function currentContextId(){
+      var activeScreen = document.querySelector('.screen.active');
+      if(activeScreen) return 'screen:' + activeScreen.id.replace('screen-', '');
+      return null;
+    }
+
+    // 화면 전환이 필요한 단계(click:true)는 자동으로 넘어가지 않고, 강조된
+    // 버튼을 사용자가 실제로 클릭할 때까지 기다린다. 그냥 내용을 살펴보는
+    // 단계(click 없음)만 잠깐 강조했다가 자동으로 다음으로 넘어간다.
+    var activeContext = null, stepIdx = -1, stepTimer = null, stepWait = null;
+
+    function cleanupStepWait(){
+      clearTimeout(stepTimer);
+      if(stepWait){ try { stepWait.el.removeEventListener('click', stepWait.fn, true); } catch(e){} stepWait = null; }
+    }
+
+    // 다음 단계로: 클릭 완료든 대기시간 종료든, 그 순간의 "실제" 활성 화면을
+    // 다시 확인해 방금 있던 화면과 다르면(진짜 화면 전환이 일어났으면) 그
+    // 화면의 가이드를 처음부터 새로 시작하고, 같으면(모달만 열리거나 닫힌
+    // 경우 포함) 같은 목록의 다음 스텝을 이어서 보여준다.
+    function advanceFrom(fromCtx, fromIdx){
+      var ctx = currentContextId();
+      if(ctx && ctx !== fromCtx){
+        enterContext(ctx);
+      } else if(activeContext === fromCtx){
+        stepIdx = fromIdx + 1;
+        attemptStep();
+      }
+    }
+
+    function attemptStep(){
+      var list = GUIDES[activeContext] || [];
+      if(stepIdx >= list.length){ clearHl(); return; }
+      var st = list[stepIdx];
+      var el = resolve(st);
+      if(!el){
+        // 대상이 아직 DOM에 없으면(전환 직후 등) 잠시 후 같은 스텝을 재시도한다.
+        stepTimer = setTimeout(attemptStep, 120);
         return;
       }
-      var st = steps[idx];
-      var el = resolve(st);
-      if(st.phase) setPhase(st.phase);
-      if(!el){ timer = setTimeout(tick, 60); return; }
-      highlight(el);
+      if(st.phase) setPhase(st.phase, !!st.click);
+      highlight(el, !!st.click);
       if(st.fills) st.fills.forEach(function(f){ fillValue(f.sel, f.text); });
-      timer = setTimeout(function(){
-        if(st.click){ try { el.click(); } catch(e){} }
-        timer = setTimeout(tick, 320);
-      }, st.hold || 1600);
+
+      var myCtx = activeContext, myIdx = stepIdx;
+      if(st.click){
+        var onUserClick = function(){
+          cleanupStepWait();
+          advanceFrom(myCtx, myIdx);
+        };
+        el.addEventListener('click', onUserClick, true);
+        stepWait = {el: el, fn: onUserClick};
+        // 타임아웃으로 자동 진행하지 않음 — 실제 클릭이 있을 때까지 대기.
+      } else {
+        stepTimer = setTimeout(function(){ advanceFrom(myCtx, myIdx); }, st.hold || 1600);
+      }
     }
-    timer = setTimeout(tick, 1200);
+
+    // 새 화면에 들어간다 — 처음 진입이든, Prev/Next·subtab·breadcrumb 등
+    // 어떤 경로로 다시 돌아온 것이든, 그 화면의 가이드를 항상 스텝 0부터
+    // 새로 시작한다(모달을 여닫는 것은 화면 전환이 아니므로 여기 해당하지
+    // 않고 같은 시나리오가 이어진다).
+    function enterContext(ctx){
+      cleanupStepWait();
+      activeContext = ctx;
+      stepIdx = 0;
+      attemptStep();
+    }
+
+    // 사용자가 가이드된 버튼이 아닌 다른 경로로(Prev, subtab 클릭, 뒤로가기
+    // 등) 화면을 이동했을 때도 놓치지 않도록, 별도로 지금 활성 화면을
+    // 주기적으로 확인해 어긋나 있으면 그 화면의 가이드로 갈아탄다. 화면은
+    // 그대로인데 목록이 innerHTML로 통째로 다시 그려지는 등(Step1 실험
+    // 목록처럼) 강조 중이던 요소 자체가 사라진 경우도 같은 스텝을 다시
+    // 시도해 강조·클릭 대기를 되살린다.
+    setInterval(function(){
+      var ctx = currentContextId();
+      if(ctx && ctx !== activeContext){ enterContext(ctx); return; }
+      if(stepWait && stepWait.el && !stepWait.el.isConnected) attemptStep();
+    }, 300);
+
+    var initialCtx = currentContextId();
+    if(initialCtx) setTimeout(function(){ enterContext(initialCtx); }, 1200);
   });
 })();
 </script>
