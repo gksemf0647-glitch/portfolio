@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <rect width="640" height="400" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="639" height="399" fill="none" stroke="#e6e7eb"/>
+  <!-- window chrome -->
+  <rect x="0" y="0" width="640" height="30" fill="#22262c"/>
+  <circle cx="18" cy="15" r="4" fill="#ff5f57"/><circle cx="34" cy="15" r="4" fill="#febc2e"/><circle cx="50" cy="15" r="4" fill="#28c840"/>
+  <text x="70" y="19" font-size="10" fill="#8b929c">LabFlow · Experiment</text>
+  <!-- gnb -->
+  <rect x="0" y="30" width="640" height="34" fill="#2c2c2c"/>
+  <rect x="20" y="41" width="12" height="12" rx="3" fill="#fff"/>
+  <text x="40" y="51" font-size="11" font-weight="700" fill="#fff">LabFlow</text>
+  <text x="118" y="51" font-size="9.5" fill="#c9cdd4">Notice   Feasibility   Prototype/V&amp;V</text>
+  <text x="360" y="51" font-size="9.5" font-weight="700" fill="#fff">Experiment</text>
+  <text x="544" y="51" font-size="9" fill="#c9cdd4">user1  ·  Log Out</text>
+  <text x="624" y="386" font-size="9.5" fill="#9aa0aa" text-anchor="end">③ 구동 · 모니터링</text>
+  
+  <text x="40" y="90" font-size="14" font-weight="700" fill="#16181d">구동 · 모니터링</text>
+  <circle cx="52" cy="106" r="4" fill="#2c4bd4"/>
+  <text x="66" y="110" font-size="9.5" fill="#6b6f78">RUNNING · LiquidHandler-02</text>
+  <rect x="40" y="122" width="560" height="9" rx="4.5" fill="#e6e7eb"/>
+  <rect x="40" y="122" width="356" height="9" rx="4.5" fill="#2c4bd4"/>
+  <text x="40" y="148" font-size="9" fill="#6b6f78" font-family="monospace">64%</text>
+  <text x="600" y="148" font-size="9" fill="#6b6f78" font-family="monospace" text-anchor="end">예상 잔여 03:12</text>
+  <rect x="44" y="162" width="122" height="56" rx="8" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <text x="105" y="190" font-size="15" font-weight="700" fill="#16181d" text-anchor="middle" font-family="monospace">00:42</text>
+    <text x="105" y="207" font-size="9" fill="#6b6f78" text-anchor="middle">경과 시간</text><rect x="182" y="162" width="122" height="56" rx="8" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <text x="243" y="190" font-size="15" font-weight="700" fill="#16181d" text-anchor="middle" font-family="monospace">61 / 96</text>
+    <text x="243" y="207" font-size="9" fill="#6b6f78" text-anchor="middle">처리 웰</text><rect x="320" y="162" width="122" height="56" rx="8" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <text x="381" y="190" font-size="15" font-weight="700" fill="#16181d" text-anchor="middle" font-family="monospace">21.4℃</text>
+    <text x="381" y="207" font-size="9" fill="#6b6f78" text-anchor="middle">덱 온도</text><rect x="458" y="162" width="122" height="56" rx="8" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <text x="519" y="190" font-size="15" font-weight="700" fill="#16181d" text-anchor="middle" font-family="monospace">116</text>
+    <text x="519" y="207" font-size="9" fill="#6b6f78" text-anchor="middle">사용 팁</text>
+  <rect x="44" y="244" width="552" height="124" rx="8" fill="#22262c"/>
+  <text x="60" y="266" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:01] 구동 시작 요청 수신</text><text x="60" y="285" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:07] Res-1 흡인 완료 (12.5 µL)</text><text x="60" y="304" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:12] Plate-1 Well D6 분주 완료</text><text x="60" y="323" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:18] 믹싱 사이클 수행 중</text><text x="60" y="342" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:25] 팁 교체 완료</text>
+</svg>

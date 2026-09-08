@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1152" width="1000" height="1152" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9aa0aa"/></marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b26a00"/></marker>
+  </defs>
+  <rect width="1000" height="1152" fill="#ffffff"/>
+  <text x="40" y="44" font-size="21" font-weight="700" fill="#16181d">사용자 시나리오 · User Scenario Flow</text>
+  <text x="40" y="66" font-size="12.5" fill="#6b6f78">비전문 사용자가 Liquid Handler 를 운영하는 전체 흐름 (분기 · 예외 포함)</text>
+  <line x1="40" y1="80" x2="960" y2="80" stroke="#e6e7eb"/>
+  <g transform="translate(0,6)">
+    <rect x="690" y="20" width="14" height="14" rx="3" fill="#ffffff" stroke="#e6e7eb"/><text x="710" y="31" font-size="10" fill="#6b6f78">Process</text>
+    <path d="M782 27 L796 20 L810 27 L796 34 Z" fill="#f6f7f9" stroke="#9aa0aa"/><text x="818" y="31" font-size="10" fill="#6b6f78">Decision</text>
+    <path d="M884 27 h30" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4"/><text x="920" y="31" font-size="10" fill="#b26a00">No · 예외 흐름</text>
+  </g>
+  <path d="M530 138 V168" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 206 V236" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 294 V324" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><text x="542" y="313" font-size="10.5" font-weight="700" fill="#1c8a46">Yes</text><path d="M360 265 H310 V187 H380" fill="none" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arA)"/><path d="M530 362 V392" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 430 V460" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 498 V528" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 586 V616" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><text x="542" y="605" font-size="10.5" font-weight="700" fill="#1c8a46">Yes</text><path d="M360 557 H310 V479 H380" fill="none" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arA)"/><path d="M530 654 V684" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 742 V772" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><text x="542" y="761" font-size="10.5" font-weight="700" fill="#1c8a46">Yes</text><path d="M360 713 H310 V635 H380" fill="none" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arA)"/><path d="M530 810 V840" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 878 V908" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 966 V996" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><text x="542" y="985" font-size="10.5" font-weight="700" fill="#1c8a46">No</text><path d="M700 937 H770" fill="none" stroke="#b26a00" stroke-width="1.4" marker-end="url(#arA)"/><text x="708" y="931" font-size="10" font-weight="700" fill="#b26a00">Yes</text><path d="M530 1034 V1064" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+  <rect x="410" y="96" width="240" height="42" rx="21" fill="#e7ebfb" stroke="#2c4bd4"/>
+      <text x="530" y="121.5" font-size="12.5" font-weight="700" fill="#2c4bd4" text-anchor="middle">비전문 사용자 · 장비 운영 시작</text><rect x="380" y="168" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="168" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="191.5" font-size="11.5" fill="#16181d" text-anchor="middle">Experiment › Product List 열기</text><path d="M530 236 L700 265 L530 294 L360 265 Z" fill="#f6f7f9" stroke="#9aa0aa"/>
+      <text x="530" y="269.5" font-size="12" font-weight="600" fill="#16181d" text-anchor="middle">등록된 제품이 있는가?</text><rect x="380" y="324" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="324" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="347.5" font-size="11.5" fill="#16181d" text-anchor="middle">제품 선택 → Test Selection 진입</text><rect x="380" y="392" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="392" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="415.5" font-size="11.5" fill="#16181d" text-anchor="middle">Test Method · Analysis · Test · Protocol 선택</text><rect x="380" y="460" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="460" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="483.5" font-size="11.5" fill="#16181d" text-anchor="middle">Test Information 구성 (Consumable · Rack · Template)</text><path d="M530 528 L700 557 L530 586 L360 557 Z" fill="#f6f7f9" stroke="#9aa0aa"/>
+      <text x="530" y="561.5" font-size="12" font-weight="600" fill="#16181d" text-anchor="middle">입력값이 허용 범위인가?</text><rect x="380" y="616" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="616" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="639.5" font-size="11.5" fill="#16181d" text-anchor="middle">장착 가이드맵 확인 → 소모품 장착</text><path d="M530 684 L700 713 L530 742 L360 713 Z" fill="#f6f7f9" stroke="#9aa0aa"/>
+      <text x="530" y="717.5" font-size="12" font-weight="600" fill="#16181d" text-anchor="middle">“장착 완료” 체크했는가?</text><rect x="380" y="772" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="772" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="795.5" font-size="11.5" fill="#16181d" text-anchor="middle">최종 확인 → 구동 시작</text><rect x="380" y="840" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="840" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="863.5" font-size="11.5" fill="#16181d" text-anchor="middle">실시간 모니터링 (진행률 · 타임라인 · 로그)</text><path d="M530 908 L700 937 L530 966 L360 937 Z" fill="#f6f7f9" stroke="#9aa0aa"/>
+      <text x="530" y="941.5" font-size="12" font-weight="600" fill="#16181d" text-anchor="middle">구동 중 이상이 발생했는가?</text><rect x="770" y="919" width="160" height="36" rx="18" fill="#f6f7f9" stroke="#b26a00"/>
+          <text x="850" y="941.5" font-size="11" font-weight="700" fill="#b26a00" text-anchor="middle">Yes · 일시정지 / 중지</text><rect x="380" y="996" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="996" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="1019.5" font-size="11.5" fill="#16181d" text-anchor="middle">구동 완료 · QC 로그 자동 저장</text><rect x="410" y="1064" width="240" height="42" rx="21" fill="#e7ebfb" stroke="#2c4bd4"/>
+      <text x="530" y="1089.5" font-size="12.5" font-weight="700" fill="#2c4bd4" text-anchor="middle">완료 · 제품 목록으로 복귀</text>
+  <text x="302" y="257" font-size="9.5" font-weight="600" fill="#b26a00" text-anchor="end">No · ＋Add List / Single Run 로 신규 생성</text><text x="302" y="549" font-size="9.5" font-weight="600" fill="#b26a00" text-anchor="end">No · ⚠ 경고 표시 → 값 재입력</text><text x="302" y="705" font-size="9.5" font-weight="600" fill="#b26a00" text-anchor="end">No · 다음 버튼 비활성 · 장착 재확인</text>
+</svg>

@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 772" width="1000" height="772" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9aa0aa"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="772" fill="#ffffff"/>
+  <text x="40" y="44" font-size="21" font-weight="700" fill="#16181d">메뉴 구조도 · Menu Structure</text>
+  <text x="40" y="66" font-size="12.5" fill="#6b6f78">LabFlow — Experiment · Liquid Handler 운영 화면 계층</text>
+  <line x1="40" y1="80" x2="960" y2="80" stroke="#e6e7eb"/>
+  
+    <rect x="40" y="96" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 96 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="121" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">GNB</text>
+    <text x="66" y="143" font-size="15" font-weight="700" fill="#16181d">Experiment</text>
+    <text x="66" y="162" font-size="10.5" fill="#6b6f78">상단 글로벌 내비게이션</text><g>
+    <rect x="340" y="114" width="57" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="368.5" y="128.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Notice</text>
+  </g><g>
+    <rect x="405" y="114" width="85" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="447.5" y="128.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Feasibility</text>
+  </g><g>
+    <rect x="498" y="114" width="105" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="550.5" y="128.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Prototype · V&amp;V</text>
+  </g><g>
+    <rect x="611" y="114" width="79" height="22" rx="11" fill="#e7ebfb" stroke="#2c4bd4"/>
+    <text x="650.5" y="128.675" font-size="10.5" font-weight="700" fill="#2c4bd4" text-anchor="middle">Experiment</text>
+  </g><path d="M100 180 V200" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="200" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 200 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="225" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 1</text>
+    <text x="66" y="247" font-size="15" font-weight="700" fill="#16181d">Product List</text>
+    <text x="66" y="266" font-size="10.5" fill="#6b6f78">제품 목록 · 운영 진입점</text><g>
+    <rect x="340" y="218" width="116" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="398" y="232.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">행 클릭 → 제품 선택</text>
+  </g><g>
+    <rect x="464" y="218" width="76" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="502" y="232.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">＋ Add List</text>
+  </g><g>
+    <rect x="548" y="218" width="78" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="587" y="232.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Single Run</text>
+  </g><g>
+    <rect x="634" y="218" width="85" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="676.5" y="232.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Maintenance</text>
+  </g><g>
+    <rect x="727" y="218" width="63" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="758.5" y="232.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">UV Scan</text>
+  </g><g>
+    <rect x="798" y="218" width="128" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="862" y="232.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Teaching Validation</text>
+  </g><g>
+    <rect x="340" y="248" width="111" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="395.5" y="262.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Document Library</text>
+  </g><path d="M100 284 V304" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="304" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 304 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="329" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 2</text>
+    <text x="66" y="351" font-size="15" font-weight="700" fill="#16181d">Test Selection</text>
+    <text x="66" y="370" font-size="10.5" fill="#6b6f78">실험 조건 선택</text><g>
+    <rect x="340" y="322" width="102" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="391" y="336.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">1 · Test Method</text>
+  </g><g>
+    <rect x="450" y="322" width="86" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="493" y="336.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">2 · Analysis</text>
+  </g><g>
+    <rect x="544" y="322" width="64" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="576" y="336.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">3 · Test</text>
+  </g><g>
+    <rect x="616" y="322" width="123" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="677.5" y="336.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">4 · Protocol (list)</text>
+  </g><path d="M100 388 V408" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="408" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 408 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="433" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 3</text>
+    <text x="66" y="455" font-size="15" font-weight="700" fill="#16181d">Test Information</text>
+    <text x="66" y="474" font-size="10.5" fill="#6b6f78">Test Method 별 구성 화면</text><g>
+    <rect x="340" y="426" width="103" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="391.5" y="440.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">PCR Consumable</text>
+  </g><g>
+    <rect x="451" y="426" width="157" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="529.5" y="440.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Number of Mix Units (1–8)</text>
+  </g><g>
+    <rect x="616" y="426" width="152" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="692" y="440.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Reagent · Mastermix Rack</text>
+  </g><g>
+    <rect x="776" y="426" width="95" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="823.5" y="440.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Template Rack</text>
+  </g><g>
+    <rect x="340" y="456" width="131" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="405.5" y="470.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Information ↔ Layout</text>
+  </g><path d="M100 492 V512" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="512" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 512 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="537" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 4</text>
+    <text x="66" y="559" font-size="15" font-weight="700" fill="#16181d">장착 가이드맵 · Deck Guide Map</text>
+    <text x="66" y="578" font-size="10.5" fill="#6b6f78">구성값대로 소모품 배치</text><g>
+    <rect x="340" y="530" width="141" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="410.5" y="544.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Method 별 소모품 배치도</text>
+  </g><g>
+    <rect x="489" y="530" width="166" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="572" y="544.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">팁 · 시약 · 플레이트 · 폐기물</text>
+  </g><g>
+    <rect x="663" y="530" width="129" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="727.5" y="544.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">“장착 완료” 확인 체크</text>
+  </g><path d="M100 596 V616" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="616" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 616 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="641" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 5</text>
+    <text x="66" y="663" font-size="15" font-weight="700" fill="#16181d">구동 · 모니터링 · Run / Monitor</text>
+    <text x="66" y="682" font-size="10.5" fill="#6b6f78">실행 및 실시간 추적</text><g>
+    <rect x="340" y="634" width="127" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="403.5" y="648.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">최종 확인 → 구동 시작</text>
+  </g><g>
+    <rect x="475" y="634" width="113" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="531.5" y="648.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">진행률 · 처리 지표</text>
+  </g><g>
+    <rect x="596" y="634" width="148" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="670" y="648.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">단계 타임라인 · 실행 로그</text>
+  </g><g>
+    <rect x="752" y="634" width="132" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="818" y="648.675" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">일시정지 / 중지 / 완료</text>
+  </g>
+  <rect x="40" y="726" width="920" height="34" rx="9" fill="#ffffff" stroke="#e6e7eb" stroke-dasharray="3 3"/>
+  <text x="56" y="747" font-size="10.5" fill="#6b6f78">Test Method 분기 · Test Information 화면 :  Reaction Setup · Reagent Mixing · Sample Dilution · Bulk Preparation · Bulk Dispensing</text>
+</svg>
