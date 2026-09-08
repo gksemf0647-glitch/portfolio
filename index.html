@@ -1055,7 +1055,7 @@
   .thumb-stack {
     position: relative;
     width: 100%;
-    aspect-ratio: 8 / 5;
+    aspect-ratio: var(--ar, 8 / 5);   /* per-project override via inline --ar */
     border-radius: 4px;
     overflow: hidden;
     background: var(--bg-soft);
@@ -1073,20 +1073,32 @@
   .thumb-stack img:first-child { opacity: 1; }
 
   .work-item:hover .thumb-stack,
-  .work-item:focus-visible .thumb-stack { transform: scale(1.02); }
+  .work-item:focus-visible .thumb-stack,
+  .more-work-item:hover .thumb-stack,
+  .more-work-item:focus-visible .thumb-stack { transform: scale(1.02); }
 
   .work-item:hover .thumb-stack img,
-  .work-item:focus-visible .thumb-stack img {
+  .work-item:focus-visible .thumb-stack img,
+  .more-work-item:hover .thumb-stack img,
+  .more-work-item:focus-visible .thumb-stack img {
     animation: thumbCycle calc(var(--n, 3) * 1.6s) linear infinite;
   }
   .work-item:hover .thumb-stack img:nth-child(1),
-  .work-item:focus-visible .thumb-stack img:nth-child(1) { animation-delay: 0s; }
+  .work-item:focus-visible .thumb-stack img:nth-child(1),
+  .more-work-item:hover .thumb-stack img:nth-child(1),
+  .more-work-item:focus-visible .thumb-stack img:nth-child(1) { animation-delay: 0s; }
   .work-item:hover .thumb-stack img:nth-child(2),
-  .work-item:focus-visible .thumb-stack img:nth-child(2) { animation-delay: 1.6s; }
+  .work-item:focus-visible .thumb-stack img:nth-child(2),
+  .more-work-item:hover .thumb-stack img:nth-child(2),
+  .more-work-item:focus-visible .thumb-stack img:nth-child(2) { animation-delay: 1.6s; }
   .work-item:hover .thumb-stack img:nth-child(3),
-  .work-item:focus-visible .thumb-stack img:nth-child(3) { animation-delay: 3.2s; }
+  .work-item:focus-visible .thumb-stack img:nth-child(3),
+  .more-work-item:hover .thumb-stack img:nth-child(3),
+  .more-work-item:focus-visible .thumb-stack img:nth-child(3) { animation-delay: 3.2s; }
   .work-item:hover .thumb-stack img:nth-child(4),
-  .work-item:focus-visible .thumb-stack img:nth-child(4) { animation-delay: 4.8s; }
+  .work-item:focus-visible .thumb-stack img:nth-child(4),
+  .more-work-item:hover .thumb-stack img:nth-child(4),
+  .more-work-item:focus-visible .thumb-stack img:nth-child(4) { animation-delay: 4.8s; }
 
   @keyframes thumbCycle {
     0%, 25%  { opacity: 1; }
@@ -1096,10 +1108,14 @@
 
   @media (prefers-reduced-motion: reduce) {
     .work-item:hover .thumb-stack img,
-    .work-item:focus-visible .thumb-stack img { animation: none; }
+    .work-item:focus-visible .thumb-stack img,
+    .more-work-item:hover .thumb-stack img,
+    .more-work-item:focus-visible .thumb-stack img { animation: none; }
     /* still give a hint that there's more than one frame */
     .work-item:hover .thumb-stack img:nth-child(2),
-    .work-item:focus-visible .thumb-stack img:nth-child(2) { opacity: 1; }
+    .work-item:focus-visible .thumb-stack img:nth-child(2),
+    .more-work-item:hover .thumb-stack img:nth-child(2),
+    .more-work-item:focus-visible .thumb-stack img:nth-child(2) { opacity: 1; }
   }
 
   .work-title {
@@ -9179,9 +9195,15 @@ renderHome();
       ],
       validation: "자동화 장비 조작 시나리오·예외 처리 검증",
       tools: null,
-      thumbnail: imgReady("assets/projects/automation-experiment-planning/thumbnail.png"),
-      detailImages: [img("assets/projects/automation-experiment-planning/detail-01.png")],
-      workflowImages: [img("assets/projects/automation-experiment-planning/workflow-01.png")]
+      thumbnail: imgReady("assets/projects/automation-experiment-planning/thumbnail.svg"),
+      // Multiple screen thumbnails — the work-list card cross-fades through them on hover.
+      thumbnails: [
+        imgReady("assets/projects/automation-experiment-planning/thumbnail.svg"),
+        imgReady("assets/projects/automation-experiment-planning/thumbnail-2.svg"),
+        imgReady("assets/projects/automation-experiment-planning/thumbnail-3.svg")
+      ],
+      detailImages: [imgDiagram("assets/projects/automation-experiment-planning/menu-structure.svg")],
+      workflowImages: [imgDiagram("assets/projects/automation-experiment-planning/user-scenario-flow.svg")]
     },
     {
       major: true,
@@ -9220,8 +9242,8 @@ renderHome();
       // Detail-view hero uses the interactive embedded mockup below
       // (<template id="prototype-embed--feasibility-automation-sw">), same as
       // projects 01 and 04.
-      detailImages: [img("assets/projects/feasibility-automation-sw/detail-01.png")],
-      workflowImages: [img("assets/projects/feasibility-automation-sw/workflow-01.png")]
+      detailImages: [imgDiagram("assets/projects/feasibility-automation-sw/menu-structure.svg")],
+      workflowImages: [imgDiagram("assets/projects/feasibility-automation-sw/user-scenario-flow.svg")]
     },
     {
       major: false,
@@ -9250,8 +9272,8 @@ renderHome();
       validation: null,
       tools: null,
       thumbnail: imgReady("assets/projects/prototype-doc-automation/thumbnail.png"),
-      detailImages: [img("assets/projects/prototype-doc-automation/detail-01.png")],
-      workflowImages: [img("assets/projects/prototype-doc-automation/workflow-01.png")]
+      detailImages: [imgDiagram("assets/projects/prototype-doc-automation/menu-structure.svg")],
+      workflowImages: [imgDiagram("assets/projects/prototype-doc-automation/user-scenario-flow.svg")]
     },
     {
       major: false,
@@ -9281,6 +9303,14 @@ renderHome();
       validation: null,
       tools: ["Jira", "Confluence", "Slack"],
       thumbnail: imgReady("assets/projects/qc-report-automation/thumbnail.png"),
+      // Existing QC Report screenshot (1200×632) + two more screens of the same
+      // mockup — the More-Work card cross-fades through all three on hover.
+      thumbAspect: "1200 / 632",
+      thumbnails: [
+        imgReady("assets/projects/qc-report-automation/thumbnail.png"),
+        imgReady("assets/projects/qc-report-automation/thumbnail-2.svg"),
+        imgReady("assets/projects/qc-report-automation/thumbnail-3.svg")
+      ],
       detailImages: [],
       // Ordered so the two images sharing row 1 of the 2-col grid have similar
       // aspect ratios (menu-structure ~1.7:1, user-flow ~1.5:1) — object-fit:
@@ -9356,7 +9386,8 @@ renderHome();
   function workThumbHtml(cs) {
     var t = cs.thumbnails && cs.thumbnails.length > 1 ? cs.thumbnails : null;
     if (!t) return imgPlaceholder(cs.thumbnail, cs.name);
-    return `<div class="thumb-stack" style="--n:${t.length}" data-lightbox-label="${cs.name}">
+    var ar = cs.thumbAspect ? `;--ar:${cs.thumbAspect}` : '';
+    return `<div class="thumb-stack" style="--n:${t.length}${ar}" data-lightbox-label="${cs.name}">
       ${t.map((im, i) => `<img src="${im.realSrc}" alt="${cs.name} — screen ${i + 1}" loading="lazy">`).join('')}
     </div>`;
   }
@@ -9608,7 +9639,7 @@ renderHome();
   // ==== MORE WORK: remaining projects, compact 2-col grid, lighter hover ====
   document.getElementById('moreWorkGrid').innerHTML = moreCaseStudies.map((cs, idx) => `
     <a class="more-work-item reveal" style="--i:${idx}" href="${cs.caseStudyRoute}" data-slug="${cs.slug}" id="work-${cs.slug}">
-      <div class="more-work-thumb">${imgPlaceholder(cs.thumbnail, cs.name)}</div>
+      <div class="more-work-thumb">${workThumbHtml(cs)}</div>
       <span class="more-work-number">${cs.num}</span>
       <h3 class="more-work-title">${cs.name}</h3>
       <p class="more-work-desc">${cs.oneLiner}</p>

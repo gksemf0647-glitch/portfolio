@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 724" width="1000" height="724" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9aa0aa"/></marker>
+  </defs>
+  <rect width="1000" height="724" fill="#ffffff"/>
+  <text x="40" y="44" font-size="21" font-weight="700" fill="#16181d">메뉴 구조도 · Menu Structure</text>
+  <text x="40" y="66" font-size="12.5" fill="#6b6f78">LabFlow OneSystem — Item Manager · 실험계획(Full-Auto Exp Group) 화면 계층</text>
+  <line x1="40" y1="80" x2="960" y2="80" stroke="#e6e7eb"/>
+  
+    <rect x="40" y="96" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 96 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="121" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">GNB</text>
+    <text x="66" y="143" font-size="14.5" font-weight="700" fill="#16181d">LabFlow OneSystem</text>
+    <text x="66" y="162" font-size="10.5" fill="#6b6f78">좌측 글로벌 내비게이션</text><g>
+    <rect x="360" y="112" width="71" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="395.5" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Dashboard</text>
+  </g><g>
+    <rect x="439" y="112" width="55" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="466.5" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Notice</text>
+  </g><g>
+    <rect x="502" y="112" width="66" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="535" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Projects</text>
+  </g><g>
+    <rect x="576" y="112" width="86" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="619" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Oligo Design</text>
+  </g><g>
+    <rect x="670" y="112" width="61" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="700.5" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Library</text>
+  </g><g>
+    <rect x="739" y="112" width="91" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="784.5" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Apps Download</text>
+  </g><g>
+    <rect x="838" y="112" width="86" height="21" rx="10.5" fill="#e7ebfb" stroke="#2c4bd4"/>
+    <text x="881" y="126" font-size="10" font-weight="700" fill="#2c4bd4" text-anchor="middle">Item Manager</text>
+  </g><path d="M100 180 V200" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="200" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 200 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="225" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 1</text>
+    <text x="66" y="247" font-size="14.5" font-weight="700" fill="#16181d">Item Manager · Item (목록)</text>
+    <text x="66" y="266" font-size="10.5" fill="#6b6f78">실험 아이템 목록 · 진입점</text><g>
+    <rect x="360" y="216" width="130" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="425" y="230" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">All Items / Favorites</text>
+  </g><g>
+    <rect x="498" y="216" width="128" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="562" y="230" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Period · Keyword 필터</text>
+  </g><g>
+    <rect x="360" y="245" width="430" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="575" y="259" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Table: Category·ID·Item Name·Disease·Product·Regulatory·Purpose·Status·Date</text>
+  </g><g>
+    <rect x="798" y="245" width="64" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="830" y="259" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">＋ Create</text>
+  </g><path d="M100 284 V304" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="304" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 304 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="329" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 2</text>
+    <text x="66" y="351" font-size="14.5" font-weight="700" fill="#16181d">Create Item  /  Item Detail (아이템 상세)</text>
+    <text x="66" y="370" font-size="10.5" fill="#6b6f78">신규 아이템 등록 · 실험 그룹 목록</text><g>
+    <rect x="360" y="320" width="156" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="438" y="334" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Create Item — 기준정보 등록</text>
+  </g><g>
+    <rect x="524" y="320" width="163" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="605.5" y="334" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Item Detail — Exp Group 목록</text>
+  </g><g>
+    <rect x="695" y="320" width="168" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="779" y="334" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">＋ Create Full-Auto Exp Group</text>
+  </g><path d="M100 388 V408" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="408" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 408 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="433" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 3</text>
+    <text x="66" y="455" font-size="14.5" font-weight="700" fill="#16181d">Create Full-Auto Exp Group · 4-step Wizard</text>
+    <text x="66" y="474" font-size="10.5" fill="#6b6f78">Sticky Step Nav + Checklist Footer</text><g>
+    <rect x="360" y="424" width="118" height="21" rx="10.5" fill="#e7ebfb" stroke="#2c4bd4"/>
+    <text x="419" y="438" font-size="10" font-weight="700" fill="#2c4bd4" text-anchor="middle">1 · Experiment plan</text>
+  </g><g>
+    <rect x="486" y="424" width="113" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="542.5" y="438" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">2 · Template check</text>
+  </g><g>
+    <rect x="607" y="424" width="144" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="679" y="438" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">3 · Template preparation</text>
+  </g><g>
+    <rect x="759" y="424" width="135" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="826.5" y="438" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">4 · Input Confirmation</text>
+  </g><path d="M100 492 V512" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="512" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 512 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="537" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 3 상세</text>
+    <text x="66" y="559" font-size="14.5" font-weight="700" fill="#16181d">Wizard 각 단계 입력</text>
+    <g>
+    <rect x="360" y="528" width="446" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="583" y="542" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">① Exp Group 정보 · Regulatory · Experiments to run · 조건 반복수(Template/NS/NC/PC)</text>
+  </g><g>
+    <rect x="360" y="557" width="216" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="468" y="571" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">② 수동 준비 Template · 최종농도 · 희석표</text>
+  </g><g>
+    <rect x="584" y="557" width="261" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="714.5" y="571" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">③ Negative Sample Spiking · 10⁸ cp/rxn Dilution</text>
+  </g><g>
+    <rect x="360" y="586" width="373" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="546.5" y="600" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">④ Template panel build · Well Information · PCR Information → Confirm</text>
+  </g><path d="M100 596 V616" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="616" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 616 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="641" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 4</text>
+    <text x="66" y="663" font-size="14.5" font-weight="700" fill="#16181d">Item Detail (완료) · 자동화 장비 연계</text>
+    <text x="66" y="682" font-size="10.5" fill="#6b6f78">확정된 실험계획을 Full-Auto 장비로 전달</text><g>
+    <rect x="360" y="632" width="127" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="423.5" y="646" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">생성된 Exp Group 목록</text>
+  </g><g>
+    <rect x="495" y="632" width="122" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="556" y="646" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Well / PCR 정보 확인</text>
+  </g><g>
+    <rect x="625" y="632" width="128" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="689" y="646" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Run — 자동화 장비 구동</text>
+  </g>
+</svg>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1220" width="1000" height="1220" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa0aa"/></marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#b26a00"/></marker>
+  </defs>
+  <rect width="1000" height="1220" fill="#ffffff"/>
+  <text x="40" y="44" font-size="21" font-weight="700" fill="#16181d">사용자 시나리오 · User Scenario Flow</text>
+  <text x="40" y="66" font-size="12.5" fill="#6b6f78">연구원이 Feasibility 실험을 계획·수행·정리하는 전체 흐름 (분기 · 예외 포함)</text>
+  <line x1="40" y1="80" x2="960" y2="80" stroke="#e6e7eb"/>
+  <g transform="translate(0,6)">
+    <rect x="690" y="20" width="14" height="14" rx="3" fill="#ffffff" stroke="#e6e7eb"/><text x="710" y="31" font-size="10" fill="#6b6f78">Process</text>
+    <path d="M782 27 L796 20 L810 27 L796 34 Z" fill="#f6f7f9" stroke="#9aa0aa"/><text x="818" y="31" font-size="10" fill="#6b6f78">Decision</text>
+    <path d="M884 27 h30" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4"/><text x="920" y="31" font-size="10" fill="#b26a00">No · 예외 흐름</text>
+  </g>
+  <path d="M530 138 V168" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 226 V256" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><text x="542" y="245" font-size="10.5" font-weight="700" fill="#1c8a46">Yes</text><path d="M345 197 H304 V117 H380" fill="none" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arA)"/><path d="M530 294 V324" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 382 V412" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><text x="542" y="401" font-size="10.5" font-weight="700" fill="#1c8a46">Yes</text><path d="M345 353 H304 V275 H380" fill="none" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arA)"/><path d="M530 450 V480" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 518 V548" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 586 V616" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 674 V704" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><text x="542" y="693" font-size="10.5" font-weight="700" fill="#1c8a46">No</text><path d="M715 645 H780" fill="none" stroke="#b26a00" stroke-width="1.4" marker-end="url(#arA)"/><text x="723" y="639" font-size="10" font-weight="700" fill="#b26a00">Yes</text><path d="M530 742 V772" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 810 V840" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 898 V928" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><text x="542" y="917" font-size="10.5" font-weight="700" fill="#1c8a46">Yes</text><path d="M345 869 H304 V791 H380" fill="none" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arA)"/><path d="M530 966 V996" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 1034 V1064" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/><path d="M530 1102 V1132" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+  <rect x="396" y="96" width="268" height="42" rx="21" fill="#e7ebfb" stroke="#2c4bd4"/>
+      <text x="530" y="121.5" font-size="12" font-weight="700" fill="#2c4bd4" text-anchor="middle">연구원 로그인 · Home 진입</text><path d="M530 168 L715 197 L530 226 L345 197 Z" fill="#f6f7f9" stroke="#9aa0aa"/>
+      <text x="530" y="201.5" font-size="11.5" font-weight="600" fill="#16181d" text-anchor="middle">진행할 Feasibility 실험이 있는가?</text><rect x="380" y="256" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="256" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="279.5" font-size="11" fill="#16181d" text-anchor="middle">Lab-book 선택 → Test List</text><path d="M530 324 L715 353 L530 382 L345 353 Z" fill="#f6f7f9" stroke="#9aa0aa"/>
+      <text x="530" y="357.5" font-size="11.5" font-weight="600" fill="#16181d" text-anchor="middle">실험 항목이 등록돼 있는가?</text><rect x="380" y="412" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="412" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="435.5" font-size="11" fill="#16181d" text-anchor="middle">Test 선택 → 실험 Wizard 진입</text><rect x="380" y="480" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="480" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="503.5" font-size="11" fill="#16181d" text-anchor="middle">Step 1 · Material &amp; Method (Inventory 자동연동 + pDNA 입력)</text><rect x="380" y="548" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="548" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="571.5" font-size="11" fill="#16181d" text-anchor="middle">Step 2 · Well information (자동 웰맵 확인)</text><path d="M530 616 L715 645 L530 674 L345 645 Z" fill="#f6f7f9" stroke="#9aa0aa"/>
+      <text x="530" y="649.5" font-size="11.5" font-weight="600" fill="#16181d" text-anchor="middle">수기 진행인가, 자동화 장비인가?</text><rect x="780" y="627" width="150" height="36" rx="18" fill="#f6f7f9" stroke="#b26a00"/>
+        <text x="855" y="649.5" font-size="10" font-weight="700" fill="#b26a00" text-anchor="middle">자동화 · 장비 설정</text><rect x="380" y="704" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="704" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="727.5" font-size="11" fill="#16181d" text-anchor="middle">Step 3 · Template preparation(수기) · PCR Setup</text><rect x="380" y="772" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="772" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="795.5" font-size="11" fill="#16181d" text-anchor="middle">Step 4 · 결과 데이터 업로드 (장비/분석 프로그램 연동)</text><path d="M530 840 L715 869 L530 898 L345 869 Z" fill="#f6f7f9" stroke="#9aa0aa"/>
+      <text x="530" y="873.5" font-size="11.5" font-weight="600" fill="#16181d" text-anchor="middle">업로드 데이터가 유효한가?</text><rect x="380" y="928" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="928" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="951.5" font-size="11" fill="#16181d" text-anchor="middle">Step 5 · 결과 정리 — Well별 Ct·Tm·판정 자동 정리</text><rect x="380" y="996" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="996" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="1019.5" font-size="11" fill="#16181d" text-anchor="middle">Step 6 · Discussion — 결론 서술형 작성</text><rect x="380" y="1064" width="300" height="38" rx="10" fill="#ffffff" stroke="#e6e7eb"/>
+    <rect x="380" y="1064" width="4" height="38" rx="2" fill="#2c4bd4"/>
+    <text x="530" y="1087.5" font-size="11" fill="#16181d" text-anchor="middle">Save → 다음 Test / Lab-book 진행률 갱신</text><rect x="396" y="1132" width="268" height="42" rx="21" fill="#e7ebfb" stroke="#2c4bd4"/>
+      <text x="530" y="1157.5" font-size="12" font-weight="700" fill="#2c4bd4" text-anchor="middle">Feasibility 완료 · Prototype 진행 판단</text>
+  <text x="296" y="189" font-size="9.5" font-weight="600" fill="#b26a00" text-anchor="end">No · Lab-book 추가</text><text x="296" y="345" font-size="9.5" font-weight="600" fill="#b26a00" text-anchor="end">No · 실험 항목 추가</text><text x="296" y="861" font-size="9.5" font-weight="600" fill="#b26a00" text-anchor="end">No · 파일 재업로드</text>
+</svg>

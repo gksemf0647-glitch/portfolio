@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 724" width="1000" height="724" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa0aa"/></marker></defs>
+  <rect width="1000" height="724" fill="#ffffff"/>
+  <text x="40" y="44" font-size="21" font-weight="700" fill="#16181d">메뉴 구조도 · Menu Structure</text>
+  <text x="40" y="66" font-size="12.5" fill="#6b6f78">LAB IDEA — Prototype 단계 실험 · 문서 자동화 화면 계층</text>
+  <line x1="40" y1="80" x2="960" y2="80" stroke="#e6e7eb"/>
+  
+    <rect x="40" y="96" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 96 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="121" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">GNB / LNB</text>
+    <text x="66" y="143" font-size="14.5" font-weight="700" fill="#16181d">LAB IDEA</text>
+    <text x="66" y="162" font-size="10.5" fill="#6b6f78">상단 바 + 좌측 아이콘 내비게이션</text><g>
+    <rect x="362" y="112" width="176" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="450" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Product : Target Panel A Assay</text>
+  </g><g>
+    <rect x="546" y="112" width="55" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="573.5" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Search</text>
+  </g><g>
+    <rect x="609" y="112" width="145" height="21" rx="10.5" fill="#e7ebfb" stroke="#2c4bd4"/>
+    <text x="681.5" y="126" font-size="10" font-weight="700" fill="#2c4bd4" text-anchor="middle">Experiments (Prototype)</text>
+  </g><g>
+    <rect x="762" y="112" width="45" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="784.5" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Home</text>
+  </g><g>
+    <rect x="815" y="112" width="71" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="850.5" y="126" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Inventory</text>
+  </g><g>
+    <rect x="362" y="141" width="61" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="392.5" y="155" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Reports</text>
+  </g><path d="M100 180 V200" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="200" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 200 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="225" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 1</text>
+    <text x="66" y="247" font-size="14.5" font-weight="700" fill="#16181d">Home</text>
+    <text x="66" y="266" font-size="10.5" fill="#6b6f78">현황 요약 · Prototype 진입</text><g>
+    <rect x="362" y="216" width="328" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="526" y="230" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Category — 실험 단계(Feasibility / Prototype / Verification)</text>
+  </g><g>
+    <rect x="698" y="216" width="200" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="798" y="230" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Dashboard summary · Notice · Recent</text>
+  </g><path d="M100 284 V304" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="304" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 304 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="329" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 2</text>
+    <text x="66" y="351" font-size="14.5" font-weight="700" fill="#16181d">Prototype · Lab-book List</text>
+    <text x="66" y="370" font-size="10.5" fill="#6b6f78">Feasibility 자동화 구조를 그대로 확장</text><g>
+    <rect x="362" y="320" width="63" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="393.5" y="334" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Set 선택</text>
+  </g><g>
+    <rect x="433" y="320" width="178" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="522" y="334" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">＋ 추가 · 복사 · 업로드 · 다운로드</text>
+  </g><g>
+    <rect x="362" y="349" width="340" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="532" y="363" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">Table: Lab-book · Revision · Updated · Status · Progress · Note</text>
+  </g><path d="M100 388 V408" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="408" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 408 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="433" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 3</text>
+    <text x="66" y="455" font-size="14.5" font-weight="700" fill="#16181d">Test List (Lab-book 상세)</text>
+    <text x="66" y="474" font-size="10.5" fill="#6b6f78">Lab-book 내 실험 항목</text><g>
+    <rect x="362" y="424" width="98" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="411" y="438" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">＋ 실험 항목 추가</text>
+  </g><g>
+    <rect x="468" y="424" width="285" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="610.5" y="438" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">단계 Progress: Plan · Experiment · Result · Criteria</text>
+  </g><path d="M100 492 V512" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="512" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 512 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="537" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 4</text>
+    <text x="66" y="559" font-size="14.5" font-weight="700" fill="#16181d">실험 Wizard (6-step)</text>
+    <text x="66" y="578" font-size="10.5" fill="#6b6f78">Sticky Step Bar · 단계별 산출 문서 자동 생성</text><g>
+    <rect x="362" y="528" width="127" height="21" rx="10.5" fill="#e7ebfb" stroke="#2c4bd4"/>
+    <text x="425.5" y="542" font-size="10" font-weight="700" fill="#2c4bd4" text-anchor="middle">1 · Material &amp; Method</text>
+  </g><g>
+    <rect x="497" y="528" width="123" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="558.5" y="542" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">2 · Well information</text>
+  </g><g>
+    <rect x="628" y="528" width="107" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="681.5" y="542" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">3 · 실험 방법 선택</text>
+  </g><g>
+    <rect x="743" y="528" width="104" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="795" y="542" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">4 · 데이터 업로드</text>
+  </g><g>
+    <rect x="855" y="528" width="83" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="896.5" y="542" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">5 · 결과 정리</text>
+  </g><g>
+    <rect x="362" y="557" width="80" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="402" y="571" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">6 · 합격기준</text>
+  </g><path d="M100 596 V616" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect x="40" y="616" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+    <path d="M53 616 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+    <text x="66" y="641" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 4 상세</text>
+    <text x="66" y="663" font-size="14.5" font-weight="700" fill="#16181d">Wizard 각 단계 · 문서 자동화</text>
+    <g>
+    <rect x="362" y="632" width="405" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="564.5" y="646" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">① Inventory 자동 연동 + 사용자 입력  ·  ② 수기 웰맵 작성 제거 → 96-well 자동 생성</text>
+  </g><g>
+    <rect x="362" y="661" width="292" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="508" y="675" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">③ 실험 방법 분기 — Manual / 자동화 장비(Liquid handler)</text>
+  </g><g>
+    <rect x="662" y="661" width="226" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="775" y="675" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">④ 데이터 업로드 → ⑤ 결과 정리(Well별 판정)</text>
+  </g><g>
+    <rect x="362" y="690" width="413" height="21" rx="10.5" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="568.5" y="704" font-size="10" font-weight="500" fill="#3f434c" text-anchor="middle">⑥ 합격기준 — Ct Pass Criteria 입력 → Pass/Fail 자동 판정 → 산출 문서 자동 Export</text>
+  </g>
+</svg>

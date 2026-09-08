@@ -1,59 +1,70 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
-  <rect width="640" height="400" fill="#ffffff"/>
-  <rect x="0.5" y="0.5" width="639" height="399" fill="none" stroke="#e6e7eb"/>
-  <!-- window chrome -->
-  <rect x="0" y="0" width="640" height="30" fill="#22262c"/>
-  <circle cx="18" cy="15" r="4" fill="#ff5f57"/><circle cx="34" cy="15" r="4" fill="#febc2e"/><circle cx="50" cy="15" r="4" fill="#28c840"/>
-  <text x="70" y="19" font-size="10" fill="#8b929c">LabFlow · Experiment</text>
-  <!-- gnb -->
-  <rect x="0" y="30" width="640" height="34" fill="#2c2c2c"/>
-  <rect x="20" y="41" width="12" height="12" rx="3" fill="#fff"/>
-  <text x="40" y="51" font-size="11" font-weight="700" fill="#fff">LabFlow</text>
-  <text x="118" y="51" font-size="9.5" fill="#c9cdd4">Notice   Feasibility   Prototype/V&amp;V</text>
-  <text x="360" y="51" font-size="9.5" font-weight="700" fill="#fff">Experiment</text>
-  <text x="544" y="51" font-size="9" fill="#c9cdd4">user1  ·  Log Out</text>
-  <text x="624" y="386" font-size="9.5" fill="#9aa0aa" text-anchor="end">① 제품 목록</text>
+  <rect width="640" height="400" fill="#F6F8FB"/>
+  <rect x="0.5" y="0.5" width="639" height="399" fill="none" stroke="#E4E9EF"/>
+  <!-- chrome bar -->
+  <rect x="0" y="0" width="640" height="24" fill="#F3F4F6"/>
+  <line x1="0" y1="24" x2="640" y2="24" stroke="#E4E9EF"/>
+  <circle cx="16" cy="12" r="3.5" fill="#FF5F57"/><circle cx="30" cy="12" r="3.5" fill="#FEBC2E"/><circle cx="44" cy="12" r="3.5" fill="#28C840"/>
+  <text x="58" y="15.5" font-size="9" fill="#9AA3AF">LabFlow · Experiment Workspace</text>
+  <!-- GNB (dark, as in the embed) -->
+  <rect x="0" y="24" width="640" height="38" fill="#2C2C2C"/>
+  <rect x="24" y="36" width="14" height="14" rx="4" fill="#fff"/>
+  <text x="45" y="46" font-size="11.5" font-weight="800" fill="#fff">LabFlow</text>
+  <text x="112" y="46" font-size="10" fill="rgba(255,255,255,.6)">Notice</text>
+  <text x="158" y="46" font-size="10" fill="rgba(255,255,255,.6)">Feasibility</text>
+  <text x="222" y="46" font-size="10" fill="rgba(255,255,255,.6)">Prototype / V&amp;V</text>
+  <text x="322" y="46" font-size="10" font-weight="700" fill="#fff">Experiment</text>
+  <rect x="322" y="55" width="66" height="2" fill="#fff"/>
+  <text x="472" y="46" font-size="9" fill="rgba(255,255,255,.6)">👤 user1(user1)   Log Out   About</text>
+  <text x="626" y="388" font-size="9" fill="#98A6B4" text-anchor="end">① 제품 목록</text>
   
-  <text x="40" y="90" font-size="14" font-weight="700" fill="#16181d">Product List</text>
-  <text x="560" y="90" font-size="9" fill="#9aa0aa" text-anchor="end">장비 연동 · 정상</text>
-  <!-- stat chips (left) + search (right) -->
-  <rect x="40" y="102" width="86" height="22" rx="6" fill="#f6f7f9" stroke="#e6e7eb"/><text x="83" y="117" font-size="9" fill="#6b6f78" text-anchor="middle">4 등록 제품</text>
-  <rect x="132" y="102" width="86" height="22" rx="6" fill="#f6f7f9" stroke="#e6e7eb"/><text x="175" y="117" font-size="9" fill="#6b6f78" text-anchor="middle">2/4 가동 장비</text>
-  <rect x="420" y="102" width="180" height="22" rx="6" fill="#ffffff" stroke="#e6e7eb"/><text x="434" y="117" font-size="9" fill="#9aa0aa">제품명 또는 코드로 검색</text>
-  <!-- toolbar row: ghost actions (left) · primary actions (right) -->
-  <rect x="40" y="138" width="52" height="22" rx="6" fill="#ffffff" stroke="#e6e7eb"/><text x="66" y="153" font-size="8.5" fill="#6b6f78" text-anchor="middle">Copy</text>
-  <rect x="98" y="138" width="58" height="22" rx="6" fill="#ffffff" stroke="#e6e7eb"/><text x="127" y="153" font-size="8.5" fill="#6b6f78" text-anchor="middle">Delete</text>
-  <rect x="452" y="138" width="66" height="22" rx="6" fill="#e7ebfb" stroke="#2c4bd4"/><text x="485" y="153" font-size="8.5" font-weight="700" fill="#2c4bd4" text-anchor="middle">Single Run</text>
-  <rect x="524" y="138" width="76" height="22" rx="6" fill="#2c4bd4"/><text x="562" y="153" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle">＋ Add List</text>
-  <!-- table header (clearly below the toolbar) -->
-  <rect x="40" y="176" width="560" height="20" fill="#eef0f4"/>
-  <text x="78" y="188" font-size="8" font-weight="700" letter-spacing="0.4" fill="#6b6f78">PRODUCT</text>
-  <text x="330" y="188" font-size="8" font-weight="700" letter-spacing="0.4" fill="#6b6f78">NOTES</text>
-  <text x="404" y="188" font-size="8" font-weight="700" letter-spacing="0.4" fill="#6b6f78">DATE</text>
-  <text x="520" y="188" font-size="8" font-weight="700" letter-spacing="0.4" fill="#6b6f78">STATUS</text>
-  <rect x="40" y="198" width="560" height="1" fill="#e6e7eb"/>
-    <rect x="50" y="213" width="12" height="12" rx="3" fill="none" stroke="#d7d9df"/>
-    <text x="78" y="224" font-size="11" fill="#16181d">Assay Panel A</text>
-    <text x="330" y="224" font-size="9.5" fill="#6b6f78">demo</text>
-    <text x="404" y="224" font-size="9.5" fill="#6b6f78" font-family="monospace">2026-09-04</text>
-    <rect x="520" y="212" width="46" height="16" rx="8" fill="#2c4bd4"/>
-    <text x="543" y="223" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle">신규</text><rect x="40" y="240" width="560" height="1" fill="#e6e7eb"/>
-    <rect x="50" y="255" width="12" height="12" rx="3" fill="none" stroke="#d7d9df"/>
-    <text x="78" y="266" font-size="11" fill="#16181d">Bulk Reagent Batch 07</text>
-    <text x="330" y="266" font-size="9.5" fill="#6b6f78">demo</text>
-    <text x="404" y="266" font-size="9.5" fill="#6b6f78" font-family="monospace">2026-09-03</text>
-    <rect x="520" y="254" width="46" height="16" rx="8" fill="#2354be"/>
-    <text x="543" y="265" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle">수정됨</text><rect x="40" y="282" width="560" height="1" fill="#e6e7eb"/>
-    <rect x="50" y="297" width="12" height="12" rx="3" fill="none" stroke="#d7d9df"/>
-    <text x="78" y="308" font-size="11" fill="#16181d">Reagent Mix Set 3</text>
-    <text x="330" y="308" font-size="9.5" fill="#6b6f78">demo</text>
-    <text x="404" y="308" font-size="9.5" fill="#6b6f78" font-family="monospace">2026-09-02</text>
-    <rect x="520" y="296" width="46" height="16" rx="8" fill="#2c4bd4"/>
-    <text x="543" y="307" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle">신규</text><rect x="40" y="324" width="560" height="1" fill="#e6e7eb"/>
-    <rect x="50" y="339" width="12" height="12" rx="3" fill="none" stroke="#d7d9df"/>
-    <text x="78" y="350" font-size="11" fill="#16181d">Dilution Template Set A</text>
-    <text x="330" y="350" font-size="9.5" fill="#6b6f78">demo</text>
-    <text x="404" y="350" font-size="9.5" fill="#6b6f78" font-family="monospace">2026-09-01</text>
-    <rect x="520" y="338" width="46" height="16" rx="8" fill="#1c8a46"/>
-    <text x="543" y="349" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle">완료</text>
+  <text x="24" y="86" font-size="14" font-weight="800" fill="#16202B">Product List</text>
+  <circle cx="524" cy="82" r="3" fill="#15803D"/><text x="532" y="85" font-size="8.5" fill="#5B6B7B">장비 연동 · 정상</text>
+  <!-- stat chips + search -->
+  <rect x="24" y="100" width="68" height="20" rx="6" fill="#F6F8FB" stroke="#E4E9EF"/><text x="58" y="113.5" font-size="8" fill="#5B6B7B" text-anchor="middle">4  등록 제품</text><rect x="98" y="100" width="78" height="20" rx="6" fill="#F6F8FB" stroke="#E4E9EF"/><text x="137" y="113.5" font-size="8" fill="#5B6B7B" text-anchor="middle">2/4  가동 장비</text><rect x="182" y="100" width="122" height="20" rx="6" fill="#F6F8FB" stroke="#E4E9EF"/><text x="243" y="113.5" font-size="8" fill="#5B6B7B" text-anchor="middle">98.6%  최근 30일 성공률</text>
+  <rect x="406" y="100" width="210" height="20" rx="6" fill="#F6F8FB" stroke="#E4E9EF"/><text x="416" y="113.5" font-size="8" fill="#98A6B4">🔍  제품명 또는 코드로 검색</text>
+  <!-- toolbar -->
+  <rect x="24" y="128" width="44" height="20" rx="6" fill="#FFFFFF" stroke="#E4E9EF"/>
+  <text x="46" y="141.5" font-size="8.5" font-weight="600" fill="#16202B" text-anchor="middle">Copy</text>
+  <rect x="74" y="128" width="52" height="20" rx="6" fill="#FFFFFF" stroke="#EFC9C9"/>
+  <text x="100" y="141.5" font-size="8.5" font-weight="600" fill="#B91C1C" text-anchor="middle">🗑 Delete</text>
+  <rect x="468" y="128" width="70" height="20" rx="6" fill="#E3F3F1" stroke="#BEE0DC"/>
+  <text x="503" y="141.5" font-size="8.5" font-weight="600" fill="#0E7A75" text-anchor="middle">▶ Single Run</text>
+  <rect x="544" y="128" width="72" height="20" rx="6" fill="#0E7A75" stroke="#0E7A75"/>
+  <text x="580" y="141.5" font-size="8.5" font-weight="600" fill="#fff" text-anchor="middle">＋ Add List</text>
+  <!-- table header -->
+  <rect x="24" y="144" width="592" height="20" fill="#EEF1F5"/>
+  <text x="32" y="156" font-size="7.5" font-weight="600" fill="#5B6B7B">No</text><text x="54" y="156" font-size="7.5" font-weight="600" fill="#5B6B7B">Product</text><text x="324" y="156" font-size="7.5" font-weight="600" fill="#5B6B7B">Notes</text><text x="380" y="156" font-size="7.5" font-weight="600" fill="#5B6B7B">Record Date</text><text x="492" y="156" font-size="7.5" font-weight="600" fill="#5B6B7B">Record User</text><text x="550" y="156" font-size="7.5" font-weight="600" fill="#5B6B7B">Status</text><text x="612" y="156" font-size="7.5" font-weight="600" fill="#5B6B7B">Auth</text>
+  <rect x="24" y="166" width="592" height="1" fill="#E4E9EF"/>
+    <rect x="24" y="174" width="11" height="11" rx="3" fill="none" stroke="#98A6B4"/>
+    <text x="54" y="187" font-size="10.5" fill="#16202B">Assay Panel A<tspan font-size="8" fill="#98A6B4" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">  LH-2409-B1</tspan></text>
+    <text x="324" y="187" font-size="9" fill="#5B6B7B">demo</text>
+    <text x="380" y="187" font-size="8.5" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">2026-09-04</text>
+    <text x="492" y="187" font-size="9" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">oprA</text>
+    <rect x="550" y="172" width="42" height="15" rx="7.5" fill="#B45309"/><text x="571" y="182.5" font-size="7.5" font-weight="700" fill="#fff" text-anchor="middle">신규</text>
+    <text x="612" y="187" font-size="9" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">oprC</text><rect x="24" y="200" width="592" height="1" fill="#E4E9EF"/>
+    <rect x="24" y="208" width="11" height="11" rx="3" fill="none" stroke="#98A6B4"/>
+    <text x="54" y="221" font-size="10.5" fill="#16202B">Bulk Reagent Batch 07<tspan font-size="8" fill="#98A6B4" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">  LH-2309-D2</tspan></text>
+    <text x="324" y="221" font-size="9" fill="#5B6B7B">demo</text>
+    <text x="380" y="221" font-size="8.5" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">2026-09-03</text>
+    <text x="492" y="221" font-size="9" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">oprB</text>
+    <rect x="550" y="206" width="42" height="15" rx="7.5" fill="#2354BE"/><text x="571" y="216.5" font-size="7.5" font-weight="700" fill="#fff" text-anchor="middle">수정됨</text>
+    <text x="612" y="221" font-size="9" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">oprC</text><rect x="24" y="234" width="592" height="1" fill="#E4E9EF"/>
+    <rect x="24" y="242" width="11" height="11" rx="3" fill="none" stroke="#98A6B4"/>
+    <text x="54" y="255" font-size="10.5" fill="#16202B">Reagent Mix Set 3<tspan font-size="8" fill="#98A6B4" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">  LH-2409-F3</tspan></text>
+    <text x="324" y="255" font-size="9" fill="#5B6B7B">demo</text>
+    <text x="380" y="255" font-size="8.5" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">2026-09-01</text>
+    <text x="492" y="255" font-size="9" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">oprA</text>
+    <rect x="550" y="240" width="42" height="15" rx="7.5" fill="#B45309"/><text x="571" y="250.5" font-size="7.5" font-weight="700" fill="#fff" text-anchor="middle">신규</text>
+    <text x="612" y="255" font-size="9" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">oprC</text><rect x="24" y="268" width="592" height="1" fill="#E4E9EF"/>
+    <rect x="24" y="276" width="11" height="11" rx="3" fill="none" stroke="#98A6B4"/>
+    <text x="54" y="289" font-size="10.5" fill="#16202B">Dilution Template Set A<tspan font-size="8" fill="#98A6B4" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">  LH-2208-A4</tspan></text>
+    <text x="324" y="289" font-size="9" fill="#5B6B7B">demo</text>
+    <text x="380" y="289" font-size="8.5" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">2026-08-29</text>
+    <text x="492" y="289" font-size="9" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">oprC</text>
+    <rect x="550" y="274" width="42" height="15" rx="7.5" fill="#15803D"/><text x="571" y="284.5" font-size="7.5" font-weight="700" fill="#fff" text-anchor="middle">완료</text>
+    <text x="612" y="289" font-size="9" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">oprC</text>
+  <!-- quicklinks -->
+  <line x1="24" y1="314" x2="616" y2="314" stroke="#E4E9EF"/>
+  <text x="24" y="330" font-size="9" font-weight="600" fill="#5B6B7B">Maintenance</text><text x="116" y="330" font-size="9" font-weight="600" fill="#5B6B7B">UV Scan</text><text x="180" y="330" font-size="9" font-weight="600" fill="#5B6B7B">Teaching Validation</text><text x="312" y="330" font-size="9" font-weight="600" fill="#5B6B7B">Document Library</text>
 </svg>

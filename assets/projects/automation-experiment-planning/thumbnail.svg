@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <rect width="640" height="400" fill="#F6F6FA"/>
+  <rect x="0.5" y="0.5" width="639" height="399" fill="none" stroke="#E4E4EC"/>
+  <!-- sidenav -->
+  <rect x="0" y="0" width="138" height="400" fill="#fff"/>
+  <line x1="138" y1="0" x2="138" y2="400" stroke="#E4E4EC"/>
+  <rect x="16" y="20" width="18" height="18" rx="5" fill="#5B54E8"/>
+  <text x="42" y="33" font-size="10.5" font-weight="800" fill="#1E1E2B">LabFlow OneSystem</text>
+  
+    <circle cx="24" cy="73" r="3" fill="#9596A6"/>
+    <text x="36" y="77" font-size="9.5" font-weight="600" fill="#5D5E6E">Dashboard</text>
+    <circle cx="24" cy="99" r="3" fill="#9596A6"/>
+    <text x="36" y="103" font-size="9.5" font-weight="600" fill="#5D5E6E">Notice</text>
+    <circle cx="24" cy="125" r="3" fill="#9596A6"/>
+    <text x="36" y="129" font-size="9.5" font-weight="600" fill="#5D5E6E">Projects</text>
+    <circle cx="24" cy="151" r="3" fill="#9596A6"/>
+    <text x="36" y="155" font-size="9.5" font-weight="600" fill="#5D5E6E">Oligo Design</text>
+    <circle cx="24" cy="177" r="3" fill="#9596A6"/>
+    <text x="36" y="181" font-size="9.5" font-weight="600" fill="#5D5E6E">Library</text>
+    <circle cx="24" cy="203" r="3" fill="#9596A6"/>
+    <text x="36" y="207" font-size="9.5" font-weight="600" fill="#5D5E6E">Apps Download</text><rect x="10" y="217" width="118" height="24" rx="6" fill="#EEEDFD"/>
+    <circle cx="24" cy="229" r="3" fill="#5B54E8"/>
+    <text x="36" y="233" font-size="9.5" font-weight="700" fill="#5B54E8">Item Manager</text>
+  <line x1="12" y1="354" x2="126" y2="354" stroke="#E4E4EC"/>
+  <circle cx="24" cy="372" r="8" fill="#EEEDFD"/><text x="24" y="375" font-size="8" font-weight="800" fill="#5B54E8" text-anchor="middle">이</text>
+  <text x="38" y="375" font-size="9" font-weight="700" fill="#5D5E6E">이하늘</text>
+  <!-- topbar -->
+  <rect x="138" y="0" width="502" height="26" fill="#fff"/>
+  <line x1="138" y1="26" x2="640" y2="26" stroke="#E4E4EC"/>
+  <text x="490" y="17" font-size="8.5" font-weight="700" fill="#5B54E8">User</text>
+  <text x="522" y="17" font-size="8.5" fill="#9596A6">Admin   EN</text>
+  <text x="582" y="17" font-size="8" fill="#9596A6" font-family="monospace">V2026.08</text>
+  <text x="626" y="388" font-size="9.5" fill="#9aa0aa" text-anchor="end">① Item 목록</text>
+  
+  <text x="150" y="52" font-size="8.5" fill="#9596A6">📁  Item Manager</text>
+  <text x="150" y="76" font-size="15" font-weight="800" fill="#1E1E2B">Item</text>
+  <rect x="560" y="60" width="68" height="22" rx="7" fill="#5B54E8"/><text x="594" y="75" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">＋ Create</text>
+  <text x="150" y="102" font-size="9.5" font-weight="700" fill="#5B54E8">All Items</text><rect x="150" y="108" width="42" height="2" fill="#5B54E8"/>
+  <text x="208" y="102" font-size="9.5" font-weight="600" fill="#9596A6">Favorites</text>
+  <!-- filter row -->
+  <text x="150" y="130" font-size="8" font-weight="700" fill="#5D5E6E">Period</text>
+  <rect x="190" y="120" width="92" height="18" rx="5" fill="#fff" stroke="#E4E4EC"/><text x="197" y="132" font-size="7.5" fill="#9596A6">Select date ▾</text>
+  <text x="294" y="130" font-size="8" font-weight="700" fill="#5D5E6E">Keyword</text>
+  <rect x="344" y="120" width="170" height="18" rx="5" fill="#fff" stroke="#E4E4EC"/><text x="351" y="132" font-size="7.5" fill="#9596A6">Search by Item Name</text>
+  <rect x="562" y="120" width="66" height="18" rx="5" fill="#fff" stroke="#E4E4EC"/><text x="595" y="132" font-size="7.5" fill="#5D5E6E" text-anchor="middle">▦ Columns</text>
+  <!-- table header -->
+  <rect x="150" y="146" width="478" height="16" fill="#eef0f4"/>
+  <text x="162" y="157" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">CATEGORY</text><text x="208" y="157" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">ID</text><text x="240" y="157" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">ITEM NAME</text><text x="374" y="157" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">DISEASE CATEGORY</text><text x="480" y="157" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">REGULATORY</text><text x="546" y="157" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">PURPOSE</text><text x="582" y="157" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">STATUS</text>
+  <rect x="150" y="168" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="189" font-size="9" fill="#E8A93A">★</text>
+    <rect x="162" y="176" width="42" height="14" rx="4" fill="#EEEDFD"/><text x="183" y="186" font-size="7" font-weight="700" fill="#6B4FBB" text-anchor="middle">Panel A</text>
+    <text x="208" y="189" font-size="8" fill="#9596A6" font-family="monospace">5736</text>
+    <text x="240" y="189" font-size="8" fill="#1E1E2B">PCR 장비 추가 적용 - Panel A D…</text>
+    <text x="374" y="189" font-size="7.5" fill="#5D5E6E">Human Papilloma…</text>
+    <text x="480" y="189" font-size="7.5" fill="#5D5E6E">CE-IVDR</text>
+    <text x="546" y="189" font-size="7.5" fill="#5D5E6E">Product m…</text>
+    <circle cx="584" cy="183" r="3" fill="#9596A6"/><text x="592" y="189" font-size="8" fill="#9596A6">-</text><rect x="150" y="202" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="223" font-size="9" fill="#E8A93A">★</text>
+    <rect x="162" y="210" width="42" height="14" rx="4" fill="#EEEDFD"/><text x="183" y="220" font-size="7" font-weight="700" fill="#6B4FBB" text-anchor="middle">Panel B</text>
+    <text x="208" y="223" font-size="8" fill="#9596A6" font-family="monospace">5728</text>
+    <text x="240" y="223" font-size="8" fill="#1E1E2B">타깃 올리고 업데이트 - Panel B Ma…</text>
+    <text x="374" y="223" font-size="7.5" fill="#5D5E6E">Respiratory Inf…</text>
+    <text x="480" y="223" font-size="7.5" fill="#5D5E6E">CE-IVDD +4</text>
+    <text x="546" y="223" font-size="7.5" fill="#5D5E6E">Product m…</text>
+    <circle cx="584" cy="217" r="3" fill="#5B54E8"/><text x="592" y="223" font-size="7.5" font-weight="700" fill="#5D5E6E">Ready</text><rect x="150" y="236" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="257" font-size="9" fill="#E8A93A">★</text>
+    <rect x="162" y="244" width="42" height="14" rx="4" fill="#EEEDFD"/><text x="183" y="254" font-size="7" font-weight="700" fill="#6B4FBB" text-anchor="middle">Panel B</text>
+    <text x="208" y="257" font-size="8" fill="#9596A6" font-family="monospace">5727</text>
+    <text x="240" y="257" font-size="8" fill="#1E1E2B">PCR 장비 추가 적용 - Panel B M…</text>
+    <text x="374" y="257" font-size="7.5" fill="#5D5E6E">Respiratory Inf…</text>
+    <text x="480" y="257" font-size="7.5" fill="#5D5E6E">CE-IVDR</text>
+    <text x="546" y="257" font-size="7.5" fill="#5D5E6E">Product m…</text>
+    <circle cx="584" cy="251" r="3" fill="#5B54E8"/><text x="592" y="257" font-size="7.5" font-weight="700" fill="#5D5E6E">Ready</text><rect x="150" y="270" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="291" font-size="9" fill="#9596A6">☆</text>
+    <rect x="162" y="278" width="42" height="14" rx="4" fill="#EEEDFD"/><text x="183" y="288" font-size="7" font-weight="700" fill="#6B4FBB" text-anchor="middle">Panel C</text>
+    <text x="208" y="291" font-size="8" fill="#9596A6" font-family="monospace">5704</text>
+    <text x="240" y="291" font-size="8" fill="#1E1E2B">Probe 변경 - Panel C Assay</text>
+    <text x="374" y="291" font-size="7.5" fill="#5D5E6E">Gastrointestina…</text>
+    <text x="480" y="291" font-size="7.5" fill="#5D5E6E">CE-IVDR</text>
+    <text x="546" y="291" font-size="7.5" fill="#5D5E6E">Product r…</text>
+    <circle cx="584" cy="285" r="3" fill="#9596A6"/><text x="592" y="291" font-size="8" fill="#9596A6">-</text><rect x="150" y="304" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="325" font-size="9" fill="#9596A6">☆</text>
+    <rect x="162" y="312" width="42" height="14" rx="4" fill="#EEEDFD"/><text x="183" y="322" font-size="7" font-weight="700" fill="#6B4FBB" text-anchor="middle">Panel A</text>
+    <text x="208" y="325" font-size="8" fill="#9596A6" font-family="monospace">5673</text>
+    <text x="240" y="325" font-size="8" fill="#1E1E2B">더미 프로젝트 12222</text>
+    <text x="374" y="325" font-size="7.5" fill="#5D5E6E">Urinary Tract I…</text>
+    <text x="480" y="325" font-size="7.5" fill="#5D5E6E">-</text>
+    <text x="546" y="325" font-size="7.5" fill="#5D5E6E">New produ…</text>
+    <circle cx="584" cy="319" r="3" fill="#9596A6"/><text x="592" y="325" font-size="8" fill="#9596A6">-</text>
+  <g transform="translate(150,346)">
+    <rect x="0" y="0" width="16" height="14" rx="3" fill="#fff" stroke="#E4E4EC"/><text x="8" y="10.5" font-size="8" fill="#9596A6" text-anchor="middle">‹</text>
+    <rect x="20" y="0" width="16" height="14" rx="3" fill="#5B54E8"/><text x="28" y="10.5" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+    <rect x="40" y="0" width="16" height="14" rx="3" fill="#fff" stroke="#E4E4EC"/><text x="48" y="10.5" font-size="8" fill="#9596A6" text-anchor="middle">2</text>
+    <rect x="60" y="0" width="16" height="14" rx="3" fill="#fff" stroke="#E4E4EC"/><text x="68" y="10.5" font-size="8" fill="#9596A6" text-anchor="middle">3</text>
+  </g>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <rect width="640" height="400" fill="#F6F6FA"/>
+  <rect x="0.5" y="0.5" width="639" height="399" fill="none" stroke="#E4E4EC"/>
+  <!-- sidenav -->
+  <rect x="0" y="0" width="138" height="400" fill="#fff"/>
+  <line x1="138" y1="0" x2="138" y2="400" stroke="#E4E4EC"/>
+  <rect x="16" y="20" width="18" height="18" rx="5" fill="#5B54E8"/>
+  <text x="42" y="33" font-size="10.5" font-weight="800" fill="#1E1E2B">LabFlow OneSystem</text>
+  
+    <circle cx="24" cy="73" r="3" fill="#9596A6"/>
+    <text x="36" y="77" font-size="9.5" font-weight="600" fill="#5D5E6E">Dashboard</text>
+    <circle cx="24" cy="99" r="3" fill="#9596A6"/>
+    <text x="36" y="103" font-size="9.5" font-weight="600" fill="#5D5E6E">Notice</text>
+    <circle cx="24" cy="125" r="3" fill="#9596A6"/>
+    <text x="36" y="129" font-size="9.5" font-weight="600" fill="#5D5E6E">Projects</text>
+    <circle cx="24" cy="151" r="3" fill="#9596A6"/>
+    <text x="36" y="155" font-size="9.5" font-weight="600" fill="#5D5E6E">Oligo Design</text>
+    <circle cx="24" cy="177" r="3" fill="#9596A6"/>
+    <text x="36" y="181" font-size="9.5" font-weight="600" fill="#5D5E6E">Library</text>
+    <circle cx="24" cy="203" r="3" fill="#9596A6"/>
+    <text x="36" y="207" font-size="9.5" font-weight="600" fill="#5D5E6E">Apps Download</text><rect x="10" y="217" width="118" height="24" rx="6" fill="#EEEDFD"/>
+    <circle cx="24" cy="229" r="3" fill="#5B54E8"/>
+    <text x="36" y="233" font-size="9.5" font-weight="700" fill="#5B54E8">Item Manager</text>
+  <line x1="12" y1="354" x2="126" y2="354" stroke="#E4E4EC"/>
+  <circle cx="24" cy="372" r="8" fill="#EEEDFD"/><text x="24" y="375" font-size="8" font-weight="800" fill="#5B54E8" text-anchor="middle">이</text>
+  <text x="38" y="375" font-size="9" font-weight="700" fill="#5D5E6E">이하늘</text>
+  <!-- topbar -->
+  <rect x="138" y="0" width="502" height="26" fill="#fff"/>
+  <line x1="138" y1="26" x2="640" y2="26" stroke="#E4E4EC"/>
+  <text x="490" y="17" font-size="8.5" font-weight="700" fill="#5B54E8">User</text>
+  <text x="522" y="17" font-size="8.5" fill="#9596A6">Admin   EN</text>
+  <text x="582" y="17" font-size="8" fill="#9596A6" font-family="monospace">V2026.08</text>
+  <text x="626" y="388" font-size="9.5" fill="#9aa0aa" text-anchor="end">③ Step 4 · Confirmation</text>
+  
+  <text x="150" y="44" font-size="8" fill="#9596A6">Item Manager › PCR 장비 추가 적용 - Panel A Detection › <tspan fill="#5D5E6E" font-weight="600">Create Full-Auto Exp Group</tspan></text>
+  <text x="150" y="68" font-size="14" font-weight="800" fill="#1E1E2B">Create Full-Auto Exp Group</text>
+  <text x="150" y="84" font-size="7.5" fill="#9596A6">ID <tspan font-weight="700" fill="#5D5E6E">5736</tspan></text><text x="197.2" y="84" font-size="7.5" fill="#9596A6">Product <tspan font-weight="700" fill="#5D5E6E">Panel A Detection</tspan></text><text x="320" y="84" font-size="7.5" fill="#9596A6">Cat No. <tspan font-weight="700" fill="#5D5E6E">CAT-10372X</tspan></text><text x="413.4" y="84" font-size="7.5" fill="#9596A6">Spec change <tspan font-weight="700" fill="#5D5E6E">PCR 장비 추가 적용</tspan></text><text x="532" y="84" font-size="7.5" fill="#9596A6">Regulatory <tspan font-weight="700" fill="#5D5E6E">CE-IVDR</tspan></text>
+  <rect x="150" y="90" width="115" height="26" rx="7" fill="#fff" stroke="#E4E4EC"/>
+    <circle cx="163" cy="103" r="7" fill="#E7F4EC"/><text x="163" y="106" font-size="7.5" font-weight="700" fill="#2F9E5B" text-anchor="middle">✓</text>
+    <text x="175" y="106" font-size="7.3" font-weight="600" fill="#9596A6">Experiment plan</text><rect x="271" y="90" width="115" height="26" rx="7" fill="#fff" stroke="#E4E4EC"/>
+    <circle cx="284" cy="103" r="7" fill="#E7F4EC"/><text x="284" y="106" font-size="7.5" font-weight="700" fill="#2F9E5B" text-anchor="middle">✓</text>
+    <text x="296" y="106" font-size="7.3" font-weight="600" fill="#9596A6">Template check</text><rect x="392" y="90" width="115" height="26" rx="7" fill="#fff" stroke="#E4E4EC"/>
+    <circle cx="405" cy="103" r="7" fill="#E7F4EC"/><text x="405" y="106" font-size="7.5" font-weight="700" fill="#2F9E5B" text-anchor="middle">✓</text>
+    <text x="417" y="106" font-size="7.3" font-weight="600" fill="#9596A6">Template preparation</text><rect x="513" y="90" width="115" height="26" rx="7" fill="#EEEDFD" stroke="#5B54E8" stroke-width="1.5"/>
+    <circle cx="526" cy="103" r="7" fill="#5B54E8"/><text x="526" y="106" font-size="7.5" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+    <text x="538" y="106" font-size="7.3" font-weight="700" fill="#5B54E8">Input Confirmation</text>
+  <!-- subtabs + Confirm -->
+  <text x="150" y="140" font-size="8.5" font-weight="700" fill="#5B54E8">Template panel build</text><rect x="150" y="145" width="82" height="2" fill="#5B54E8"/>
+  <text x="246" y="140" font-size="8.5" fill="#9596A6">Well Information</text>
+  <text x="334" y="140" font-size="8.5" fill="#9596A6">PCR Information</text>
+  <rect x="568" y="128" width="60" height="20" rx="6" fill="#1E1E2B"/><text x="598" y="141.5" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">Confirm</text>
+  <!-- filter pills -->
+  <rect x="150" y="158" width="48" height="17" rx="8.5" fill="#5B54E8" stroke="#5B54E8"/><text x="174" y="169.5" font-size="7.3" font-weight="700" fill="#fff" text-anchor="middle">Stock</text><rect x="204" y="158" width="48" height="17" rx="8.5" fill="#fff" stroke="#E4E4EC"/><text x="228" y="169.5" font-size="7.3" font-weight="600" fill="#5D5E6E" text-anchor="middle">General</text><rect x="258" y="158" width="48" height="17" rx="8.5" fill="#fff" stroke="#E4E4EC"/><text x="282" y="169.5" font-size="7.3" font-weight="600" fill="#5D5E6E" text-anchor="middle">Test A</text><rect x="312" y="158" width="48" height="17" rx="8.5" fill="#fff" stroke="#E4E4EC"/><text x="336" y="169.5" font-size="7.3" font-weight="600" fill="#5D5E6E" text-anchor="middle">IC spiking</text>
+  <rect x="428" y="158" width="48" height="17" rx="5" fill="#fff" stroke="#E4E4EC"/><text x="452" y="169.5" font-size="7.3" fill="#5D5E6E" text-anchor="middle">All ▾</text>
+  <rect x="482" y="158" width="146" height="17" rx="5" fill="#fff" stroke="#E4E4EC"/><text x="490" y="169.5" font-size="7.3" fill="#5D5E6E">Consumption by experiment ▾</text>
+  <!-- table -->
+  <rect x="150" y="202" width="478" height="16" fill="#eef0f4"/>
+  <text x="150" y="213" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">TEMPLATE</text><text x="280" y="213" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">CONCENTRATION</text><text x="386" y="213" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">TEST A COMB.</text><text x="446" y="213" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">CONSUMPTION BY EXPERIMENT</text><text x="596" y="213" font-size="6.3" font-weight="700" letter-spacing="0.2" fill="#5D5E6E">TOTAL</text>
+  <rect x="150" y="232" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="246" font-size="7.5" font-weight="700" fill="#2F9E5B">Stock</text>
+    <text x="192" y="246" font-size="8" fill="#1E1E2B" font-family="monospace">PA26</text>
+    <text x="280" y="246" font-size="8" fill="#5D5E6E">10⁸ copies/rxn</text>
+    <text x="386" y="246" font-size="8" fill="#9596A6">-</text>
+    <text x="446" y="246" font-size="7.5" fill="#9596A6">Used after dilution · no direct consumption</text>
+    <text x="620" y="246" font-size="8" fill="#9596A6" text-anchor="end">-</text><rect x="150" y="254" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="268" font-size="7.5" font-weight="700" fill="#2F9E5B">Stock</text>
+    <text x="192" y="268" font-size="8" fill="#1E1E2B" font-family="monospace">PA66</text>
+    <text x="280" y="268" font-size="8" fill="#5D5E6E">10⁸ copies/rxn</text>
+    <text x="386" y="268" font-size="8" fill="#9596A6">-</text>
+    <text x="446" y="268" font-size="7.5" fill="#9596A6">Used after dilution · no direct consumption</text>
+    <text x="620" y="268" font-size="8" fill="#9596A6" text-anchor="end">-</text><rect x="150" y="276" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="290" font-size="7.5" font-weight="700" fill="#2F9E5B">Stock</text>
+    <text x="192" y="290" font-size="8" fill="#1E1E2B" font-family="monospace">PA45</text>
+    <text x="280" y="290" font-size="8" fill="#5D5E6E">10⁸ copies/rxn</text>
+    <text x="386" y="290" font-size="8" fill="#9596A6">-</text>
+    <text x="446" y="290" font-size="7.5" fill="#9596A6">Used after dilution · no direct consumption</text>
+    <text x="620" y="290" font-size="8" fill="#9596A6" text-anchor="end">-</text><rect x="150" y="298" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="312" font-size="7.5" font-weight="700" fill="#2F9E5B">Stock</text>
+    <text x="192" y="312" font-size="8" fill="#1E1E2B" font-family="monospace">PA69</text>
+    <text x="280" y="312" font-size="8" fill="#5D5E6E">10⁸ copies/rxn</text>
+    <text x="386" y="312" font-size="8" fill="#9596A6">-</text>
+    <text x="446" y="312" font-size="7.5" fill="#9596A6">Used after dilution · no direct consumption</text>
+    <text x="620" y="312" font-size="8" fill="#9596A6" text-anchor="end">-</text><rect x="150" y="320" width="478" height="1" fill="#E4E4EC"/>
+    <text x="150" y="334" font-size="7.5" font-weight="700" fill="#2F9E5B">Stock</text>
+    <text x="192" y="334" font-size="8" fill="#1E1E2B" font-family="monospace">PA58</text>
+    <text x="280" y="334" font-size="8" fill="#5D5E6E">10⁸ copies/rxn</text>
+    <text x="386" y="334" font-size="8" fill="#9596A6">-</text>
+    <text x="446" y="334" font-size="7.5" fill="#9596A6">Used after dilution · no direct consumption</text>
+    <text x="620" y="334" font-size="8" fill="#9596A6" text-anchor="end">-</text>
+  <!-- sticky footer -->
+  <rect x="138" y="356" width="502" height="44" fill="#fff"/><line x1="138" y1="356" x2="640" y2="356" stroke="#E4E4EC"/>
+  <text x="150" y="374" font-size="7.5" fill="#2F9E5B">✓ Template panel build   ✓ Well Information   <tspan fill="#B8860B">● PCR Information</tspan></text>
+  <rect x="520" y="366" width="48" height="20" rx="5" fill="#fff" stroke="#E4E4EC"/><text x="544" y="379.5" font-size="8" fill="#5D5E6E" text-anchor="middle">Back</text>
+  <rect x="574" y="366" width="54" height="20" rx="5" fill="#5B54E8"/><text x="601" y="379.5" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">Done</text>
+</svg>

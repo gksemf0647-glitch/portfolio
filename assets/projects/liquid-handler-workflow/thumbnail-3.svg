@@ -1,35 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
-  <rect width="640" height="400" fill="#ffffff"/>
-  <rect x="0.5" y="0.5" width="639" height="399" fill="none" stroke="#e6e7eb"/>
-  <!-- window chrome -->
-  <rect x="0" y="0" width="640" height="30" fill="#22262c"/>
-  <circle cx="18" cy="15" r="4" fill="#ff5f57"/><circle cx="34" cy="15" r="4" fill="#febc2e"/><circle cx="50" cy="15" r="4" fill="#28c840"/>
-  <text x="70" y="19" font-size="10" fill="#8b929c">LabFlow · Experiment</text>
-  <!-- gnb -->
-  <rect x="0" y="30" width="640" height="34" fill="#2c2c2c"/>
-  <rect x="20" y="41" width="12" height="12" rx="3" fill="#fff"/>
-  <text x="40" y="51" font-size="11" font-weight="700" fill="#fff">LabFlow</text>
-  <text x="118" y="51" font-size="9.5" fill="#c9cdd4">Notice   Feasibility   Prototype/V&amp;V</text>
-  <text x="360" y="51" font-size="9.5" font-weight="700" fill="#fff">Experiment</text>
-  <text x="544" y="51" font-size="9" fill="#c9cdd4">user1  ·  Log Out</text>
-  <text x="624" y="386" font-size="9.5" fill="#9aa0aa" text-anchor="end">③ 구동 · 모니터링</text>
+  <rect width="640" height="400" fill="#F6F8FB"/>
+  <rect x="0.5" y="0.5" width="639" height="399" fill="none" stroke="#E4E9EF"/>
+  <!-- chrome bar -->
+  <rect x="0" y="0" width="640" height="24" fill="#F3F4F6"/>
+  <line x1="0" y1="24" x2="640" y2="24" stroke="#E4E9EF"/>
+  <circle cx="16" cy="12" r="3.5" fill="#FF5F57"/><circle cx="30" cy="12" r="3.5" fill="#FEBC2E"/><circle cx="44" cy="12" r="3.5" fill="#28C840"/>
+  <text x="58" y="15.5" font-size="9" fill="#9AA3AF">LabFlow · Experiment Workspace</text>
+  <!-- GNB (dark, as in the embed) -->
+  <rect x="0" y="24" width="640" height="38" fill="#2C2C2C"/>
+  <rect x="24" y="36" width="14" height="14" rx="4" fill="#fff"/>
+  <text x="45" y="46" font-size="11.5" font-weight="800" fill="#fff">LabFlow</text>
+  <text x="112" y="46" font-size="10" fill="rgba(255,255,255,.6)">Notice</text>
+  <text x="158" y="46" font-size="10" fill="rgba(255,255,255,.6)">Feasibility</text>
+  <text x="222" y="46" font-size="10" fill="rgba(255,255,255,.6)">Prototype / V&amp;V</text>
+  <text x="322" y="46" font-size="10" font-weight="700" fill="#fff">Experiment</text>
+  <rect x="322" y="55" width="66" height="2" fill="#fff"/>
+  <text x="472" y="46" font-size="9" fill="rgba(255,255,255,.6)">👤 user1(user1)   Log Out   About</text>
+  <text x="626" y="388" font-size="9" fill="#98A6B4" text-anchor="end">③ 구동 · 모니터링</text>
   
-  <text x="40" y="90" font-size="14" font-weight="700" fill="#16181d">구동 · 모니터링</text>
-  <circle cx="52" cy="106" r="4" fill="#2c4bd4"/>
-  <text x="66" y="110" font-size="9.5" fill="#6b6f78">RUNNING · LiquidHandler-02</text>
-  <rect x="40" y="122" width="560" height="9" rx="4.5" fill="#e6e7eb"/>
-  <rect x="40" y="122" width="356" height="9" rx="4.5" fill="#2c4bd4"/>
-  <text x="40" y="148" font-size="9" fill="#6b6f78" font-family="monospace">64%</text>
-  <text x="600" y="148" font-size="9" fill="#6b6f78" font-family="monospace" text-anchor="end">예상 잔여 03:12</text>
-  <rect x="44" y="162" width="122" height="56" rx="8" fill="#f6f7f9" stroke="#e6e7eb"/>
-    <text x="105" y="190" font-size="15" font-weight="700" fill="#16181d" text-anchor="middle" font-family="monospace">00:42</text>
-    <text x="105" y="207" font-size="9" fill="#6b6f78" text-anchor="middle">경과 시간</text><rect x="182" y="162" width="122" height="56" rx="8" fill="#f6f7f9" stroke="#e6e7eb"/>
-    <text x="243" y="190" font-size="15" font-weight="700" fill="#16181d" text-anchor="middle" font-family="monospace">61 / 96</text>
-    <text x="243" y="207" font-size="9" fill="#6b6f78" text-anchor="middle">처리 웰</text><rect x="320" y="162" width="122" height="56" rx="8" fill="#f6f7f9" stroke="#e6e7eb"/>
-    <text x="381" y="190" font-size="15" font-weight="700" fill="#16181d" text-anchor="middle" font-family="monospace">21.4℃</text>
-    <text x="381" y="207" font-size="9" fill="#6b6f78" text-anchor="middle">덱 온도</text><rect x="458" y="162" width="122" height="56" rx="8" fill="#f6f7f9" stroke="#e6e7eb"/>
-    <text x="519" y="190" font-size="15" font-weight="700" fill="#16181d" text-anchor="middle" font-family="monospace">116</text>
-    <text x="519" y="207" font-size="9" fill="#6b6f78" text-anchor="middle">사용 팁</text>
-  <rect x="44" y="244" width="552" height="124" rx="8" fill="#22262c"/>
-  <text x="60" y="266" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:01] 구동 시작 요청 수신</text><text x="60" y="285" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:07] Res-1 흡인 완료 (12.5 µL)</text><text x="60" y="304" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:12] Plate-1 Well D6 분주 완료</text><text x="60" y="323" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:18] 믹싱 사이클 수행 중</text><text x="60" y="342" font-size="9" fill="#9fb2ce" font-family="monospace">[10:24:25] 팁 교체 완료</text>
+  <text x="24" y="82" font-size="11.5" font-weight="700" fill="#16202B"><tspan fill="#98A6B4" font-weight="500">Product List  ›  Assay Panel A  ›  </tspan>구동 · 모니터링</text>
+  <!-- mon-status -->
+  <circle cx="28" cy="100" r="4" fill="#0E7A75"/>
+  <text x="40" y="99" font-size="10.5" font-weight="700" fill="#16202B">구동 중 · Assay Panel A</text>
+  <text x="40" y="111" font-size="8" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">Handler-02 · Reaction Setup</text>
+  <rect x="554" y="90" width="62" height="16" rx="8" fill="#2354BE"/><text x="585" y="101" font-size="7.5" font-weight="700" fill="#fff" text-anchor="middle">RUNNING</text>
+  <!-- progress -->
+  <rect x="24" y="120" width="592" height="8" rx="4" fill="#E4E9EF"/>
+  <rect x="24" y="120" width="71.03999999999999" height="8" rx="4" fill="url(#lhg)"/>
+  <defs><linearGradient id="lhg" x1="0" x2="1"><stop offset="0" stop-color="#0E7A75"/><stop offset="1" stop-color="#5B8CF2"/></linearGradient></defs>
+  <text x="24" y="142" font-size="8.5" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">12%</text>
+  <text x="616" y="142" font-size="8.5" fill="#5B6B7B" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" text-anchor="end">예상 잔여 00:44</text>
+  <!-- metrics -->
+  <rect x="24" y="150" width="142" height="48" rx="8" fill="#F6F8FB" stroke="#E4E9EF"/>
+    <text x="95" y="176" font-size="13" font-weight="700" fill="#16202B" text-anchor="middle" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">00:02</text>
+    <text x="95" y="190" font-size="7.5" fill="#5B6B7B" text-anchor="middle">경과 시간</text><rect x="174" y="150" width="142" height="48" rx="8" fill="#F6F8FB" stroke="#E4E9EF"/>
+    <text x="245" y="176" font-size="13" font-weight="700" fill="#16202B" text-anchor="middle" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">12 / 96</text>
+    <text x="245" y="190" font-size="7.5" fill="#5B6B7B" text-anchor="middle">처리 웰</text><rect x="324" y="150" width="142" height="48" rx="8" fill="#F6F8FB" stroke="#E4E9EF"/>
+    <text x="395" y="176" font-size="13" font-weight="700" fill="#16202B" text-anchor="middle" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">21.4℃</text>
+    <text x="395" y="190" font-size="7.5" fill="#5B6B7B" text-anchor="middle">덱 온도</text><rect x="474" y="150" width="142" height="48" rx="8" fill="#F6F8FB" stroke="#E4E9EF"/>
+    <text x="545" y="176" font-size="13" font-weight="700" fill="#16202B" text-anchor="middle" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">24</text>
+    <text x="545" y="190" font-size="7.5" fill="#5B6B7B" text-anchor="middle">사용 팁 수</text>
+  <!-- timeline (left) -->
+  <circle cx="29" cy="221" r="4" fill="#0E7A75"/>
+    <text x="42" y="224" font-size="9" font-weight="700" fill="#16202B">덱 초기화</text>
+    <line x1="24" y1="233" x2="268" y2="233" stroke="#E4E9EF" stroke-dasharray="2 2"/><circle cx="29" cy="245" r="4" fill="#E4E9EF"/>
+    <text x="42" y="248" font-size="9" font-weight="400" fill="#5B6B7B">팁 픽업</text>
+    <line x1="24" y1="257" x2="268" y2="257" stroke="#E4E9EF" stroke-dasharray="2 2"/><circle cx="29" cy="269" r="4" fill="#E4E9EF"/>
+    <text x="42" y="272" font-size="9" font-weight="400" fill="#5B6B7B">시약 흡인</text>
+    <line x1="24" y1="281" x2="268" y2="281" stroke="#E4E9EF" stroke-dasharray="2 2"/><circle cx="29" cy="293" r="4" fill="#E4E9EF"/>
+    <text x="42" y="296" font-size="9" font-weight="400" fill="#5B6B7B">목적 플레이트 분주</text>
+    <line x1="24" y1="305" x2="268" y2="305" stroke="#E4E9EF" stroke-dasharray="2 2"/><circle cx="29" cy="317" r="4" fill="#E4E9EF"/>
+    <text x="42" y="320" font-size="9" font-weight="400" fill="#5B6B7B">믹싱</text>
+    <line x1="24" y1="329" x2="268" y2="329" stroke="#E4E9EF" stroke-dasharray="2 2"/><circle cx="29" cy="341" r="4" fill="#E4E9EF"/>
+    <text x="42" y="344" font-size="9" font-weight="400" fill="#5B6B7B">팁 폐기 · 반복</text>
+    
+  <!-- log box (right, dark) -->
+  <rect x="284" y="212" width="332" height="150" rx="8" fill="#191F2B"/>
+  <text x="296" y="350" font-size="7.5" fill="#9FB2CE" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">[22:41:33] Plate-1 Well D6 분주 완료</text><text x="296" y="332" font-size="7.5" fill="#9FB2CE" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">[22:41:31] 믹싱 사이클 수행 중</text><text x="296" y="314" font-size="7.5" fill="#9FB2CE" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">[22:41:28] 믹싱 사이클 수행 중</text><text x="296" y="296" font-size="7.5" fill="#9FB2CE" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">[22:41:27] 구동 시작 요청 수신</text>
+  <!-- actions -->
+  <rect x="24" y="372" width="62" height="20" rx="6" fill="#FFFFFF" stroke="#E4E9EF"/>
+  <text x="55" y="385.5" font-size="8.5" font-weight="600" fill="#16202B" text-anchor="middle">⏸ 일시정지</text>
+  <rect x="94" y="372" width="50" height="20" rx="6" fill="#FFFFFF" stroke="#EFC9C9"/>
+  <text x="119" y="385.5" font-size="8.5" font-weight="600" fill="#B91C1C" text-anchor="middle">■ 중지</text>
 </svg>
