@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>실험실 자동화 시스템 재기획 — 시나리오 목업</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#2C2C2C; --brand-soft:#F0F0F0; --on-brand:#F5F5F5;
+    --red:#C22A2A; --red-soft:#FBEAEA;
+    --ink:#1E1E1E; --ink-60:#5B5B5B; --ink-40:#8A8A8A;
+    --line:#D9D9D9; --bg:#F5F5F5; --surface:#FFFFFF;
+    --navy:#45526B; --teal:#7FCFCB; --amber:#B8860B; --green:#2F7D4F; --blue:#1F6FB8;
+    --shadow: 0 1px 2px rgba(20,20,25,.04), 0 8px 20px rgba(20,20,25,.05);
+    --radius-lg:16px; --radius-md:12px; --radius-sm:8px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans KR',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:.02em;}
+
+  .portfolio-head{padding:26px 40px 14px;max-width:1440px;margin:0 auto;}
+  .portfolio-head .eyebrow{font-size:11.5px;font-weight:700;color:var(--brand);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .portfolio-head h1{font-size:21px;margin:0 0 6px;font-weight:900;}
+  .portfolio-head p{font-size:13px;color:var(--ink-60);margin:0;max-width:760px;line-height:1.6;}
+
+  .jumpbar{display:flex;align-items:center;gap:10px;max-width:1440px;margin:12px auto 0;padding:0 40px;flex-wrap:wrap;}
+  .jumpbar span{font-size:11.5px;font-weight:700;color:var(--ink-40);}
+  .jumpbar select{font-size:12.5px;font-weight:700;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);}
+  .flowtag{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-soft);padding:4px 10px;border-radius:999px;}
+
+  .stage{max-width:1440px;margin:14px auto 60px;padding:0 40px;position:relative;}
+  .screen{display:none;}
+  .screen.active{display:block;}
+  .device{background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);}
+
+  .gnb{background:#fff;color:var(--ink);display:flex;align-items:center;padding:0 24px;height:60px;gap:18px;border-bottom:1px solid var(--line);}
+  .gnb .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;}
+  .gnb .brand .dot{width:28px;height:28px;border-radius:var(--radius-sm);background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+  .gnb .divider{width:1px;height:22px;background:var(--line);}
+  .gnb .product{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;color:var(--ink-60);}
+  .gnb .badge{background:var(--brand-soft);color:var(--ink-60);font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid var(--line);}
+  .gnb .spacer{flex:1;}
+  .gnb .search{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);color:var(--ink);font-size:12px;padding:8px 12px;width:180px;}
+  .gnb .search::placeholder{color:var(--ink-40);}
+  .gnb .icons{display:flex;gap:6px;align-items:center;margin-left:8px;}
+  .gnb .icons .ico-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-60);cursor:pointer;}
+  .gnb .icons .ico-btn:hover{background:var(--bg);color:var(--ink);}
+  .ico svg{display:block;width:18px;height:18px;}
+
+  .body-wrap{display:flex;background:#FAFAFB;min-height:660px;}
+  .lnb{width:52px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:18px;}
+  .lnb .lnb-icon{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--ink-40);cursor:pointer;}
+  .lnb .lnb-icon svg{width:18px;height:18px;}
+  .lnb .lnb-icon.active{background:var(--brand-soft);color:var(--brand);}
+
+  .content{flex:1;padding:22px 26px 36px;}
+  .crumb{font-size:12.5px;color:var(--ink-40);margin-bottom:6px;font-weight:600;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+  .crumb .cur{color:var(--brand);font-weight:700;}
+  .crumb .sep{opacity:.5;}
+  .pagetitle{font-size:20px;font-weight:900;margin:2px 0 16px;}
+  .helpnote{font-size:12px;color:var(--ink-40);margin:-10px 0 16px;}
+
+  .grid-2{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;}
+  .card{background:#fff;border-radius:var(--radius-md);border:1px solid var(--line);padding:20px 22px;}
+  .card-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px;}
+  .card-head h3{font-size:15px;margin:0;font-weight:700;}
+  .card-head .more{font-size:12px;color:var(--ink-40);font-weight:600;cursor:pointer;}
+
+  .cat-section{margin-bottom:20px;}
+  .cat-section:last-child{margin-bottom:0;}
+  .cat-subhead{font-size:11px;font-weight:700;color:var(--ink-40);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+  .cat-refs{display:flex;gap:10px;}
+  .cat-ref-item{flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;background:#fff;transition:.15s;}
+  .cat-ref-item:hover{border-color:var(--brand);background:var(--brand-soft);}
+  .cat-ref-item .ico{width:20px;height:20px;color:var(--ink-60);flex-shrink:0;}
+  .cat-ref-item .label{font-size:13px;font-weight:600;color:var(--ink);}
+  .cat-stages{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .stage-card{border:1px solid var(--line);border-radius:var(--radius-md);padding:22px 14px;text-align:center;cursor:pointer;background:#fff;transition:.15s;}
+  .stage-card:hover{border-color:var(--brand);background:var(--brand-soft);}
+  .stage-card .ico{width:30px;height:30px;color:var(--brand);margin:0 auto 12px;display:block;}
+  .stage-card h4{margin:0 0 4px;font-size:14px;font-weight:800;color:var(--ink);}
+  .stage-card p{margin:0;font-size:11px;color:var(--ink-40);font-weight:600;}
+  .stage-card.disabled{cursor:default;}
+  .stage-card.disabled .ico{color:var(--ink-40);}
+  .stage-card.disabled h4{color:var(--ink-40);}
+  .stage-card.disabled:hover{border-color:var(--line);background:#fff;}
+
+  .utab-row{display:flex;gap:26px;border-bottom:1px solid var(--line);margin-bottom:18px;}
+  .utab{font-size:14px;font-weight:700;color:var(--ink-40);padding:10px 2px;cursor:pointer;border-bottom:2px solid transparent;}
+  .utab.on{color:var(--brand);border-color:var(--brand);}
+
+  .status-row{display:flex;gap:12px;}
+  .status-pill{flex:1;border-radius:var(--radius-sm);border:1px solid var(--line);padding:16px 8px;text-align:center;}
+  .status-pill .label{font-size:12px;font-weight:700;margin-bottom:8px;}
+  .status-pill .num{font-size:20px;font-weight:900;}
+  .status-pill.todo{background:rgba(127,127,220,.12);}
+  .status-pill.progress{background:rgba(63,167,114,.14);}
+  .status-pill.hold{background:rgba(242,169,59,.14);}
+  .status-pill.done{background:rgba(70,164,249,.14);}
+
+  .donut-row{display:flex;justify-content:space-around;margin-top:18px;}
+  .donut{text-align:center;font-size:12px;font-weight:700;}
+  .donut svg{display:block;margin:0 auto 8px;}
+
+  .list-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:12.5px;border-bottom:1px dashed var(--line);}
+  .list-row:last-child{border-bottom:none;}
+  .list-row .t{color:var(--ink);}
+  .list-row .meta{color:var(--ink-40);text-align:right;font-size:11px;}
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .iconbtns{display:flex;gap:8px;}
+  .iconbtn{width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--line);background:#fff;color:var(--ink-60);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;}
+  .iconbtn svg{width:16px;height:16px;}
+  .iconbtn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-soft);}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  thead th{text-align:left;padding:11px 12px;color:var(--ink-60);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line);background:#FAFAFA;}
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--line);}
+  tbody tr.clickable{cursor:pointer;}
+  tbody tr.clickable:hover{background:#FAFAFB;}
+  .tag{font-size:11px;font-weight:800;padding:4px 9px;border-radius:6px;}
+  .tag.todo{background:rgba(127,127,220,.14);color:#5b5bc4;}
+  .tag.progress{background:rgba(63,167,114,.16);color:var(--green);}
+  .tag.hold{background:rgba(242,169,59,.18);color:#9a6a10;}
+  .tag.done{background:rgba(70,164,249,.16);color:#1f6fb8;}
+  .stage-tag{font-size:11px;font-weight:700;color:var(--brand);border:1px solid var(--line);background:var(--brand-soft);padding:3px 8px;border-radius:6px;}
+  .progressbar{width:80px;height:6px;background:var(--line);border-radius:99px;overflow:hidden;}
+  .progressbar > div{height:100%;background:var(--brand);}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;}
+  .dot.green{background:var(--green);} .dot.amber{background:var(--amber);} .dot.blue{background:var(--blue);}
+
+  .wizard-steps{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .wstep{flex:1;min-width:110px;padding:9px 6px;text-align:center;font-size:11.5px;font-weight:700;border-radius:8px;background:#F1F1F3;color:var(--ink-40);}
+  .wstep.current{background:var(--brand);color:#fff;}
+  .wstep.done{background:#EFF6EF;color:var(--green);}
+
+  .form-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;margin-bottom:18px;}
+  .fieldset{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;}
+  .fieldset legend{font-size:12px;font-weight:800;color:var(--navy);padding:0 6px;}
+  .field-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:11.5px;font-weight:700;color:var(--ink-60);display:flex;align-items:center;gap:4px;}
+  .field label .lock{font-size:10px;color:var(--ink-40);}
+  .field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;background:#fff;color:var(--ink);font-family:inherit;}
+  .field input[disabled],.field select[disabled]{background:#F6F6F7;color:var(--ink-40);}
+  .add-row-btn{font-size:12px;font-weight:700;color:var(--brand);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:8px;}
+  .note-box{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px;font-family:inherit;resize:vertical;}
+
+  .wizard-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:22px;}
+  .btn{padding:9px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink-60);}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .btn.dark{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .btn.ghost{background:#fff;}
+
+  .plate-wrap{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;}
+  .plate{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;}
+  .plate h4{font-size:12.5px;margin:0 0 10px;font-weight:800;color:var(--ink-60);}
+  .plate-grid{display:grid;grid-template-columns:repeat(12,20px);grid-auto-rows:20px;gap:3px;}
+  .well{width:20px;height:20px;border-radius:4px;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;}
+  .legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;font-size:11px;color:var(--ink-60);}
+  .legend .sw{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px;}
+  .well-info-panel{border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:260px;background:#fff;}
+  .well-info-panel .row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px dashed var(--line);}
+  .well-info-panel .row:last-child{border-bottom:none;}
+
+  .method-row{display:flex;gap:20px;flex-wrap:wrap;}
+  .method-card{width:290px;border:3px solid var(--line);border-radius:12px;padding:22px;text-align:center;cursor:pointer;background:#fff;transition:.15s;}
+  .method-card:hover{border-color:var(--brand);}
+  .method-card.selected{border-color:var(--brand);background:var(--brand-soft);}
+  .method-card .ico{font-size:34px;margin-bottom:12px;}
+  .method-card h4{margin:0 0 8px;font-size:16px;}
+  .method-card p{margin:0;font-size:12.5px;color:var(--ink-60);}
+
+  .result-layout{display:grid;grid-template-columns:230px 1fr 240px;gap:16px;align-items:start;}
+  .pane{border:1px solid var(--line);border-radius:12px;background:#fff;padding:14px;}
+  .pane h4{font-size:12.5px;margin:0 0 10px;font-weight:800;}
+  .page-row{display:flex;align-items:center;justify-content:space-between;padding:9px 8px;border-radius:8px;font-size:12px;cursor:pointer;}
+  .page-row.on{background:var(--brand-soft);color:var(--brand);font-weight:700;}
+  .page-row:hover{background:#F6F6F7;}
+  .complete-badge{font-size:10px;font-weight:800;color:var(--green);}
+  .data-file{font-size:11px;color:var(--ink-60);padding:8px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;}
+
+  .crit-table th,.crit-table td{text-align:center;border:1px solid var(--line);padding:8px;font-size:11.5px;}
+  .crit-table th{background:#F8F8F8;color:var(--ink);}
+  .crit-table td.pass{background:#FFF6C4;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,20,25,.45);display:none;align-items:center;justify-content:center;z-index:100;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:#fff;border-radius:16px;width:520px;max-width:92vw;box-shadow:var(--shadow);overflow:hidden;}
+  .modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .modal-head h3{margin:0;font-size:18px;}
+  .modal-head .x{cursor:pointer;color:var(--ink-40);font-size:16px;}
+  .modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px;}
+  .modal-foot{padding:20px 22px 26px;display:flex;justify-content:center;gap:16px;}
+  .modal-table{width:100%;font-size:12px;border-collapse:collapse;}
+  .modal-table th{background:#FAFAFA;color:var(--ink-60);padding:8px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.02em;border-bottom:1px solid var(--line);}
+  .modal-table td{padding:8px;border-bottom:1px solid var(--line);}
+
+  .note-toggle{position:fixed;right:28px;bottom:28px;background:var(--ink);color:#fff;border-radius:999px;padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow);z-index:50;display:flex;align-items:center;gap:8px;}
+  .note-panel{position:fixed;right:28px;bottom:82px;width:340px;max-height:60vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--line);padding:18px 20px;display:none;z-index:50;}
+  .note-panel.show{display:block;}
+  .note-panel h4{font-size:13px;margin:0 0 10px;font-weight:800;color:var(--brand);}
+  .note-panel ul{margin:0;padding-left:16px;font-size:12px;line-height:1.7;color:var(--ink);}
+  .note-panel li{margin-bottom:6px;}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;box-shadow:var(--shadow);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  [data-icon] svg{width:100%;height:100%;display:block;}
+  .ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;vertical-align:-3px;}
+  .iconbtn .ico{width:16px;height:16px;}
+  .lock.ico{width:11px;height:11px;vertical-align:-1px;}
+  .gnb .icons .ico-btn svg{width:18px;height:18px;}
+
+  @media (max-width:1000px){
+    .field-grid{grid-template-columns:repeat(2,1fr);}
+    .grid-2{grid-template-columns:1fr;}
+    .result-layout{grid-template-columns:1fr;}
+  }
+
+  /* ── Wizard 화면(Material & Method, Well information …): 하단 버튼을 Footer로
+        고정하고, 그 사이 본문 영역만 정해진 높이 안에서 스크롤되도록 함.
+        중간 콘텐츠는 스크립트가 .wizard-body 로 감싸고 .content 에 .wizard 를 붙임. */
+  .content.wizard{display:flex;flex-direction:column;padding-bottom:0;}
+  .content.wizard > .crumb,
+  .content.wizard > .wizard-steps{flex:0 0 auto;}
+  .content.wizard > .wizard-body{
+    flex:1 1 auto;
+    min-height:0;              /* flex 자식이 줄어들어 스크롤이 생기도록 */
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:2px 14px 12px 0;
+  }
+  .content.wizard > .wizard-actions{
+    flex:0 0 auto;
+    margin-top:0;
+    padding:16px 0 6px;
+    border-top:1px solid var(--line);
+    background:var(--surface);
+  }
+  /* -- 튜토리얼: 사용자 시나리오상 다음에 눌러야 할 요소 하이라이트(맥동) -- */
+  @keyframes pulseHighlight {
+    0%   { box-shadow: 0 0 0 0 rgba(31,111,184,.55); transform: scale(1); }
+    50%  { box-shadow: 0 0 0 8px rgba(31,111,184,0);  transform: scale(1.02); }
+    100% { box-shadow: 0 0 0 0 rgba(31,111,184,0);    transform: scale(1); }
+  }
+  .flow-highlight{ animation: pulseHighlight 2s infinite ease-in-out; border-color: var(--blue) !important; position: relative; z-index: 5; }
+</style>
+</head>
+<body>
+
+<div class="portfolio-head">
+  <div class="eyebrow">Portfolio · UX Reframing Case</div>
+  <h1>연구원 실험 워크플로우 디지털 전환 — 메인 시나리오 목업</h1>
+  <p>실제 화면설계서(연구원용 실험 자동화 시스템)의 화면 흐름·기능 구조를 그대로 반영하되, 회사 고유 제품명·인물정보·내부 문서ID는 전부 가상 데이터로 대체함. Home → Prototype 진입 → Lab-book 선택 → 실험항목 추가/진입 → 실험계획 → Well information(자동생성) → 실험방법 선택 → 데이터 업로드 → 결과 정리 → 합격기준까지 한 흐름으로 클릭하며 확인 가능.</p>
+</div>
+
+<div class="jumpbar">
+  <span class="flowtag">화면 이동</span>
+  <span>버튼을 눌러 순서대로 진행하거나, 아래에서 화면을 바로 선택:</span>
+  <select id="jumpSelect" onchange="show(this.value)">
+    <option value="home">1. Home / Dashboard</option>
+    <option value="labbooklist">2. Prototype — Lab-book list</option>
+    <option value="testlist">3. Lab-book — Test list</option>
+    <option value="plan">4. 실험계획 입력 (Material &amp; Method)</option>
+    <option value="wellinfo">5. Well information (자동생성)</option>
+    <option value="method">6. 실험 방법 선택 (Manual / 자동화장비)</option>
+    <option value="dataupload">7. 데이터 업로드</option>
+    <option value="result">8. 결과 정리 (Result)</option>
+    <option value="criteria">9. 합격기준 (Criteria)</option>
+  </select>
+</div>
+
+<div class="stage">
+
+  <div class="screen active" id="screen-home">
+    <div class="device">
+      <div class="gnb">
+        <div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div>
+        <div class="divider"></div>
+        <div class="product"><span class="badge">Change</span> Target Panel A Assay</div>
+        <div class="spacer"></div>
+        <input class="search" placeholder="Search" />
+        <div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div>
+      </div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon active" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb">Home</div>
+          <div class="helpnote">로그인 시 최초 진입 화면 — 카테고리 진입, 진행률, 공지, 최근 작업 이력을 한 화면에서 확인</div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Category</h3></div>
+              <div class="cat-section">
+                <div class="cat-subhead">참고 정보</div>
+                <div class="cat-refs">
+                  <div class="cat-ref-item"><span class="ico" data-icon="clipboard"></span><span class="label">Product information</span></div>
+                  <div class="cat-ref-item"><span class="ico" data-icon="box"></span><span class="label">Inventory</span></div>
+                </div>
+              </div>
+              <div class="cat-section">
+                <div class="cat-subhead">실험 단계</div>
+                <div class="cat-stages">
+                  <div class="stage-card"><span class="ico" data-icon="flask"></span><h4>Feasibility</h4><p>25% 진행 중</p></div>
+                  <div class="stage-card" onclick="show('labbooklist')" title="클릭하여 Prototype 진입"><span class="ico" data-icon="flask2"></span><h4>Prototype</h4><p>1건 진행 중</p></div>
+                  <div class="stage-card disabled" title="정성(Qualitative) 제품에서만 사용"><span class="ico" data-icon="check"></span><h4>Verification</h4><p>정성 제품 전용</p></div>
+                </div>
+              </div>
+              <div style="height:22px"></div>
+              <div class="card-head"><h3>Dashboard summary</h3><span class="more">More ›</span></div>
+              <div class="utab-row"><div class="utab on">Feasibility</div><div class="utab">Prototype</div><div class="utab">Verification</div></div>
+              <div class="status-row">
+                <div class="status-pill todo"><div class="label">To do</div><div class="num">18</div></div>
+                <div class="status-pill progress"><div class="label">In progress</div><div class="num">1</div></div>
+                <div class="status-pill hold"><div class="label">On hold</div><div class="num">25</div></div>
+                <div class="status-pill done"><div class="label">Completed</div><div class="num">26</div></div>
+              </div>
+              <div class="donut-row">
+                <div class="donut"><svg width="70" height="70" viewBox="0 0 36 36"><path d="M18 2a16 16 0 1 1 0 32 16 16 0 1 1 0-32" fill="none" stroke="#E5E5E5" stroke-width="4"/><path d="M18 2a16 16 0 1 1 0 32" fill="none" stroke="#2C2C2C" stroke-width="4" stroke-dasharray="12 100" stroke-linecap="round"/></svg>25% · Feasibility</div>
+                <div class="donut"><svg width="70" height="70" viewBox="0 0 36 36"><path d="M18 2a16 16 0 1 1 0 32 16 16 0 1 1 0-32" fill="none" stroke="#E5E5E5" stroke-width="4"/></svg>0% · Prototype</div>
+                <div class="donut"><svg width="70" height="70" viewBox="0 0 36 36"><path d="M18 2a16 16 0 1 1 0 32 16 16 0 1 1 0-32" fill="none" stroke="#E5E5E5" stroke-width="4"/></svg>0% · Verification</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:20px;">
+              <div class="card">
+                <div class="card-head"><h3>Notice</h3><span class="more">More ›</span></div>
+                <div class="list-row"><div class="t">[공지] Prototype v0.1.1 릴리즈 노트</div><div class="meta">2026-07-17</div></div>
+                <div class="list-row"><div class="t">[공지] Verification v0.1.1 릴리즈 노트</div><div class="meta">2026-07-17</div></div>
+                <div class="list-row"><div class="t">[공지] 사용자 매뉴얼 업데이트 (KR)</div><div class="meta">2026-07-17</div></div>
+              </div>
+              <div class="card">
+                <div class="card-head"><h3>Recent</h3><span class="more">More ›</span></div>
+                <div class="list-row"><div class="t">Prototype › Lab-book 2 › 반제품1 안정성 테스트</div><div class="meta">16분 전<br>hdlee</div></div>
+                <div class="list-row"><div class="t">Feasibility › Lab-book 3 › Multi-target 민감도 시험</div><div class="meta">3시간 전<br>srkim</div></div>
+                <div class="list-row"><div class="t">Feasibility › Lab-book 1 › LoD 성능 평가</div><div class="meta">6일 전<br>jyoh</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="wizard-actions" style="justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:var(--ink-40);font-weight:600;">Prototype 단계 · Lab-book 3건 · 진행 중 1건</span>
+            <button class="btn primary flow-highlight" onclick="show('labbooklist')">Prototype Lab-book 열기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-labbooklist">
+    <div class="device">
+      <div class="gnb"><div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div><div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" /><div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div></div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span class="cur">Prototype</span></div>
+          <div class="pagetitle">Prototype</div>
+          <div class="toolbar">
+            <div class="iconbtns">
+              <div class="iconbtn" title="Lab-book 추가"><span class="ico" data-icon="plus"></span></div>
+              <div class="iconbtn" title="삭제"><span class="ico" data-icon="trash"></span></div>
+              <div class="iconbtn" title="복사"><span class="ico" data-icon="copy"></span></div>
+              <div class="iconbtn" title="업로드"><span class="ico" data-icon="upload"></span></div>
+              <div class="iconbtn" title="다운로드"><span class="ico" data-icon="download"></span></div>
+            </div>
+            <button class="btn ghost">Tutorial</button>
+          </div>
+          <table>
+            <thead><tr><th></th><th>Lab-book</th><th>Revision No.</th><th>Updated date</th><th>Status</th><th>Progress</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr class="clickable flow-highlight" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 2</td><td>1.0</td><td>2026-07-28</td><td><span class="dot green"></span>In progress</td><td><div class="progressbar"><div style="width:20%"></div></div></td><td>—</td></tr>
+              <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab Book_안정성패널</td><td>1.0</td><td>2026-07-28</td><td><span class="dot amber"></span>On hold</td><td><div class="progressbar"><div style="width:70%"></div></div></td><td>Oligo redesign in progress</td></tr>
+              <tr class="clickable" onclick="show('testlist')"><td><input type="checkbox"></td><td>Lab-book 1</td><td>1.0</td><td>2026-04-05</td><td><span class="dot blue"></span>Completed</td><td><div class="progressbar"><div style="width:100%"></div></div></td><td>M&amp;M 13 Selected</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-testlist">
+    <div class="device">
+      <div class="gnb"><div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div><div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" /><div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div></div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('labbooklist')" style="cursor:pointer;text-decoration:underline;">Prototype</span><span class="sep">›</span><span class="cur">Lab-book 2</span></div>
+          <div class="pagetitle">Lab-book 2</div>
+          <div class="toolbar">
+            <div class="iconbtns">
+              <div class="iconbtn" title="실험항목 추가" onclick="document.getElementById('modalAddTest').classList.add('show')"><span class="ico" data-icon="plus"></span></div>
+              <div class="iconbtn" title="삭제"><span class="ico" data-icon="trash"></span></div>
+              <div class="iconbtn" title="복사"><span class="ico" data-icon="copy"></span></div>
+              <div class="iconbtn" title="편집"><span class="ico" data-icon="edit"></span></div>
+              <div class="iconbtn" title="다운로드"><span class="ico" data-icon="download"></span></div>
+            </div>
+            <button class="btn primary">Save</button>
+          </div>
+          <table>
+            <thead><tr><th></th><th>No.</th><th>Test</th><th>Status</th><th>Progress</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr class="clickable flow-highlight" onclick="show('plan')"><td><input type="checkbox"></td><td>1</td><td>3-1 반제품 소량생산 안정성 시험 (Batch test)</td><td><span class="tag progress">In progress</span></td><td><div class="progressbar"><div style="width:40%"></div></div></td><td>—</td></tr>
+              <tr class="clickable" onclick="show('plan')"><td><input type="checkbox"></td><td>2</td><td>Cross-reactivity 검증</td><td><span class="tag todo">To do</span></td><td><div class="progressbar"><div style="width:0%"></div></div></td><td>—</td></tr>
+              <tr class="clickable" onclick="show('plan')"><td><input type="checkbox"></td><td>-</td><td>2차 Multi-target 선정_민감도 (Customized test)</td><td><span class="tag todo">To do</span></td><td><div class="progressbar"><div style="width:0%"></div></div></td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalAddTest">
+    <div class="modal-box">
+      <div class="modal-head"><h3>Add Test</h3><span class="x" onclick="document.getElementById('modalAddTest').classList.remove('show')">✕</span></div>
+      <div class="modal-body">
+        <div class="field"><label>Test <span style="color:var(--red)">*</span></label><select><option>-Select-</option><option>Sensitivity test (Batch test)</option><option>Specificity test</option></select></div>
+        <div class="field"><label>Title <span style="color:var(--red)">*</span></label><input placeholder="실험항목명 입력 (최대 100자)"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="document.getElementById('modalAddTest').classList.remove('show')">CANCEL</button>
+        <button class="btn primary" onclick="document.getElementById('modalAddTest').classList.remove('show');show('plan')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-plan">
+    <div class="device">
+      <div class="gnb"><div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div><div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" /><div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div></div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('labbooklist')" style="cursor:pointer;text-decoration:underline;">Prototype</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Sensitivity test (Batch test)</span></div>
+
+          <div class="wizard-steps">
+            <div class="wstep current" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('method')">3. 실험 방법 선택</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('criteria')">6. 합격기준</div>
+          </div>
+
+          <div class="form-title">Material &amp; Method</div>
+
+          <fieldset class="fieldset">
+            <legend>자동 연동 항목 (Inventory 연동 · 수정 불가)</legend>
+            <div class="field-grid">
+              <div class="field"><label>Template <span class="lock ico" data-icon="lock"></span></label><input disabled value="pDNA-Target-A_lot12"></div>
+              <div class="field"><label>PCR NC <span class="lock ico" data-icon="lock"></span></label><input disabled value="RNase-free water"></div>
+              <div class="field"><label>PC <span class="lock ico" data-icon="lock"></span></label><input disabled value="Positive control mix"></div>
+              <div class="field"><label>IC <span class="lock ico" data-icon="lock"></span></label><input disabled value="Internal control mix"></div>
+              <div class="field"><label>Oligomix <span class="lock ico" data-icon="lock"></span></label><input disabled value="OMX-2026-014"></div>
+              <div class="field"><label>Enzyme &amp; Buffer <span class="lock ico" data-icon="lock"></span></label><input disabled value="Taq Pol / 2X Buffer"></div>
+              <div class="field"><label>PCR component <span class="lock ico" data-icon="lock"></span></label><input disabled value="20 µL reaction"></div>
+              <div class="field"><label>PCR tube type <span class="lock ico" data-icon="lock"></span></label><input disabled value="0.2 mL 8-strip"></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend>사용자 입력 항목 — pDNA</legend>
+            <div class="field-grid">
+              <div class="field"><label>pDNA name</label><select><option>pDNA_TargetA_std</option><option>pDNA_TargetA_alt</option></select></div>
+              <div class="field"><label>Average Melt Tm (°C)</label><input placeholder="예: 82.4" maxlength="5"></div>
+              <div class="field"><label>pDNA name (Additional)</label><select><option>—</option><option>pDNA_TargetB_std</option></select></div>
+              <div class="field"><label>Average Melt Tm (°C)</label><input placeholder="예: 79.1" maxlength="5"></div>
+            </div>
+            <div class="add-row-btn"><span class="ico" data-icon="plus" style="width:14px;height:14px;"></span> Additional pDNA 추가</div>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend>Note</legend>
+            <textarea class="note-box" placeholder="실험 관련 특이사항 기재 (최대 5,000자)"></textarea>
+          </fieldset>
+
+          <div class="wizard-actions">
+            <button class="btn ghost" onclick="show('testlist')">Prev</button>
+            <button class="btn primary flow-highlight" onclick="show('wellinfo')">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-wellinfo">
+    <div class="device">
+      <div class="gnb"><div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div><div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" /><div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div></div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Sensitivity test</span></div>
+
+          <div class="wizard-steps">
+            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
+            <div class="wstep current" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('method')">3. 실험 방법 선택</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('criteria')">6. 합격기준</div>
+          </div>
+
+          <div class="form-title">Well information <span style="font-size:12px;color:var(--ink-40);font-weight:500;">— Current data: Material &amp; Method (1)</span></div>
+          <div class="helpnote">Material &amp; Method에서 입력한 정보를 기반으로 96-well plate에 Mastermix/Template 배치가 자동 생성됨 (수기 웰맵 작성 과정을 제거한 부분)</div>
+
+          <div class="plate-wrap">
+            <div class="plate">
+              <h4>Plate 1 — Mastermix plate</h4>
+              <div class="plate-grid" id="plateMM"></div>
+              <div class="legend">
+                <span><span class="sw" style="background:#2C2C2C"></span>M1 Mastermix 1 (Pre-lot)</span>
+                <span><span class="sw" style="background:#45526B"></span>M2 Mastermix 2 (New-lot 1)</span>
+                <span><span class="sw" style="background:#3FA772"></span>M3 Mastermix 3 (New-lot 2)</span>
+              </div>
+            </div>
+            <div class="plate">
+              <h4>Plate 1 — Template plate</h4>
+              <div class="plate-grid" id="plateT"></div>
+              <div class="legend">
+                <span><span class="sw" style="background:#F2A93B"></span>T1–T3 pDNA_TargetA_std 희석계열</span>
+              </div>
+            </div>
+            <div class="well-info-panel">
+              <h4 style="margin-bottom:10px;">Mastermix 상세</h4>
+              <div class="row"><span>M1</span><span>Mastermix 1 · Pre-lot</span></div>
+              <div class="row"><span>M2</span><span>Mastermix 2 · New-lot 1</span></div>
+              <div class="row"><span>M3</span><span>Mastermix 3 · New-lot 2</span></div>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button class="btn ghost" onclick="show('plan')">Prev</button>
+            <button class="btn primary flow-highlight" onclick="show('method')">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-method">
+    <div class="device">
+      <div class="gnb"><div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div><div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" /><div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div></div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Sensitivity test</span></div>
+
+          <div class="wizard-steps">
+            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
+            <div class="wstep current" style="cursor:pointer;" onclick="show('method')">3. 실험 방법 선택</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('criteria')">6. 합격기준</div>
+          </div>
+
+          <div class="form-title">Experiment — 실험 방법 선택</div>
+          <div class="helpnote">동일한 실험 계획을 수기(Manual)로 진행할지, 자동화 장비(Liquid handler 등)로 진행할지 선택. 선택에 따라 이후 단계 입력 항목이 달라짐.</div>
+
+          <div class="method-row">
+            <div class="method-card selected" id="cardManual" onclick="selectMethod('manual')">
+              <div class="ico" data-icon="hand" style="width:34px;height:34px;margin:0 auto 12px;"></div>
+              <h4>Manual</h4>
+              <p>연구원이 직접 피펫팅하여 Plate 준비. Well 별 위치를 육안으로 확인하며 진행.</p>
+            </div>
+            <div class="method-card" id="cardAuto" onclick="selectMethod('auto')">
+              <div class="ico" data-icon="robot" style="width:34px;height:34px;margin:0 auto 12px;"></div>
+              <h4>자동화 장비</h4>
+              <p>Liquid handler 프로토콜 파일을 생성해 장비로 분주. Well information과 동일한 배치 파일 자동 출력.</p>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button class="btn ghost" onclick="show('wellinfo')">Prev</button>
+            <button class="btn primary flow-highlight" onclick="show('dataupload')">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-dataupload">
+    <div class="device">
+      <div class="gnb"><div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div><div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" /><div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div></div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Sensitivity test</span></div>
+
+          <div class="wizard-steps">
+            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('method')">3. 실험 방법 선택</div>
+            <div class="wstep current" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('criteria')">6. 합격기준</div>
+          </div>
+
+          <div class="utab-row"><div class="utab on">Data file</div><div class="utab">Document</div></div>
+          <div class="toolbar">
+            <div class="iconbtns"><div class="iconbtn"><span class="ico" data-icon="plus"></span></div><div class="iconbtn"><span class="ico" data-icon="trash"></span></div><div class="iconbtn"><span class="ico" data-icon="download"></span></div></div>
+          </div>
+          <table>
+            <thead><tr><th></th><th>File name</th><th colspan="2">PCR raw data</th><th>Well information</th><th>PCR instrument</th><th>Note</th><th>★</th></tr></thead>
+            <tbody>
+              <tr><td><input type="checkbox"></td><td>admin_2026-07-23_14-25_BR205025_plate1</td><td>Nobaseline ✕</td><td>Baseline ✓</td><td>Well information 1 / Plate 1</td><td>CFX96</td><td>Retest</td><td><span class="ico" data-icon="star"></span></td></tr>
+              <tr><td><input type="checkbox"></td><td>admin_2026-07-23_14-26_BR205030_plate2</td><td>Nobaseline ✓</td><td>Baseline ✓</td><td>Well information 1 / Plate 2</td><td>CFX96</td><td>—</td><td><span class="ico" data-icon="star"></span></td></tr>
+            </tbody>
+          </table>
+
+          <div class="wizard-actions">
+            <button class="btn ghost" onclick="show('method')">Prev</button>
+            <button class="btn primary flow-highlight" onclick="show('result')">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-result">
+    <div class="device">
+      <div class="gnb"><div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div><div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" /><div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div></div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('testlist')" style="cursor:pointer;text-decoration:underline;">Lab-book 2</span><span class="sep">›</span><span class="cur">Result</span></div>
+
+          <div class="wizard-steps">
+            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('method')">3. 실험 방법 선택</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
+            <div class="wstep current" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
+            <div class="wstep" style="cursor:pointer;" onclick="show('criteria')">6. 합격기준</div>
+          </div>
+
+          <div class="result-layout">
+            <div class="pane">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <h4 style="margin:0;">Page</h4>
+                <div class="iconbtns"><div class="iconbtn" title="Page 추가" onclick="document.getElementById('modalCreatePage').classList.add('show')"><span class="ico" data-icon="plus"></span></div><div class="iconbtn" title="삭제"><span class="ico" data-icon="trash"></span></div></div>
+              </div>
+              <div class="page-row on"><span>Page 1 for test 1</span><span class="complete-badge">✓ Complete</span></div>
+              <div class="page-row"><span>Page 2 for test 1</span><span></span></div>
+              <div class="page-row"><span>Page 3 for test 1</span><span></span></div>
+            </div>
+
+            <div class="pane">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <h4 style="margin:0;">Page 1 for test 1</h4>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn ghost" style="padding:6px 12px;font-size:11.5px;" onclick="show('criteria')">CRITERIA</button>
+                  <button class="btn ghost" style="padding:6px 12px;font-size:11.5px;">NOTE</button>
+                </div>
+              </div>
+              <table style="font-size:11.5px;">
+                <thead><tr><th>Well</th><th>Fluorophore</th><th>Analyte</th><th>Ct</th><th>Melt Tm</th><th>Result</th></tr></thead>
+                <tbody>
+                  <tr><td>A1</td><td>FAM</td><td>Analyte 1</td><td>24.3</td><td>82.1</td><td><span class="tag done">Positive</span></td></tr>
+                  <tr><td>A2</td><td>HEX</td><td>Analyte 2</td><td>26.7</td><td>79.4</td><td><span class="tag done">Positive</span></td></tr>
+                  <tr><td>A3</td><td>Cal Red 610</td><td>Analyte 3</td><td>-</td><td>-</td><td><span class="tag hold">Negative</span></td></tr>
+                  <tr><td>A4</td><td>Quasar 670</td><td>IC</td><td>29.5</td><td>-</td><td><span class="tag done">Valid</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pane">
+              <h4>Data</h4>
+              <div class="data-file"><input type="checkbox"> admin_2026-06-30_10-28_plate2</div>
+              <div class="data-file"><input type="checkbox"> admin_2026-06-30_10-28_plate3</div>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button class="btn ghost" onclick="show('dataupload')">Prev</button>
+            <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
+            <button class="btn primary flow-highlight" onclick="show('criteria')">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalCreatePage">
+    <div class="modal-box" style="width:640px;">
+      <div class="modal-head"><h3>Create page</h3><span class="x" onclick="document.getElementById('modalCreatePage').classList.remove('show')">✕</span></div>
+      <div class="modal-body">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <select style="flex:1;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px;"><option>Well information 1</option></select>
+          <button class="btn ghost" style="padding:6px 14px;font-size:11.5px;">ALL</button>
+        </div>
+        <table class="modal-table">
+          <thead><tr><th>Well information</th><th>Plate</th><th>PCR instrument</th><th>Page name</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Well information 1</td><td>Plate 1</td><td>CFX96</td><td><input style="width:100%;border:1px solid var(--line);border-radius:6px;padding:4px 6px;" value="Plate 1_Template A"></td><td><span class="ico" data-icon="trash"></span></td></tr>
+            <tr><td>Well information 1</td><td>Plate 2</td><td>CFX96</td><td><input style="width:100%;border:1px solid var(--line);border-radius:6px;padding:4px 6px;" value="Plate 2_Template A"></td><td><span class="ico" data-icon="trash"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="document.getElementById('modalCreatePage').classList.remove('show')">CANCEL</button>
+        <button class="btn primary" onclick="document.getElementById('modalCreatePage').classList.remove('show')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-criteria">
+    <div class="device">
+      <div class="gnb"><div class="brand" style="cursor:pointer;" onclick="show('home')" title="홈으로 이동"><div class="dot">L</div>LAB IDEA</div><div class="divider"></div><div class="product"><span class="badge">Change</span> Target Panel A Assay</div><div class="spacer"></div><input class="search" placeholder="Search" /><div class="icons"><span class="ico-btn" data-icon="bell"></span><span class="ico-btn" data-icon="folder"></span><span class="ico-btn" data-icon="user"></span><span class="ico-btn" data-icon="settings"></span><span class="ico-btn" data-icon="grid"></span></div></div>
+      <div class="body-wrap">
+        <div class="lnb"><div class="lnb-icon" data-icon="home"></div><div class="lnb-icon" data-icon="box"></div><div class="lnb-icon active" data-icon="flask"></div><div class="lnb-icon" data-icon="chart"></div></div>
+        <div class="content">
+          <div class="crumb"><span onclick="show('home')" style="cursor:pointer;text-decoration:underline;">Home</span><span class="sep">›</span><span onclick="show('result')" style="cursor:pointer;text-decoration:underline;">Result</span><span class="sep">›</span><span class="cur">Criteria</span></div>
+
+          <div class="wizard-steps">
+            <div class="wstep done" style="cursor:pointer;" onclick="show('plan')">1. Material &amp; Method</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('wellinfo')">2. Well information</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('method')">3. 실험 방법 선택</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('dataupload')">4. 데이터 업로드</div>
+            <div class="wstep done" style="cursor:pointer;" onclick="show('result')">5. 결과 정리</div>
+            <div class="wstep current" style="cursor:pointer;" onclick="show('criteria')">6. 합격기준</div>
+          </div>
+
+          <div class="pagetitle" style="font-size:18px;">Criteria</div>
+          <div class="helpnote">Fluorophore/Analyte/Template pDNA는 Product information의 Analyte channel information에서 자동 연동 (수정 불가). Ct, Melt peak, Melt Tm은 각 실험항목 결과에서 자동 연동됨. Ct Pass criteria(노란색)는 합격 판정 기준값으로, 결과와 비교해 최종 Pass/Fail을 결정함.</div>
+          <div class="utab-row"><div class="utab on">mono pDNA 1 fold</div><div class="utab">mono pDNA LoD</div><div class="utab">PC</div><div class="utab">IC</div></div>
+
+          <div style="overflow-x:auto;">
+          <table class="crit-table" style="min-width:900px;">
+            <thead>
+              <tr>
+                <th rowspan="2">Fluorophore</th><th rowspan="2">Analyte</th><th rowspan="2">Template<br>pDNA</th>
+                <th colspan="3">Ct</th><th colspan="3">Melt peak height</th><th colspan="3">Melt Tm</th>
+                <th>Ct Pass<br>Criteria</th><th>History</th>
+              </tr>
+              <tr><th>Min</th><th>Max</th><th>Average</th><th>Min</th><th>Max</th><th>Average</th><th>Min</th><th>Max</th><th>Average</th><th>Ct Max</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr><td>FAM_L</td><td>Analyte 1</td><td>Template 1</td><td>23.1</td><td>25.4</td><td>24.2</td><td>410</td><td>480</td><td>446</td><td>81.9</td><td>82.6</td><td>82.2</td><td class="pass">30.0</td><td>—</td></tr>
+              <tr><td>FAM_H</td><td>Analyte 2</td><td>Template 2</td><td>25.9</td><td>27.8</td><td>26.9</td><td>390</td><td>455</td><td>420</td><td>79.0</td><td>79.8</td><td>79.4</td><td class="pass">32.0</td><td>—</td></tr>
+              <tr><td>HEX_L</td><td>Analyte 3</td><td>Template 3</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td class="pass">33.0</td><td>—</td></tr>
+              <tr><td>HEX_H</td><td>Analyte 4</td><td>Template 4</td><td>28.0</td><td>30.5</td><td>29.4</td><td>360</td><td>410</td><td>388</td><td>84.1</td><td>84.9</td><td>84.5</td><td class="pass">35.0</td><td>—</td></tr>
+              <tr><td>Quasar 670_L</td><td>IC</td><td>—</td><td>27.2</td><td>29.0</td><td>28.1</td><td>300</td><td>360</td><td>330</td><td>—</td><td>—</td><td>—</td><td class="pass">32.0</td><td>—</td></tr>
+            </tbody>
+          </table>
+          </div>
+
+          <div class="wizard-actions">
+            <button class="btn ghost" onclick="show('result')">Prev</button>
+            <button class="btn ghost" onclick="toast('저장되었습니다!')">Save</button>
+            <button class="btn dark flow-highlight" onclick="show('testlist');toast('완료되었습니다!')">Complete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="note-toggle" onclick="document.getElementById('notePanel').classList.toggle('show')">💡 기획 포인트</div>
+<div class="note-panel" id="notePanel"><h4>재기획 핵심 포인트</h4><ul id="noteList"></ul></div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+  const screens = ['home','labbooklist','testlist','plan','wellinfo','method','dataupload','result','criteria'];
+  const notes = {
+    home: [
+      '카테고리(Product info/Inventory/Feasibility/Prototype/Verification) 진입점을 카드로 시각화, 원클릭 이동',
+      'Dashboard summary는 단계별 탭 + 상태 4분류(To do/In progress/On hold/Completed) 구조 유지',
+      'Recent는 "카테고리 › Lab-book › 실험항목" 경로형 표기로 작업 맥락을 바로 파악하게 함'
+    ],
+    labbooklist: [
+      '기존 엑셀/수기 리스트를 Lab-book 단위 테이블로 전환 — Revision, 진행률, 상태를 한눈에 비교',
+      '행 클릭 시 바로 Test list로 진입해 리스트 → 상세 이동 단계를 최소화'
+    ],
+    testlist: [
+      '실험항목(Test)을 Lab-book 하위에 배치해 실험 계획 단위를 명확히 구분',
+      '+ 버튼으로 Add Test 모달을 띄우고, 저장 즉시 실험계획 입력 화면으로 자연스럽게 연결'
+    ],
+    plan: [
+      'Material & Method는 Inventory에서 자동 연동되는 값(잠금 아이콘)과 사용자 입력값을 시각적으로 분리',
+      'Additional pDNA처럼 반복 입력이 필요한 항목은 "행 추가" 패턴으로 확장',
+      'Prev/Next 구조로 단계형 실험 기록(Wizard)을 구현해 다음 단계 진입 경로를 고정'
+    ],
+    wellinfo: [
+      'Well information은 연구원이 직접 그리던 웰맵을 Material & Method 입력값 기반 자동생성으로 대체한 핵심 개선 지점',
+      'Mastermix/Template plate를 분리 표시하고, 우측 패널에서 각 Well의 상세(Lot 정보 등)를 바로 확인 가능'
+    ],
+    method: [
+      '동일 실험계획이라도 실행 방식(Manual/자동화 장비)에 따라 후속 데이터 입력 항목이 달라지는 점을 반영',
+      '카드형 선택 UI로 실험 시작 전 의사결정 지점을 명확히 분리'
+    ],
+    dataupload: [
+      'PCR 원본 데이터를 Well information/Plate와 자동 매칭해 업로드, 이후 Result 화면에서 재사용',
+      'Result에서 이미 사용 중인 데이터는 수정/삭제가 비활성화되도록 설계해 결과 정합성 보호'
+    ],
+    result: [
+      '3분할 레이아웃(Page 목록 / 결과 테이블 / 원본 데이터)으로 여러 Plate 결과를 한 화면에서 정리',
+      'Page별 Complete 토글이 상위 Test list의 진행률(Progress) 계산과 연동되는 구조',
+      'CRITERIA 버튼으로 합격기준 화면과 바로 연결해 결과 판정까지 하나의 흐름으로 처리'
+    ],
+    criteria: [
+      'Fluorophore/Analyte/Template 자동 연동 + Ct·Melt 통계(Min/Max/Average)를 함께 보여줘 판정 근거를 투명하게 노출',
+      'Pass criteria를 강조 색상으로 구분해 결과 승인 여부를 빠르게 판단하도록 함'
+    ]
+  };
+  function show(id){
+    screens.forEach(s=>document.getElementById('screen-'+s).classList.remove('active'));
+    document.getElementById('screen-'+id).classList.add('active');
+    document.getElementById('jumpSelect').value = id;
+    renderNotes(id);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function renderNotes(id){
+    document.getElementById('noteList').innerHTML = (notes[id]||[]).map(n=>'<li>'+n+'</li>').join('');
+  }
+  function selectMethod(kind){
+    document.getElementById('cardManual').classList.toggle('selected', kind==='manual');
+    document.getElementById('cardAuto').classList.toggle('selected', kind==='auto');
+  }
+  let toastTimer = null;
+  function toast(msg){
+    const el = document.getElementById('toastEl');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
+  }
+  function renderPlate(elId, colorFn){
+    const el = document.getElementById(elId);
+    let html='';
+    for(let r=0;r<8;r++){
+      for(let c=0;c<12;c++){
+        const cell = colorFn(r,c);
+        html += '<div class="well" style="background:'+cell.bg+'">'+cell.label+'</div>';
+      }
+    }
+    el.innerHTML = html;
+  }
+  renderPlate('plateMM', function(r,c){
+    const palette = ['#2C2C2C','#45526B','#3FA772'];
+    if(c%4===3) return {bg:'#EDEDED', label:''};
+    const idx = c%3;
+    return {bg:palette[idx], label:'M'+(idx+1)};
+  });
+  renderPlate('plateT', function(r,c){
+    if(c%4===3) return {bg:'#EDEDED', label:''};
+    return {bg:'#F2A93B', label:'T'+((c%3)+1)};
+  });
+  renderNotes('home');
+
+  // ---- Icon library (line-style, matches neutral design system) ----
+  const ICONS = {
+    bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+    folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>',
+    user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.4 7-5.4s5.8 1.8 7 5.4"/></svg>',
+    settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9c.2.7.7 1.2 1.5 1.4h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>',
+    grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>',
+    box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.3 7 8.7-4 8.7 4-8.7 4-8.7-4Z"/><path d="M3.3 7v10l8.7 4 8.7-4V7"/><path d="M12 11v10"/></svg>',
+    flask: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V3"/><path d="M7.5 15h9"/></svg>',
+    flask2: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8"/><path d="M9 2v7.2L3.6 18a2.2 2.2 0 0 0 1.9 3.3h13a2.2 2.2 0 0 0 1.9-3.3L15 9.2V2"/><path d="M6.5 14h11"/></svg>',
+    chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg>',
+    clipboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="1.5"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5.5"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6.5 7 7.3 19a1.5 1.5 0 0 0 1.5 1.4h6.4a1.5 1.5 0 0 0 1.5-1.4L18.5 7"/><path d="M10 11v6M14 11v6"/></svg>',
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="1.5"/><path d="M5.5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1.5"/></svg>',
+    upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m7 8.5 5-4.5 5 4.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>',
+    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="m7 11.5 5 4.5 5-4.5"/><path d="M4 19h16"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a2 2 0 0 0 0-2.8L16.8 5a2 2 0 0 0-2.8 0L4 15v5Z"/><path d="M13 6.5 17.5 11"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.8 6.3.6-4.7 4.3 1.3 6.3L12 17l-5.6 3 1.3-6.3-4.7-4.3 6.3-.6L12 3Z"/></svg>',
+    hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12V6a1.5 1.5 0 0 1 3 0v5"/><path d="M11 11V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M14 11.2V6a1.5 1.5 0 0 1 3 0v7"/><path d="M17 12v-2a1.5 1.5 0 0 1 3 0v6c0 3.3-2.2 6-6 6h-2c-3 0-4.2-1-5.7-3L4 15.4c-.6-.9-.3-1.9.5-2.4.8-.4 1.7-.2 2.3.5L8 15"/></svg>',
+    robot: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V4"/><circle cx="12" cy="3" r="1.2" fill="currentColor" stroke="none"/><path d="M2 13h2M20 13h2"/><circle cx="9" cy="13" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="currentColor" stroke="none"/><path d="M9 17h6"/></svg>'
+  };
+  document.querySelectorAll('[data-icon]').forEach(function(el){
+    el.innerHTML = ICONS[el.dataset.icon] || '';
+  });
+
+  // wizard-actions(Footer) 를 가진 모든 화면(=Home 포함): 상단 고정 영역
+  // (crumb / wizard-steps) 아래부터 Footer 전까지를 .wizard-body 로 감싸
+  // 스크롤 영역으로 만들고, .content 에 .wizard / .screen 에 .has-wizard 부여.
+  document.querySelectorAll('.screen .content').forEach(function(c){
+    var actions = c.querySelector(':scope > .wizard-actions');
+    if(!actions) return;
+    c.classList.add('wizard');
+    var sc = c.closest('.screen'); if(sc) sc.classList.add('has-wizard');
+    var anchor = c.querySelector(':scope > .wizard-steps') || c.querySelector(':scope > .crumb');
+    var start = anchor ? anchor.nextElementSibling : c.firstElementChild;
+    var body = document.createElement('div');
+    body.className = 'wizard-body';
+    var n = start;
+    while(n && n !== actions){ var nx = n.nextElementSibling; body.appendChild(n); n = nx; }
+    c.insertBefore(body, actions);
+  });
+</script>
+</body>
+</html>

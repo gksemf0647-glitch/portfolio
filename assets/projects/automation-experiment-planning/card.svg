@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 667" width="1000" height="667" font-family="'Satoshi','Pretendard',-apple-system,'Segoe UI',sans-serif">
+  <rect width="1000" height="667" fill="#EEEEE7"/>
+  <rect x="56" y="60" width="888" height="524" rx="16" fill="#0B0C10" opacity="0.05" transform="translate(0,12)"/>
+  <rect x="56" y="60" width="888" height="524" rx="16" fill="#FFFFFF" stroke="#E2E2DA"/>
+
+  <text x="104" y="140" font-size="27" font-weight="700" fill="#17181C" letter-spacing="-0.015em">Experiment sets</text>
+
+  <line x1="104" y1="180" x2="896" y2="180" stroke="#EBEBE3"/>
+  <g font-size="19" fill="#2B2D34">
+    <text x="104" y="248">Panel A · Limit of Detection</text>
+    <rect x="748" y="226" width="96" height="30" rx="15" fill="#17181C"/>
+    <text x="796" y="246" font-size="14" font-weight="600" fill="#FFF" text-anchor="middle">Ready</text>
+    <line x1="104" y1="284" x2="896" y2="284" stroke="#F3F3EC"/>
+
+    <text x="104" y="352">Panel B · Cross-reactivity</text>
+    <text x="800" y="352" font-size="15" fill="#9CA0A8" text-anchor="end">Draft</text>
+    <line x1="104" y1="388" x2="896" y2="388" stroke="#F3F3EC"/>
+
+    <text x="104" y="456">Panel C · Stability</text>
+    <text x="800" y="456" font-size="15" fill="#9CA0A8" text-anchor="end">Queued</text>
+    <line x1="104" y1="492" x2="896" y2="492" stroke="#F3F3EC"/>
+  </g>
+
+  <text x="104" y="552" font-size="15" fill="#9CA0A8">Each set auto-builds its 96-well map from Material &amp; Method</text>
+</svg>

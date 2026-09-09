@@ -33,16 +33,37 @@
 </noscript>
 <style>
   :root {
-    --bg: #ffffff;
-    --bg-soft: #f6f7f9;
+    /* ---- Palette: cool "blue-grey paper" ground (a desaturated slate white,
+       ~hsl(214 30% 97%)), pure-white surfaces, ink text, one blue accent.
+       --bg is the page paper; --thumb-frame is the tint behind thumbnails. */
+    --bg: #f3f5f9;          /* cool paper — page ground (blue-grey white) */
+    --surface: #ffffff;     /* pure white — cards, things that lift */
+    --bg-soft: #e9edf4;     /* cooler tint — alternating section band */
+    --thumb-frame: #e7ecf3; /* slate tint behind product-shot thumbnails */
+    --ink-block: #141620;   /* near-black (faint blue) — the one dark section */
     --accent: #2c4bd4;
     --accent-strong: #1f37a8;
     --accent-soft: rgba(44, 75, 212, 0.08);
     --accent-border: rgba(44, 75, 212, 0.28);
-    --text: #16181d;
-    --text-dim: #6b6f78;
-    --card-border: #e6e7eb;
-    --line: #e6e7eb;
+    --text: #161820;        /* ink (a hair cool) */
+    --text-dim: #5f636e;
+    --text-mute: #969aa5;   /* tertiary — captions, disabled */
+    --card-border: #e0e5ee;
+    --line: #e0e5ee;
+
+    /* ---- Type scale: 7 deliberate steps so the page is never binary
+       (hero → body). The middle steps carry Work titles + Approach principles. */
+    --fs-caption: 0.72rem;                       /* uppercase micro-labels */
+    --fs-small:   0.8125rem;                     /* 13px — meta, index */
+    --fs-body:    0.9375rem;                     /* 15px */
+    --fs-lead:    clamp(1rem, 1.35vw, 1.1875rem);/* 16–19px — intro paragraphs */
+    --fs-h3:      clamp(1.15rem, 1.8vw, 1.5rem); /* card / row / principle titles */
+    --fs-h2:      clamp(1.6rem, 2.7vw, 2.4rem);  /* section headings */
+    --fs-display: clamp(2.5rem, 6.4vw, 5.4rem);  /* hero */
+
+    /* 12-column grid, one measure everywhere */
+    --grid-cols: 12;
+    --col-gap: clamp(14px, 2vw, 32px);
 
     /* ---- Unified spatial system (2025 refactor) --------------------------
        One container width + one padding token for every section, and a
@@ -2135,6 +2156,486 @@
   /* Body-copy measure: never wider than ~68 characters */
   .hero-sub, .work-desc, .more-work-desc,
   .approach-step p, .about-statement, .exp-rail-note { max-width: 62ch; }
+
+  /* ============================================================= *
+     v9 — art-direction pass (thumbnails, grid, hierarchy, palette,
+     bilingual, motion). Appended last so it wins on equal specificity.
+   * ============================================================= */
+
+  /* ---- Palette: paper ground, ink text, one accent ---- */
+  body { background: var(--bg); }
+  #projects   { background: var(--surface); }
+  #approach   { background: var(--bg); }
+  #about      { background: var(--bg-soft); }
+  #experience { background: var(--surface); }
+  #skills     { background: var(--bg-soft); }
+  section { border-top: 1px solid var(--line); }
+  .work-thumb, .more-work-thumb { background: var(--thumb-frame); border-color: var(--line); }
+
+  /* Consistent link-hover: an underline that draws in, in the accent colour */
+  .hero-sub-en a, .about-statement a, .work-desc a,
+  a.footer-link, a.footer-mail {
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 0% 1.5px; background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size .3s var(--ease-out);
+  }
+  .hero-sub-en a:hover, .about-statement a:hover, .work-desc a:hover,
+  a.footer-link:hover, a.footer-mail:hover { background-size: 100% 1.5px; }
+
+  /* ---- HERO: one 12-col grid; spec card aligns to cols 9–12 ---- */
+  @media (min-width: 900px) {
+    .hero-lower {
+      grid-template-columns: repeat(12, 1fr);
+      column-gap: var(--col-gap);
+      align-items: start;
+    }
+    .hero-lead-col { grid-column: 1 / 8; }
+    .hero-meta     { grid-column: 9 / 13; }
+  }
+  .hero-headline {
+    font-size: var(--fs-display);
+    text-wrap: balance;
+    max-width: 18ch;
+  }
+  .hero-eyebrow { color: var(--text-dim); font-family: var(--font-display); }
+
+  /* Bilingual: KR lead is primary (full contrast), EN gloss beneath at ~62% */
+  .hero-sub {
+    color: var(--text);
+    font-size: var(--fs-lead);
+    line-height: 1.7;
+    max-width: 40ch;
+    margin: 0 0 8px;
+  }
+  .hero-sub-en {
+    color: var(--text-dim);
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    letter-spacing: -0.005em;
+    max-width: 46ch;
+    margin: 0 0 30px;
+  }
+  .hero-meta { border-top: 2px solid var(--text); }
+  .hero-meta > div {
+    grid-template-columns: 84px 1fr;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-meta dt {
+    font-size: var(--fs-caption);
+    letter-spacing: 0.09em;
+    color: var(--text-dim);
+  }
+  .hero-meta dd { font-size: var(--fs-body); color: var(--text); }
+  .hero-status::before { background: var(--accent); }
+  @keyframes statusPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(44,75,212,0.4); }
+    70%  { box-shadow: 0 0 0 7px rgba(44,75,212,0); }
+    100% { box-shadow: 0 0 0 0 rgba(44,75,212,0); }
+  }
+
+  /* Animated scroll cue */
+  .hero-scrolldown { color: var(--text-dim); }
+  .hero-scrolldown::after { animation: scrollNudge 1.8s var(--ease) infinite; display: inline-block; }
+  @keyframes scrollNudge {
+    0%, 100% { transform: translateY(0); opacity: .6; }
+    50%      { transform: translateY(4px); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-scrolldown::after { animation: none; }
+  }
+
+  /* ---- WORK: own the index, three clear hierarchy levels ---- */
+  .work-item-head, .more-work-head {
+    display: flex; align-items: baseline; gap: 14px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 10px;
+  }
+  .work-number, .more-work-number {
+    font-family: var(--font-display);
+    font-size: 1.2rem; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .work-year, .more-work-year {
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-mute);
+    margin-left: auto;
+  }
+
+  .work-title {
+    font-size: var(--fs-h3);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .more-work-title { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; }
+
+  /* transformation one-liner as a designed before → after pair */
+  .work-transform {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px;
+    margin-bottom: 20px; max-width: none;
+  }
+  .work-transform .tf-from, .work-transform .tf-to {
+    font-size: var(--fs-small); font-weight: 600;
+    padding: 4px 11px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--text);
+    background: var(--surface);
+  }
+  .work-transform .tf-to { border-color: var(--accent-border); color: var(--accent); background: var(--accent-soft); }
+  .work-transform .tf-arrow { color: var(--text-mute); font-size: 0.9rem; }
+  .work-transform .tf-solo { font-size: var(--fs-small); color: var(--text-dim); }
+  .more-work-desc.work-transform { margin-bottom: 14px; }
+
+  /* ROLE / SCOPE — smallest tier; SCOPE as real chips */
+  .work-role-scope { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+  .work-role-scope .rs-line { display: grid; grid-template-columns: 62px 1fr; gap: 14px; align-items: start; }
+  .work-role-scope .rs-line strong {
+    font-size: var(--fs-caption); font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-mute); padding-top: 3px;
+  }
+  .work-role-scope .rs-line > span { font-size: var(--fs-small); color: var(--text-dim); line-height: 1.55; }
+  .scope-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .scope-chip {
+    font-size: 0.75rem; font-weight: 500; color: var(--text-dim);
+    padding: 3px 9px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg);
+  }
+
+  /* CTA — one clear designed action */
+  .case-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--font-display); font-size: var(--fs-small); font-weight: 600;
+    color: var(--text);
+  }
+  .case-cta::after {
+    content: ""; width: 20px; height: 1.5px; background: currentColor;
+    transition: width .3s var(--ease-out);
+  }
+  .work-item:hover .case-cta::after,
+  .work-item:focus-visible .case-cta::after,
+  .more-work-item:hover .case-cta::after { width: 40px; background: var(--accent); }
+  .work-item:hover .case-cta,
+  .more-work-item:hover .case-cta { color: var(--accent); }
+
+  /* thumbnail hover: lift + scale + "View case" label */
+  .work-thumb, .more-work-thumb { position: relative; overflow: hidden; }
+  .work-thumb .img-placeholder img,
+  .more-work-thumb .img-placeholder img { object-position: center center; transition: transform .5s var(--ease-out); }
+  .work-item:hover .work-thumb .img-placeholder img,
+  .more-work-item:hover .more-work-thumb .img-placeholder img { transform: scale(1.035); }
+  .thumb-view {
+    position: absolute; left: 14px; bottom: 14px; z-index: 2;
+    font-family: var(--font-display); font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: #fff; background: rgba(20,21,26,0.9);
+    padding: 5px 11px; border-radius: 999px;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .28s var(--ease-out), transform .28s var(--ease-out);
+  }
+  .work-item:hover .thumb-view,
+  .work-item:focus-visible .thumb-view,
+  .more-work-item:hover .thumb-view { opacity: 1; transform: translateY(0); }
+
+  /* ---- APPROACH: activate the right side, align hairlines ---- */
+  @media (min-width: 900px) {
+    .approach-head {
+      display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--col-gap);
+      align-items: end;
+    }
+    .approach-eyebrow { grid-column: 1 / 13; }
+    .approach-head h2 { grid-column: 1 / 9; font-size: var(--fs-h2); letter-spacing: -0.02em; }
+    .approach-head::after {
+      content: "05"; grid-column: 11 / 13; justify-self: end; align-self: end;
+      font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 700; line-height: .8; color: var(--line);
+      letter-spacing: -0.04em;
+    }
+  }
+  .approach-step h3 { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.015em; }
+
+  /* ---- Section headings on the scale ---- */
+  section .section-head .section-eyebrow { font-size: var(--fs-h2); }
+
+  /* ---- nav: contact button in the palette, not a raw black pill ---- */
+  .nav-contact { background: var(--text); }
+  .nav-contact:hover { background: var(--accent); }
+  nav a.active { color: var(--accent); }
+  nav a::after { background: var(--accent) !important; }
+
+  /* ============================================================= *
+     v9.1 — pass 2: bilingual rhythm, hero vertical anchor, card
+     interiors already rebuilt (monochrome), accent rationing,
+     Work-row contrast, crisp hover underline.
+   * ============================================================= */
+
+  /* Hero vertical: tighten dead space, anchor the spec card to the grid */
+  .hero { padding: clamp(52px, 8vh, 96px) 0 clamp(30px, 4.5vh, 52px); }
+  .hero-headline { margin-bottom: clamp(28px, 4vw, 44px); }
+  @media (min-width: 900px) {
+    .hero-meta {
+      align-self: stretch;
+      padding-left: clamp(20px, 2.4vw, 40px);
+      border-left: 1px solid var(--line);
+    }
+    .hero-meta > div:first-child { padding-top: 0; }
+  }
+  .hero-sub-en { font-style: normal; opacity: 0.62; margin-bottom: 26px; }
+  .hero-scrolldown { margin-top: clamp(20px, 3vh, 36px); }
+
+  /* Accent rationing: blue survives only on the "to" pill + text links +
+     status dot + active nav. Everything softer goes ink/neutral. */
+  .scope-chip { background: transparent; color: var(--text-dim); }
+  .work-transform .tf-from { color: var(--text-dim); }
+
+  /* Work-row hierarchy: widen the step between title and metadata */
+  .work-title { font-size: clamp(1.35rem, 2.2vw, 1.85rem); margin-bottom: 20px; line-height: 1.12; }
+  .more-work-title { font-size: clamp(1.2rem, 1.9vw, 1.5rem); }
+  .work-transform { margin-bottom: 26px; }
+  .work-role-scope { margin-top: 6px; margin-bottom: 26px; gap: 14px; }
+
+  /* Balance the row: centre the text column against the taller image,
+     and trim the gap to the next entry. */
+  @media (min-width: 800px) {
+    .work-item { align-items: center; }
+  }
+  .work-item { padding: 4px 0 clamp(28px, 4vw, 44px); }
+  #workList { display: grid; gap: clamp(28px, 4vw, 48px); }
+
+  /* Crisp hover-draw underlines — no permanent rule, snapped to text box */
+  .btn.ghost {
+    box-shadow: none;
+    background-image: linear-gradient(var(--text), var(--text));
+    background-size: 0% 1.5px; background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size .3s var(--ease-out), color .2s var(--ease);
+  }
+  .btn.ghost:hover { background-size: 100% 1.5px; color: var(--text); }
+  .hero-scrolldown {
+    background-image: linear-gradient(var(--text-dim), var(--text-dim));
+    background-size: 0% 1px; background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size .3s var(--ease-out);
+  }
+  .hero-scrolldown:hover { background-size: 100% 1px; }
+
+  /* Bilingual: EN heading + KO support share one rhythm across sections */
+  .approach-step h3, .work-title, .more-work-title { letter-spacing: -0.018em; }
+
+  /* Item 8 — bring the lower sections to the same bar:
+     Core Capabilities uses real chip components, not middot text
+     (matches Work SCOPE). Tools & Techniques keeps its icons. */
+  .capability-mini .skills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .capability-mini .skill-tag {
+    display: inline-flex;
+    font-size: 0.78rem; font-weight: 500; color: var(--text-dim);
+    padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px;
+    background: transparent;
+  }
+  .capability-mini .skill-tag:not(:last-child)::after { content: none; }
+  .capability-mini .num { color: var(--text-mute); }
+
+  /* Experience: tag rows as chips too */
+  .timeline-item .skills, .timeline-item .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .timeline-item .skill-tag {
+    display: inline-flex;
+    font-size: 0.78rem; font-weight: 500; color: var(--text-dim);
+    padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px;
+  }
+  .timeline-item .skill-tag:not(:last-child)::after { content: none; }
+
+  /* Section headings all on the scale, consistent weight/tracking */
+  section .section-head .section-eyebrow,
+  #experience .section-eyebrow {
+    font-size: var(--fs-h2); font-weight: 700; letter-spacing: -0.02em;
+  }
+  .about-headline { font-size: var(--fs-h2); letter-spacing: -0.025em; }
+  .about-statement { font-size: var(--fs-lead); color: var(--text); }
+
+  /* Footer contact finale — oversized, composed, in the palette */
+  footer { background: var(--ink-block); }
+  .footer-contact-label { font-size: clamp(2.6rem, 7vw, 5rem); letter-spacing: -0.045em; }
+
+  /* ============================================================= *
+     v9.3 — pass 3: distinct hero subhead, spec-card grid lock,
+     accent hard-cap (nav demoted to ink), Work macro rhythm,
+     "Case study →" affordance. Cards rebuilt (bold / no footer label).
+   * ============================================================= */
+
+  /* Hero subhead: KO lead primary, EN = a distinct positioning line (not a
+     translation), clearly demoted */
+  .hero-sub-en {
+    font-size: 0.82rem;
+    opacity: 0.5;
+    max-width: 52ch;
+    margin: 6px 0 30px;
+  }
+
+  /* Lock the spec card to the grid: both columns start on one shared rule,
+     the card fills the row height, no slack below it */
+  @media (min-width: 900px) {
+    .hero-lower {
+      align-items: stretch;
+      border-top: 1px solid var(--line);
+      padding-top: clamp(20px, 2.6vw, 34px);
+    }
+    .hero-lead-col { display: flex; flex-direction: column; }
+    .hero-cta { margin-top: auto; padding-top: 28px; }
+    .hero-meta {
+      border-top: none;
+      padding-left: clamp(22px, 2.6vw, 44px);
+      border-left: 1px solid var(--line);
+      align-self: stretch;
+      display: flex; flex-direction: column;
+    }
+    .hero-meta > div:first-child { padding-top: 0; }
+    .hero-meta > div:last-child { border-bottom: none; margin-top: auto; }
+  }
+
+  /* Accent hard-cap: nav active state is ink weight, not blue.
+     Blue now survives only on the "to" pill, text links, status dot. */
+  nav a.active { color: var(--text); font-weight: 700; }
+  nav a::after { background: var(--text) !important; }
+
+  /* Work: give the title→metadata block the page's macro spacing */
+  .work-title { margin-bottom: clamp(22px, 2.6vw, 34px); }
+  .work-transform { margin-bottom: clamp(24px, 3vw, 36px); }
+  .work-role-scope { margin-top: 0; margin-bottom: clamp(24px, 3vw, 36px); gap: 16px; }
+  .work-role-scope .rs-line { grid-template-columns: 66px 1fr; gap: 16px; }
+  .scope-chips { gap: 6px; margin-top: 2px; }
+
+  /* Case study affordance: an arrow that advances on hover, not a stray rule */
+  .case-cta::after {
+    content: "\2192";
+    width: auto; height: auto; background: none;
+    font-size: 1em; line-height: 1;
+    transition: transform .3s var(--ease-out);
+  }
+  .work-item:hover .case-cta::after,
+  .work-item:focus-visible .case-cta::after,
+  .more-work-item:hover .case-cta::after { transform: translateX(5px); background: none; width: auto; }
+
+  /* ---- Thumbnail hover: a clean 2-frame screen swap (replaces the old
+     infinite cycle). Frame 1 at rest; on hover it cross-fades to frame 2,
+     the stack lifts + scales slightly, and a "View case" tag rises in. ---- */
+  .thumb-stack { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; }
+  .thumb-stack img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: left top;
+    opacity: 0; animation: none !important;
+    transition: opacity .5s var(--ease-out), transform .6s var(--ease-out);
+  }
+  .thumb-stack img:first-child { opacity: 1; }
+  .work-item:hover .thumb-stack img:first-child,
+  .work-item:focus-visible .thumb-stack img:first-child,
+  .more-work-item:hover .thumb-stack img:first-child { opacity: 0; }
+  .work-item:hover .thumb-stack img:nth-child(2),
+  .work-item:focus-visible .thumb-stack img:nth-child(2),
+  .more-work-item:hover .thumb-stack img:nth-child(2) { opacity: 1; }
+  .work-item:hover .thumb-stack img,
+  .work-item:focus-visible .thumb-stack img,
+  .more-work-item:hover .thumb-stack img { transform: scale(1.03); }
+  @media (prefers-reduced-motion: reduce) {
+    .thumb-stack img { transition: opacity .2s linear; }
+    .work-item:hover .thumb-stack img,
+    .more-work-item:hover .thumb-stack img { transform: none; }
+  }
+
+  /* ============================================================= *
+     v9.4 — case-study detail page: same tone & layout system as the
+     main page (cool paper, ink labels, rationed accent, type scale,
+     hairline rhythm, chips, transform-pill one-liner).
+   * ============================================================= */
+  .work-detail-overlay { background: var(--bg); }
+  .work-detail-inner { padding-top: clamp(88px, 12vh, 120px); padding-bottom: 96px; max-width: 780px; }
+
+  .detail-back { font-family: var(--font-display); font-size: var(--fs-small); }
+
+  .detail-header-row {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    font-size: var(--fs-small);
+  }
+  .detail-header-row .detail-num {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.2rem;
+    letter-spacing: -0.01em; color: var(--text);
+  }
+  .detail-header-row .detail-year { color: var(--text-mute); }
+
+  .detail-title {
+    font-size: var(--fs-h2);
+    letter-spacing: -0.025em;
+    line-height: 1.12;
+    margin-bottom: 18px;
+  }
+
+  /* one-liner as the same before → after pill pair used in the Work list */
+  .detail-desc.work-transform { margin-bottom: 30px; max-width: none; }
+
+  .detail-meta-row {
+    gap: clamp(28px, 5vw, 56px);
+    padding-bottom: clamp(28px, 4vw, 40px);
+    margin-bottom: clamp(32px, 5vw, 48px);
+    border-bottom: 1px solid var(--line);
+  }
+  .detail-meta-row strong {
+    display: block;
+    font-size: var(--fs-caption); font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-mute);
+    margin-bottom: 10px;
+  }
+  .detail-meta-row .dm-value { font-size: var(--fs-small); color: var(--text-dim); line-height: 1.6; }
+  .detail-meta-row .scope-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* prototype embed: solid hairline frame, cool ground — matches the thumbs */
+  .prototype-embed {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg-soft);
+  }
+  .prototype-embed-stage { background: var(--bg-soft); }
+  .detail-hero-image { margin-bottom: clamp(40px, 6vw, 60px); }
+
+  .detail-section { margin-bottom: clamp(36px, 5vw, 48px); }
+  .detail-section h4 {
+    font-size: var(--fs-caption); font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-mute);
+    margin-bottom: 12px;
+  }
+  .detail-section p, .detail-section li { color: var(--text-dim); }
+  .detail-section > p { font-size: var(--fs-body); line-height: 1.75; max-width: 62ch; }
+  .detail-section ul { padding-left: 1.1em; }
+  .detail-section ul li { font-size: var(--fs-small); line-height: 1.8; }
+  .detail-section .skills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .detail-section .skill-tag {
+    display: inline-flex; font-size: 0.78rem; font-weight: 500; color: var(--text-dim);
+    padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px;
+  }
+  .detail-section .skill-tag:not(:last-child)::after { content: none; }
+
+  /* process timeline: ink dots + caption-ramp stage labels (accent rationed) */
+  .process-flow .step { border-left-color: var(--line); }
+  .process-flow .step::before { background: var(--text-mute); }
+  .process-flow .step .stage {
+    color: var(--text-mute); font-size: var(--fs-caption);
+    letter-spacing: 0.09em; text-transform: uppercase;
+  }
+  .process-flow .step .stage-desc { color: var(--text-dim); font-size: var(--fs-small); }
+
+  .detail-image-row img,
+  .detail-image-row .img-placeholder { border-radius: 8px; }
+
+  .detail-nav-row { border-top: 1px solid var(--line); margin-top: clamp(48px, 7vw, 72px); }
+  .detail-nav-link { font-size: var(--fs-small); }
+  .detail-nav-link .dir {
+    font-size: var(--fs-caption); letter-spacing: 0.09em;
+    color: var(--text-mute); opacity: 1;
+  }
 </style>
 </head>
 <body>
@@ -2169,19 +2670,18 @@
     <div class="hero-lower">
       <div class="hero-lead-col">
         <p class="hero-sub reveal" style="--i:2">
-          I turn complex domain processes into structured digital products —
-          from requirements through validation and operation.
+          복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·검증·운영을
+          하나의 제품 흐름으로 잇습니다.
         </p>
-        <p class="hero-sub-ko reveal" style="--i:3">
-          복잡한 Domain Process를 구조화하고, Requirement부터 Validation·Operation까지
-          하나의 Digital Product로 연결합니다.
+        <p class="hero-sub-en reveal" style="--i:3">
+          Domain-driven B2B products in molecular diagnostics — five years, planning to operation.
         </p>
         <div class="hero-cta reveal" style="--i:4">
           <a class="btn" href="mailto:handl94@naver.com">이메일 보내기</a>
           <a class="btn ghost" href="#projects">프로젝트 보기</a>
         </div>
       </div>
-      <dl class="hero-meta reveal" style="--i:3">
+      <dl class="hero-meta reveal" style="--i:4">
         <div><dt>Role</dt><dd>Technical PM / Product Owner</dd></div>
         <div><dt>Domain</dt><dd>Molecular Diagnostics · Lab Automation</dd></div>
         <div><dt>Based in</dt><dd>Seoul, South Korea</dd></div>
@@ -2196,14 +2696,14 @@
   <div class="wrap">
     <div class="approach-head">
       <div class="approach-eyebrow reveal">Approach</div>
-      <h2 class="reveal" style="--i:1">복잡성을 구조로, 구조를 제품으로. Requirement부터 Operation까지 하나의 흐름으로 연결합니다.</h2>
+      <h2 class="reveal" style="--i:1">복잡성을 구조로, 구조를 제품으로. 요구사항부터 운영까지 하나의 흐름으로 잇습니다.</h2>
     </div>
     <div class="approach-flow">
       <div class="approach-step reveal" style="--i:0">
         <span class="step-num">01</span>
         <span class="step-label">Complexity</span>
         <h3>Complexity is everywhere.</h3>
-        <p>User, Data, Rule, Device, Stakeholder, Exception이 서로 얽혀 있는 Domain입니다.</p>
+        <p>사용자·데이터·규칙·장비·이해관계자·예외가 서로 얽힌 도메인입니다.</p>
       </div>
       <div class="approach-step reveal" style="--i:1">
         <span class="step-num">02</span>
@@ -2215,19 +2715,19 @@
         <span class="step-num">03</span>
         <span class="step-label">Requirement</span>
         <h3>Turn process into requirements.</h3>
-        <p>Domain Process를 명확한 Requirement와 Product Structure로 전환합니다.</p>
+        <p>도메인 프로세스를 명확한 요구사항과 제품 구조로 전환합니다.</p>
       </div>
       <div class="approach-step reveal" style="--i:3">
         <span class="step-num">04</span>
         <span class="step-label">Product Lifecycle</span>
         <h3>From requirements to operation.</h3>
-        <p>Discover → Define → Design → Deliver → Validate → Operate까지 연결합니다.</p>
+        <p>발굴부터 정의·설계·전달·검증·운영까지 하나의 흐름으로 연결합니다.</p>
       </div>
       <div class="approach-step reveal" style="--i:4">
         <span class="step-num">05</span>
         <span class="step-label">Digital Product</span>
         <h3>From complexity to product.</h3>
-        <p>User, Workflow, Data, Rule, UI, Validation, Operation이 하나의 coherent한 Digital Product로 수렴합니다.</p>
+        <p>사용자·업무 흐름·데이터·규칙·화면·검증·운영이 하나의 일관된 제품으로 수렴합니다.</p>
       </div>
     </div>
   </div>
@@ -9185,14 +9685,14 @@ renderHome();
   const aboutProfileImage = img("assets/images/profile.png");
 
   const aboutStatement =
-    "Complex Domain Process를 분석하고 Requirement → Design → Development → Validation → Operation으로 연결하여 Digital Product로 전환합니다.";
+    "복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·개발·검증·운영을 하나로 잇고, 실제로 쓰이는 제품으로 만듭니다.";
 
-  // Paraphrases of the site's own existing positioning copy (hero-sub-ko) and
+  // Paraphrases of the site's own existing positioning copy (hero-sub) and
   // the former "강점" cards — no new claims introduced.
   const capabilities = [
-    { num: "01", title: "DOMAIN → PRODUCT", desc: "복잡한 Domain Process를 관찰하고 구조화해 Digital Product로 전환합니다." },
-    { num: "02", title: "SYSTEM THINKING", desc: "AS-IS 프로세스를 분해해 자동화 가능 영역을 정의하고, System 관점의 구조로 설계합니다." },
-    { num: "03", title: "END-TO-END", desc: "Requirement부터 Design, Development, Validation, Operation까지 전 과정에 관여합니다." }
+    { num: "01", title: "DOMAIN → PRODUCT", desc: "복잡한 도메인 프로세스를 관찰하고 구조화해 제품으로 전환합니다." },
+    { num: "02", title: "SYSTEM THINKING", desc: "현행 프로세스를 분해해 자동화 가능한 영역을 정의하고, 시스템 관점의 구조로 설계합니다." },
+    { num: "03", title: "END-TO-END", desc: "요구사항부터 설계·개발·검증·운영까지 전 과정에 관여합니다." }
   ];
 
   // Compact subset only — full history lives in each project's case study.
@@ -9273,7 +9773,8 @@ renderHome();
       num: "01", year: "2025",
       name: "제품개발 자동화 장비 및 실험계획 모듈 개발",
       oneLiner: "Complex R&D workflows → Digital Product System",
-      role: "실험계획 모듈 분석/설계, 자동화 장비 workflow 설계, 외주 SI 협업",
+      heroMetric: { value: "1", unit: "", label: "통합 제품 시스템", sub: "6단계 R&D 흐름 · 자동화 장비 연계" },
+      role: "실험계획 모듈 분석·설계, 자동화 장비 워크플로 설계, 외주 SI 협업",
       scope: "Workflow · Requirement · Device Integration",
       context: null,
       problem: "제품개발 실험계획 업무가 표준화된 시스템 없이 개별적으로 처리되고 있었고, 자동화 장비와 연계된 일관된 workflow가 없었습니다.",
@@ -9298,13 +9799,12 @@ renderHome();
       ],
       validation: "자동화 장비 조작 시나리오·예외 처리 검증",
       tools: null,
-      thumbnail: imgReady("assets/projects/automation-experiment-planning/cover.svg"),
-      // Work-list card: 3 product-UI mockup screens, cross-fading on hover
-      // (same screens shown inside the case-study detail view).
+      // Work-list card: one art-directed frame — a single legible product
+      // moment on a consistent paper frame (see assets/.../card.svg).
+      thumbnail: imgReady("assets/projects/automation-experiment-planning/shot-1.png"),
       thumbnails: [
-        imgReady("assets/projects/automation-experiment-planning/thumbnail.svg"),
-        imgReady("assets/projects/automation-experiment-planning/thumbnail-2.svg"),
-        imgReady("assets/projects/automation-experiment-planning/thumbnail-3.svg")
+        imgReady("assets/projects/automation-experiment-planning/shot-1.png"),
+        imgReady("assets/projects/automation-experiment-planning/shot-2.png")
       ],
       detailImages: [imgDiagram("assets/projects/automation-experiment-planning/menu-structure.svg")],
       workflowImages: [imgDiagram("assets/projects/automation-experiment-planning/user-scenario-flow.svg")]
@@ -9314,9 +9814,10 @@ renderHome();
       slug: "feasibility-automation-sw",
       caseStudyRoute: "#/work/feasibility-automation-sw",
       num: "02", year: "2023",
-      name: "분자진단 제품개발 Feasibility 단계 자동화 SW",
+      name: "분자진단 제품개발 타당성 단계 자동화 소프트웨어",
       oneLiner: "Manual Excel/NAS workflow → End-to-end digital workflow",
-      role: "시스템 기획, workflow 분석, 화면/기능 설계, QA 리드",
+      heroMetric: { value: "−50", unit: "%", label: "제품개발 시간", sub: "오류율 −80% · 자동화 30 → 80%" },
+      role: "시스템 기획, 워크플로 분석, 화면·기능 설계, QA 리드",
       scope: "Workflow · Requirement · UX · Validation",
       context: null,
       problem: "실험계획·결과정리 업무가 Excel/NAS 기반 수작업으로 처리되어 제품개발 단계별로 반복적인 비효율이 발생하고 있었습니다.",
@@ -9342,13 +9843,10 @@ renderHome();
       ],
       validation: "테스트 시나리오 작성 및 QA 리드",
       tools: null,
-      thumbnail: imgReady("assets/projects/feasibility-automation-sw/cover.svg"),
-      // Work-list card: 3 screens from the interactive prototype (Home dashboard,
-      // Feasibility Lab-book list, Test list), cross-fading on hover.
+      thumbnail: imgReady("assets/projects/feasibility-automation-sw/shot-1.png"),
       thumbnails: [
-        imgReady("assets/projects/feasibility-automation-sw/mock-1.png"),
-        imgReady("assets/projects/feasibility-automation-sw/mock-2.png"),
-        imgReady("assets/projects/feasibility-automation-sw/mock-3.png")
+        imgReady("assets/projects/feasibility-automation-sw/shot-1.png"),
+        imgReady("assets/projects/feasibility-automation-sw/shot-2.png")
       ],
       // Detail-view hero uses the interactive embedded mockup below
       // (<template id="prototype-embed--feasibility-automation-sw">), same as
@@ -9361,9 +9859,10 @@ renderHome();
       slug: "prototype-doc-automation",
       caseStudyRoute: "#/work/prototype-doc-automation",
       num: "04", year: "2024",
-      name: "Prototype 단계 제품개발 문서 자동화",
-      oneLiner: "Feasibility 단계 자동화 구조를 Prototype 단계로 확장",
-      role: "workflow 분석, 기능 설계, QA 담당",
+      name: "프로토타입 단계 제품개발 문서 자동화",
+      oneLiner: "Feasibility-stage automation → Prototype-stage docs",
+      heroMetric: { value: "−70", unit: "%", label: "문서 작성 시간 (기대)", sub: "제품개발 문서 품질 일관성 확보" },
+      role: "워크플로 분석, 기능 설계, QA 담당",
       scope: null,
       context: null,
       problem: null,
@@ -9382,13 +9881,10 @@ renderHome();
       ],
       validation: null,
       tools: null,
-      thumbnail: imgReady("assets/projects/prototype-doc-automation/cover.svg"),
-      // Work-list card: 3 screens from the interactive prototype (Home dashboard,
-      // experiment wizard — Material & Method, Result viewer), cross-fading on hover.
+      thumbnail: imgReady("assets/projects/prototype-doc-automation/shot-1.png"),
       thumbnails: [
-        imgReady("assets/projects/prototype-doc-automation/mock-1.png"),
-        imgReady("assets/projects/prototype-doc-automation/mock-2.png"),
-        imgReady("assets/projects/prototype-doc-automation/mock-3.png")
+        imgReady("assets/projects/prototype-doc-automation/shot-1.png"),
+        imgReady("assets/projects/prototype-doc-automation/shot-2.png")
       ],
       detailImages: [imgDiagram("assets/projects/prototype-doc-automation/menu-structure.svg")],
       workflowImages: [imgDiagram("assets/projects/prototype-doc-automation/user-scenario-flow.svg")]
@@ -9398,8 +9894,9 @@ renderHome();
       slug: "qc-report-automation",
       caseStudyRoute: "#/work/qc-report-automation",
       num: "05", year: "2020",
-      name: "QC Report 및 문서 자동화",
-      oneLiner: "반복 문서 작성 workflow를 분석하고 자동화 대상 정의",
+      name: "QC 리포트·문서 자동화",
+      oneLiner: "Repeated report work → Defined automation",
+      heroMetric: { value: "−40", unit: "%", label: "문서 작성 시간 (최대)", sub: "R&D · 품질 문서 재현성 개선" },
       role: "시스템 기획, 문서 표준화, QA, 운영 개선",
       scope: null,
       context: null,
@@ -9420,14 +9917,10 @@ renderHome();
       ],
       validation: null,
       tools: ["Jira", "Confluence", "Slack"],
-      thumbnail: imgReady("assets/projects/qc-report-automation/cover.svg"),
-      // Existing QC Report screenshot (1200×632) + two more screens of the same
-      // mockup — the More-Work card cross-fades through all three on hover.
-      thumbAspect: "1200 / 632",
+      thumbnail: imgReady("assets/projects/qc-report-automation/shot-1.png"),
       thumbnails: [
-        imgReady("assets/projects/qc-report-automation/thumbnail.png"),
-        imgReady("assets/projects/qc-report-automation/thumbnail-2.svg"),
-        imgReady("assets/projects/qc-report-automation/thumbnail-3.svg")
+        imgReady("assets/projects/qc-report-automation/shot-1.png"),
+        imgReady("assets/projects/qc-report-automation/shot-2.png")
       ],
       detailImages: [],
       // Ordered so the two images sharing row 1 of the 2-col grid have similar
@@ -9445,9 +9938,10 @@ renderHome();
       slug: "liquid-handler-workflow",
       caseStudyRoute: "#/work/liquid-handler-workflow",
       num: "03", year: "2021",
-      name: "Liquid Handler 장비 운영 workflow 개선",
+      name: "리퀴드 핸들러 장비 운영 흐름 개선",
       oneLiner: "Complex device operation → Simplified, validated workflow",
-      role: "장비 운영 workflow 분석, 사용성 개선, 검증",
+      heroMetric: { value: "−30", unit: "%", label: "장비 setup + 실행 시간", sub: "수동 입력 오류 −50%+ · 비전문가 운영 가능" },
+      role: "장비 운영 워크플로 분석, 사용성 개선, 검증",
       scope: "Device Workflow · Usability · Validation",
       context: null,
       problem: "Liquid Handler 장비의 구동 절차가 복잡해 비전문 사용자가 운영하기 어려웠고, 수동 입력 단계에서 오류가 자주 발생했습니다.",
@@ -9470,13 +9964,7 @@ renderHome();
       ],
       validation: "실제 사용자 테스트로 개선 흐름 검증",
       tools: null,
-      thumbnail: imgReady("assets/projects/liquid-handler-workflow/cover.svg"),
-      // Work-list card: 3 product-UI mockup screens, cross-fading on hover.
-      thumbnails: [
-        imgReady("assets/projects/liquid-handler-workflow/thumbnail.svg"),
-        imgReady("assets/projects/liquid-handler-workflow/thumbnail-2.svg"),
-        imgReady("assets/projects/liquid-handler-workflow/thumbnail-3.svg")
-      ],
+      thumbnail: imgReady("assets/projects/liquid-handler-workflow/shot.png"),
       detailImages: [imgDiagram("assets/projects/liquid-handler-workflow/menu-structure.svg")],
       workflowImages: [imgDiagram("assets/projects/liquid-handler-workflow/user-scenario-flow.svg")]
     }
@@ -9703,8 +10191,42 @@ renderHome();
     return `<span><strong>${label}</strong>${value || '<span class="todo">[TODO: ' + label + ']</span>'}</span>`;
   }
 
+  // SCOPE rendered as real tag components, not middot-separated text.
+  function scopeChips(scope) {
+    if (!scope) return '';
+    return scope.split(/\s*[·|]\s*/).filter(Boolean)
+      .map(t => `<span class="scope-chip">${t}</span>`).join('');
+  }
+
+  // The project's headline outcome, promoted to the largest non-title element
+  // in the row — the single blue accent per Work row lives here.
+  function outcomeLine(m, side) {
+    if (!m) return '';
+    return `<p class="work-outcome reveal reveal--${side}" style="--i:3">`
+      + `<span class="wo-value">${m.value}<span class="wo-unit">${m.unit || ''}</span></span>`
+      + `<span class="wo-text"><span class="wo-label">${m.label}</span>`
+      + (m.sub ? `<span class="wo-sub">${m.sub}</span>` : '') + `</span></p>`;
+  }
+
+  // A "X → Y" one-liner rendered as a designed before→after pair rather than
+  // a flat gray sentence — this transformation IS the value proposition.
+  function transformPair(text) {
+    if (!text) return '';
+    const parts = text.split(/\s*(?:→|->|⟶)\s*/);
+    if (parts.length < 2) return `<span class="tf-solo">${text}</span>`;
+    return `<span class="tf-from">${parts[0]}</span>`
+      + `<span class="tf-arrow" aria-hidden="true">→</span>`
+      + `<span class="tf-to">${parts.slice(1).join(' → ')}</span>`;
+  }
+
+  // A detail section renders only when it has content — no [TODO] placeholders
+  // leak to the page. Number is applied in CSS via a counter on .detail-body.
+  function detailSection(title, html) {
+    return html ? `<div class="detail-section"><h4>${title}</h4>${html}</div>` : '';
+  }
+
   function renderProcess(process) {
-    if (!process || !process.length) return '<p class="case-block todo">[TODO: PROCESS]</p>';
+    if (!process || !process.length) return '';
     if (typeof process[0] === "string") {
       return `<ul>${process.map(p => `<li>${p}</li>`).join('')}</ul>`;
     }
@@ -9713,13 +10235,13 @@ renderHome();
     `).join('')}</div>`;
   }
 
-  function renderList(items, todoLabel) {
-    if (!items || !items.length) return `<p class="todo">[TODO: ${todoLabel}]</p>`;
+  function renderList(items) {
+    if (!items || !items.length) return '';
     return `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
   }
 
-  function renderParagraph(text, todoLabel) {
-    return text ? `<p>${text}</p>` : `<p class="todo">[TODO: ${todoLabel}]</p>`;
+  function renderParagraph(text) {
+    return text ? `<p>${text}</p>` : '';
   }
 
   // Major-first, then More Work — this single ordering drives the Work
@@ -9747,13 +10269,16 @@ renderHome();
         <span class="work-number">${cs.num}</span>
         <span class="work-year">${cs.year}</span>
       </div>
-      <div class="work-thumb work-thumb-reveal work-thumb-reveal--${thumbSide}" style="--i:1">${workThumbHtml(cs)}</div>
+      <div class="work-thumb work-thumb-reveal work-thumb-reveal--${thumbSide}" style="--i:1">
+        ${workThumbHtml(cs)}
+        <span class="thumb-view" aria-hidden="true">View case</span>
+      </div>
       <div class="work-meta">
         <h3 class="work-title reveal reveal--${textSide}" style="--i:2">${cs.name}</h3>
-        <p class="work-desc reveal reveal--${textSide}" style="--i:3">${cs.oneLiner}</p>
+        <p class="work-transform reveal reveal--${textSide}" style="--i:3">${transformPair(cs.oneLiner)}</p>
         <div class="work-role-scope reveal reveal--${textSide}" style="--i:4">
-          ${metaLine("ROLE", cs.role)}
-          ${metaLine("SCOPE", cs.scope)}
+          ${cs.role ? `<div class="rs-line"><strong>ROLE</strong><span>${cs.role}</span></div>` : ''}
+          ${cs.scope ? `<div class="rs-line"><strong>SCOPE</strong><span class="scope-chips">${scopeChips(cs.scope)}</span></div>` : ''}
         </div>
         <span class="case-cta reveal reveal--${textSide}" style="--i:5">Case study</span>
       </div>
@@ -9768,9 +10293,12 @@ renderHome();
         <span class="more-work-number">${cs.num}</span>
         <span class="more-work-year">${cs.year}</span>
       </div>
-      <div class="more-work-thumb">${workThumbHtml(cs)}</div>
+      <div class="more-work-thumb">
+        ${workThumbHtml(cs)}
+        <span class="thumb-view" aria-hidden="true">View case</span>
+      </div>
       <h3 class="more-work-title">${cs.name}</h3>
-      <p class="more-work-desc">${cs.oneLiner}</p>
+      <p class="more-work-desc work-transform">${transformPair(cs.oneLiner)}</p>
       <span class="case-cta">Case study</span>
     </a>
   `).join('');
@@ -9961,25 +10489,25 @@ renderHome();
         <span class="detail-year">${cs.year}</span>
       </div>
       <h1 class="detail-title">${cs.name}</h1>
-      <p class="detail-desc">${cs.oneLiner}</p>
+      <p class="detail-desc work-transform">${transformPair(cs.oneLiner)}</p>
       <div class="detail-meta-row">
-        <div><strong>Role</strong><ul><li>${cs.role}</li></ul></div>
-        <div><strong>Scope</strong>${cs.scope ? `<ul>${cs.scope.split('·').map(s => `<li>${s.trim()}</li>`).join('')}</ul>` : '<p class="todo">[TODO: SCOPE]</p>'}</div>
+        <div><strong>Role</strong><span class="dm-value">${cs.role}</span></div>
+        ${cs.scope ? `<div><strong>Scope</strong><span class="scope-chips">${scopeChips(cs.scope)}</span></div>` : ''}
       </div>
       <div class="detail-hero-image">${
         PROTOTYPE_EMBED_SLUGS.has(cs.slug) ? prototypeEmbedHtml(cs.slug, cs.name)
         : cs.figmaEmbed ? figmaEmbedHtml(cs.figmaEmbed, cs.name)
         : imgPlaceholder(cs.thumbnail, cs.name)
       }</div>
-      <div class="detail-section"><h4>01 Context</h4>${renderParagraph(cs.context, 'CONTEXT')}</div>
-      <div class="detail-section"><h4>02 Problem</h4>${renderParagraph(cs.problem, 'PROBLEM')}</div>
-      <div class="detail-section"><h4>03 Goal</h4>${renderParagraph(cs.goal, 'GOAL')}</div>
-      <div class="detail-section"><h4>04 My Role</h4>${renderParagraph(cs.myRole, 'MY ROLE')}</div>
-      <div class="detail-section"><h4>05 Process</h4>${renderProcess(cs.process)}</div>
-      <div class="detail-section"><h4>06 Key Decisions</h4>${renderList(cs.keyDecisions, 'KEY DECISION')}</div>
-      <div class="detail-section"><h4>07 Result</h4>${renderList(cs.result, 'RESULT')}</div>
-      <div class="detail-section"><h4>08 Validation</h4>${renderParagraph(cs.validation, 'VALIDATION')}</div>
-      <div class="detail-section"><h4>09 Tools &amp; Techniques</h4>${cs.tools && cs.tools.length ? `<div class="skills">${cs.tools.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>` : '<p class="todo">[TODO: TOOLS]</p>'}</div>
+      ${detailSection('Context', renderParagraph(cs.context))}
+      ${detailSection('Problem', renderParagraph(cs.problem))}
+      ${detailSection('Goal', renderParagraph(cs.goal))}
+      ${detailSection('My role', renderParagraph(cs.myRole))}
+      ${detailSection('Process', renderProcess(cs.process))}
+      ${detailSection('Key decisions', renderList(cs.keyDecisions))}
+      ${detailSection('Result', renderList(cs.result))}
+      ${detailSection('Validation', renderParagraph(cs.validation))}
+      ${detailSection('Tools &amp; techniques', cs.tools && cs.tools.length ? `<div class="skills">${cs.tools.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>` : '')}
       <div class="detail-image-row">${cs.detailImages.map(i => imgPlaceholder(i, cs.name + ' detail')).join('')}</div>
       <div class="detail-image-row">${cs.workflowImages.map(i => imgPlaceholder(i, cs.name + ' workflow')).join('')}</div>
       <div class="detail-nav-row">

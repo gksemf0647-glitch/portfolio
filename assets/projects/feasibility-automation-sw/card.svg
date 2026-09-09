@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 667" width="1000" height="667" font-family="'Satoshi','Pretendard',-apple-system,'Segoe UI',sans-serif">
+  <rect width="1000" height="667" fill="#EEEEE7"/>
+  <rect x="56" y="60" width="888" height="524" rx="16" fill="#0B0C10" opacity="0.05" transform="translate(0,12)"/>
+  <rect x="56" y="60" width="888" height="524" rx="16" fill="#FFFFFF" stroke="#E2E2DA"/>
+
+  <text x="104" y="140" font-size="27" font-weight="700" fill="#17181C" letter-spacing="-0.015em">Experiment in progress</text>
+
+  <rect x="104" y="176" width="792" height="230" rx="14" fill="#F4F4EE" stroke="#17181C"/>
+  <text x="136" y="228" font-size="21" font-weight="600" fill="#17181C">Stability — Panel A</text>
+  <text x="136" y="258" font-size="15" fill="#63666E">Step 4 of 6 · Experiment wizard</text>
+  <rect x="136" y="284" width="728" height="10" rx="5" fill="#DEDED4"/>
+  <rect x="136" y="284" width="470" height="10" rx="5" fill="#17181C"/>
+  <text x="136" y="336" font-size="15" fill="#63666E">96-well map auto-generated · Ct · Tm pending upload</text>
+  <text x="136" y="372" font-size="15" fill="#63666E">18 to do · 26 done</text>
+
+  <line x1="104" y1="452" x2="896" y2="452" stroke="#F3F3EC"/>
+  <text x="104" y="512" font-size="16" fill="#63666E">Experiment time</text>
+  <text x="104" y="548" font-size="30" font-weight="700" fill="#17181C" letter-spacing="-0.02em">&#8722;50%</text>
+  <text x="360" y="512" font-size="16" fill="#63666E">Entry error rate</text>
+  <text x="360" y="548" font-size="30" font-weight="700" fill="#17181C" letter-spacing="-0.02em">&#8722;80%</text>
+</svg>

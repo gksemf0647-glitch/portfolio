@@ -1,0 +1,2151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LabFlow — Experiment · Liquid Handler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#0E7A75;
+  --primary-600:#0B615D;
+  --primary-soft:#E3F3F1;
+  --primary-line:#BEE0DC;
+  --ink:#16202B;
+  --ink-soft:#5B6B7B;
+  --ink-faint:#98A6B4;
+  --border:#E4E9EF;
+  --bg:#FFFFFF;
+  --bg-soft:#F6F8FB;
+  --nav-dark:#191F2B;
+  --nav-dark-2:#232B3A;
+  --amber-bg:#FCEFD8; --amber-tx:#A8630B;
+  --blue-bg:#E6EEFC; --blue-tx:#2F6FEB;
+  --green-bg:#E4F6EA; --green-tx:#1C8A46;
+  --red-bg:#FBEAEA; --red-tx:#B91C1C;
+  --grey-bg:#EEF1F4; --grey-tx:#66707B;
+  --radius:9px;
+  --shadow:0 1px 2px rgba(16,32,48,.04), 0 4px 14px rgba(16,32,48,.05);
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'Inter','Pretendard',-apple-system,'Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--sans);color:var(--ink);background:#E7EAEF;display:flex;justify-content:center;align-items:center;padding:28px 12px;min-height:100vh;}
+button{font-family:inherit;cursor:pointer;}
+
+/* ---------------- window frame (fixed 16:9, height locked) ---------------- */
+.window{width:min(1280px, 94vw);aspect-ratio:16/9;background:var(--bg);border-radius:12px;overflow:hidden;position:relative;
+  box-shadow:0 24px 60px rgba(15,23,42,.18), 0 2px 8px rgba(15,23,42,.06);display:flex;flex-direction:column;flex-shrink:0;}
+
+/* ---- portfolio 상세페이지 iframe 임베드 전용: 부모가 body 자식을
+   #__embedCanvas(1200px 고정폭)로 감싸고 프레임 폭에 맞춰 scale 한다.
+   그 안에서는 window가 캔버스를 꽉 채우도록 폭/모서리/그림자를 재설정한다. ---- */
+#__embedCanvas{width:1200px;}
+#__embedCanvas .window{width:1200px;max-width:none;border-radius:0;box-shadow:none;}
+
+/* ---------------- modal ---------------- */
+.modal-overlay{position:absolute;inset:0;background:rgba(16,23,34,.48);display:flex;align-items:center;justify-content:center;z-index:60;}
+.modal-card{width:560px;max-width:90%;max-height:82%;overflow-y:auto;background:var(--bg);border-radius:12px;box-shadow:0 20px 50px rgba(15,23,42,.3);}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);}
+.modal-head b{font-size:15px;}
+.modal-close{border:none;background:none;font-size:16px;color:var(--ink-faint);padding:2px 6px;border-radius:6px;}
+.modal-close:hover{background:var(--bg-soft);color:var(--ink);}
+.modal-body{padding:20px 22px;}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:15px 22px;border-top:1px solid var(--border);}
+.chrome-bar{flex-shrink:0;height:34px;display:flex;align-items:center;gap:7px;padding:0 14px;background:#F3F4F6;border-bottom:1px solid var(--border);}
+.chrome-bar .dot{width:10px;height:10px;border-radius:50%;}
+.dot.red{background:#FF5F57;} .dot.yellow{background:#FEBC2E;} .dot.green{background:#28C840;}
+.chrome-title{margin-left:8px;font-size:12px;color:#9AA3AF;font-weight:500;}
+.window-body{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;background:var(--bg-soft);}
+
+/* ---------------- lightweight toast (non-blocking) ---------------- */
+#lh-toast{position:absolute;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
+  background:var(--nav-dark);color:#fff;font-size:12.5px;font-weight:600;padding:10px 20px;border-radius:999px;
+  box-shadow:0 10px 30px rgba(15,23,42,.28);opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;z-index:80;white-space:nowrap;}
+#lh-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ---------------- GNB ---------------- */
+.gnb{flex-shrink:0;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:60px;font-size:14px;border-bottom:1px solid var(--border);}
+.gnb-left{display:flex;align-items:center;gap:30px;height:100%;}
+.gnb-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px;letter-spacing:.1px;color:var(--ink);}
+.gnb-brand .sq{width:18px;height:18px;border-radius:5px;background:var(--primary);display:inline-block;}
+.gnb-tabs{display:flex;height:100%;gap:24px;}
+.gnb-tab{height:100%;display:flex;align-items:center;color:var(--ink-soft);font-weight:500;border-bottom:2px solid transparent;}
+.gnb-tab.active{color:var(--ink);font-weight:700;border-color:var(--primary);}
+.gnb-right{display:flex;align-items:center;gap:16px;color:var(--ink-soft);font-size:13px;}
+.gnb-right a{color:var(--ink-soft);text-decoration:none;}
+
+/* ---------------- app shell ---------------- */
+.shell{flex:1;min-height:0;display:flex;flex-direction:column;max-width:1180px;margin:0 auto;width:100%;padding:20px 24px;overflow:hidden;}
+.subbar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:4px 0 14px;}
+.crumb{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;}
+.crumb .seg-muted{color:var(--ink-faint);font-weight:500;cursor:pointer;}
+.crumb .sep{color:var(--ink-faint);font-weight:400;}
+.status-pill{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft);}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#1C8A46;box-shadow:0 0 0 3px var(--green-bg);}
+
+.eyebrow{flex-shrink:0;font-size:11.5px;font-weight:700;letter-spacing:.4px;color:var(--primary);text-transform:uppercase;}
+.h1{flex-shrink:0;font-size:20px;font-weight:800;margin:5px 0 6px;}
+.lead{flex-shrink:0;font-size:13px;color:var(--ink-soft);line-height:1.6;max-width:640px;}
+
+.card{flex:1;min-height:0;display:flex;flex-direction:column;}
+.divider{flex-shrink:0;border:none;border-top:1px solid var(--border);margin:14px 0 18px;}
+
+/* ---------------- buttons ---------------- */
+.btn{font-size:12.8px;font-weight:600;padding:8px 14px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--ink);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn:hover{background:var(--bg-soft);}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-600);}
+.btn-primary:disabled{background:#B9C7DE;border-color:#B9C7DE;cursor:not-allowed;}
+.btn-outline-primary{border-color:var(--primary-line);color:var(--primary);background:var(--primary-soft);}
+.btn-danger-ghost{border-color:#EFC9C9;color:var(--red-tx);}
+.btn-sm{padding:6px 11px;font-size:12px;}
+
+/* ---------------- home toolbar / table ---------------- */
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.search-box{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:7px;padding:7px 11px;background:var(--bg-soft);width:280px;}
+.search-box input{border:none;background:none;outline:none;font-size:12.8px;width:100%;font-family:inherit;color:var(--ink);}
+
+table{width:100%;border-collapse:collapse;font-size:12.8px;}
+thead th{text-align:left;font-size:11.5px;color:var(--ink-soft);font-weight:600;padding:9px 10px;border-bottom:2px solid var(--border);background:#EEF1F5;}
+tbody td{padding:10px 10px;border-bottom:1px solid var(--border);}
+tbody tr.selectable:hover{background:var(--bg-soft);cursor:pointer;}
+tbody tr.row-selected{background:var(--primary-soft);}
+td.mono{font-family:var(--mono);color:var(--ink-soft);font-size:12px;}
+
+.pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;display:inline-block;}
+.pill-new{background:#B45309;color:#fff;}
+.pill-update{background:#2354BE;color:#fff;}
+.pill-complete{background:#15803D;color:#fff;}
+.pill-warn{background:var(--amber-bg);color:var(--amber-tx);}
+
+.quicklinks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;}
+.home-stats-inline{font-size:12.5px;color:var(--ink-soft);}
+.home-stats-inline b{color:var(--ink);}
+.home-stats-inline .dot-sep{margin:0 8px;color:var(--ink-faint);}
+.dense-tbl tbody td{padding:7px 10px;}
+.quicklinks-plain{display:flex;gap:22px;margin-top:20px;padding-top:14px;border-top:1px solid var(--border);}
+.quicklinks-plain a{font-size:12px;color:var(--ink-soft);font-weight:600;cursor:pointer;}
+.quicklinks-plain a:hover{color:var(--primary);}
+.icn{display:inline-flex;align-items:center;justify-content:center;vertical-align:-2px;margin-right:1px;}
+.home-stat-chips{display:flex;gap:8px;}
+.stat-chip{font-size:11.5px;color:var(--ink-soft);background:var(--bg-soft);border:1px solid var(--border);border-radius:7px;padding:5px 10px;}
+.stat-chip b{color:var(--ink);font-family:var(--mono);margin-right:5px;}
+.quicklink{padding:12px;text-align:center;border-radius:8px;border:1px solid var(--primary-line);background:var(--primary-soft);color:var(--primary);font-weight:600;font-size:12.5px;}
+
+/* ---------------- branch cards ---------------- */
+.branch-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.branch-card{border:1.5px solid var(--border);border-radius:10px;padding:20px;text-align:left;background:var(--bg);}
+.branch-card:hover{border-color:var(--primary-line);}
+.branch-card.selected{border-color:var(--primary);background:var(--primary-soft);}
+.branch-icon{font-size:21px;margin-bottom:9px;}
+.branch-title{font-size:14.5px;font-weight:700;margin-bottom:5px;}
+.branch-desc{font-size:12.5px;color:var(--ink-soft);line-height:1.55;}
+
+/* ---------------- test selection dropdown row ---------------- */
+.field-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:22px;}
+.field label{display:block;font-size:12.2px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;}
+.field select,.field input,.field textarea{width:100%;border:1px solid var(--border);border-radius:7px;padding:9px 11px;font-size:13px;font-family:inherit;color:var(--ink);background:var(--bg);}
+.section-label{font-size:13px;font-weight:700;margin-bottom:10px;}
+
+/* ---------------- settings step (Test Information) ---------------- */
+.settings-cols{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;}
+.info-strip{background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:10px 16px;display:flex;gap:20px;flex-wrap:wrap;font-size:12.3px;color:var(--ink-soft);margin-bottom:18px;}
+.info-strip b{color:var(--ink);font-weight:700;}
+.info-strip .sep2{color:var(--ink-faint);}
+.settings-top-row{display:flex;gap:36px;margin-bottom:22px;flex-wrap:wrap;}
+.settings-field label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;}
+.settings-field select{border:1px solid var(--border);border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;min-width:220px;}
+.stepper{display:flex;align-items:center;gap:8px;}
+.stepper input{width:64px;text-align:center;border:1px solid var(--border);border-radius:7px;padding:7px;font-family:var(--mono);font-size:13px;}
+.section-blue{color:var(--primary);font-weight:700;font-size:13px;margin:4px 0 10px;}
+.settings-grid-layout{display:grid;grid-template-columns:1.7fr 1fr;gap:26px;}
+.rack-row{display:flex;gap:24px;margin-bottom:18px;flex-wrap:nowrap;overflow-x:auto;}
+.rack-block{flex-shrink:0;}
+.rack-block-label{font-weight:700;font-size:13px;margin-bottom:4px;}
+.rack-rows{display:flex;flex-direction:column;gap:5px;margin-top:4px;}
+.rack-line{display:flex;align-items:center;gap:6px;border-radius:8px;padding:2px;}
+.rack-line-label{width:16px;font-size:10.5px;font-weight:700;color:var(--ink-soft);text-align:center;}
+.rack-line.selectable{cursor:pointer;}
+.rack-line.row-active:hover{background:var(--primary-soft);}
+.rack-line.row-selected{background:var(--primary-soft);outline:1.5px solid var(--primary-line);}
+.well{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:7.2px;text-align:center;line-height:1.05;color:#fff;font-weight:700;flex-shrink:0;}
+.well.empty{background:var(--bg);color:transparent;}
+.well.tmpl{cursor:pointer;color:#1c1c1c;font-size:9px;}
+.side-info{border-left:1px solid var(--border);padding-left:22px;}
+.side-info-head{font-size:12.3px;font-weight:700;color:var(--primary);margin-bottom:10px;}
+.side-placeholder{font-size:12.3px;color:var(--ink-faint);}
+table.info-tbl{width:100%;border-collapse:collapse;font-size:11.3px;margin-bottom:16px;}
+table.info-tbl th{background:var(--bg-soft);font-size:10.3px;color:var(--ink-soft);padding:6px 7px;text-align:center;border:1px solid var(--border);}
+table.info-tbl td{padding:6px 7px;text-align:center;border:1px solid var(--border);}
+.info-icon-dot{width:15px;height:15px;border-radius:50%;display:inline-block;}
+.side-toggle{display:flex;gap:6px;margin-bottom:16px;}
+.side-toggle-btn{flex:1;padding:7px 0;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--bg);border-radius:7px;color:var(--ink-soft);}
+.side-toggle-btn.active{background:var(--primary-soft);border-color:var(--primary-line);color:var(--primary);}
+.tip-row{display:flex;gap:8px;margin-bottom:14px;}
+.tip-box{flex:1;height:64px;border:1px solid var(--border);border-radius:8px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;color:var(--ink-faint);font-size:10.5px;font-weight:600;text-align:center;}
+.wp-scroll{overflow-x:auto;margin-bottom:4px;}
+.wp-grid{display:flex;flex-direction:column;gap:2px;width:max-content;}
+.wp-row{display:flex;gap:2px;align-items:center;}
+.wp-rowlabel{width:13px;font-size:9px;color:var(--ink-faint);text-align:center;flex-shrink:0;}
+.wp-collabel{width:21px;font-size:8px;color:var(--ink-faint);text-align:center;flex-shrink:0;}
+.wp-cell{width:21px;height:16px;border:1px solid var(--border);border-radius:3px;font-size:6.3px;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);background:var(--bg);flex-shrink:0;}
+.wp-cell.wp-empty{background:var(--bg);color:transparent;}
+.wp-cell.wp-clickable{cursor:pointer;}
+.wp-cell b{font-size:8px;color:#fff;text-shadow:0 0 2px rgba(0,0,0,.5);}
+.well.badge-well{background:#fff;border-width:2px;font-weight:700;font-size:12px;}
+.mm-card{border:1.5px solid var(--border);border-left-width:4px;border-radius:10px;padding:14px 16px;margin-bottom:16px;background:var(--bg);}
+.mm-card-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.mm-badge{width:26px;height:26px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+.mm-card-head label{font-size:11px;color:var(--ink-soft);font-weight:600;margin-left:6px;}
+.mm-card-head input,.mm-card-head select{border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12.5px;}
+.mm-card-toolbar{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.radio-inline{font-size:11.3px;color:var(--ink-soft);display:flex;align-items:center;gap:4px;}
+table.oligo-tbl{width:100%;border-collapse:collapse;font-size:10.8px;}
+table.oligo-tbl th{background:var(--bg-soft);font-size:9.3px;color:var(--ink-soft);padding:5px;border:1px solid var(--border);}
+table.oligo-tbl td{padding:5px;border:1px solid var(--border);text-align:center;}
+table.oligo-tbl input,table.oligo-tbl select{border:1px solid var(--border);border-radius:5px;padding:3px 4px;font-size:10.3px;width:100%;}
+.cell-warning{display:flex;align-items:center;gap:3px;justify-content:center;}
+.cell-warning input{width:44px;}
+.warn-tri{color:#B91C1C;font-size:11px;}
+.dil-block{margin-bottom:20px;}
+.dil-header-row{display:flex;gap:0;margin-left:34px;font-size:8.8px;color:var(--ink-faint);margin-bottom:5px;}
+.dil-header-row span{width:26px;text-align:center;}
+.dil-row{display:flex;align-items:center;gap:0;margin-bottom:5px;}
+.dil-row-label{width:30px;font-size:11px;font-weight:700;color:var(--ink-soft);flex-shrink:0;}
+.dil-well{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-right:2px;flex-shrink:0;}
+.dil-well.empty{background:var(--bg);border-color:var(--border);color:transparent;}
+.dil-gap{width:12px;flex-shrink:0;}
+.field-required{background:#FFF9C4 !important;}
+.range-hint{color:#B91C1C;font-size:10.5px;margin:2px 0 10px;}
+.well.tube-pending{background:#fff;border:2px solid #D6336C;}
+.well.tube-filled{background:#FFD84D;border-color:#FFD84D;}
+.tub-row{display:flex;gap:8px;}
+.tub-slot{flex:1;height:70px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink-soft);text-align:center;background:var(--bg-soft);}
+.tub-slot.filled{background:#FFD84D;color:#5B4600;}
+.wp-dual-row{display:flex;gap:18px;align-items:flex-start;}
+.icon-col{display:flex;flex-direction:column;gap:16px;padding-top:34px;flex-shrink:0;}
+.icon-btn-labeled-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.icon-circle-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--bg);font-size:14px;display:flex;align-items:center;justify-content:center;}
+.icon-btn-labeled-wrap span{font-size:10.3px;color:var(--ink-soft);}
+.mini-tip{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:3px auto;width:26px;}
+.mini-tip span{width:6px;height:6px;background:rgba(255,255,255,.55);border-radius:1px;}
+.mini-reagent{display:flex;gap:2px;justify-content:center;margin:3px 0;}
+.mini-reagent span{width:6px;height:6px;border-radius:50%;}
+.mini-plate{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin:3px auto;width:28px;}
+.mini-plate span{width:5px;height:5px;border-radius:50%;border:1px solid rgba(255,255,255,.55);}
+.mini-waste{font-size:13px;margin:2px 0;}
+.deck-legend-list{display:flex;flex-direction:column;gap:8px;}
+.deck-legend-item{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;background:var(--bg-soft);}
+.deck-legend-num{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.deck-legend-icon{width:34px;height:34px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.deck-legend-icon .mini-waste{font-size:15px;margin:0;}
+.deck-legend-text{font-size:12.5px;}
+.deck-legend-text b{display:block;}
+.deck-legend-text span{display:block;font-size:11px;color:var(--ink-soft);margin-top:1px;}
+.mm-tabs{display:flex;gap:4px;margin-bottom:10px;border-bottom:1px solid var(--border);}
+.mm-tab{padding:8px 14px;font-size:12.5px;font-weight:600;border:none;background:none;color:var(--ink-soft);border-bottom:2px solid transparent;margin-bottom:-1px;}
+.mm-tab.active{color:var(--primary);border-color:var(--primary);}
+.mm-toolbar{display:flex;gap:6px;align-items:center;margin-bottom:8px;}
+.mm-table-scroll{max-height:260px;overflow-y:auto;}
+table.mm-table{width:100%;border-collapse:collapse;font-size:11px;}
+table.mm-table th{background:var(--bg-soft);font-size:10px;color:var(--ink-soft);padding:6px;text-align:center;border:1px solid var(--border);position:sticky;top:0;}
+table.mm-table td{padding:5px 6px;text-align:center;border:1px solid var(--border);}
+table.mm-table tr.mm-parent{background:var(--bg-soft);font-weight:700;}
+table.mm-table tr.mm-child td:nth-child(4){color:var(--ink-faint);}
+
+.param-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--border);font-size:12.8px;}
+.param-row span:last-child{font-family:var(--mono);font-weight:600;}
+
+/* ---------------- deck map ---------------- */
+.deck-wrap{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;}
+.deck-board{background:var(--nav-dark);border-radius:12px;padding:18px;}
+.deck-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.deck-slot{aspect-ratio:1/1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1.5px dashed rgba(255,255,255,.22);color:#DCE4EF;font-size:10.3px;text-align:center;gap:3px;padding:4px;}
+.deck-slot b{font-family:var(--mono);font-size:15px;}
+.deck-slot.tip{background:rgba(255,255,255,.09);border-style:solid;border-color:rgba(255,255,255,.28);}
+.deck-slot.reagent{background:rgba(47,111,235,.45);border-style:solid;border-color:#7FA6F2;}
+.deck-slot.plate{background:rgba(28,138,70,.4);border-style:solid;border-color:#4ADE80;}
+.deck-slot.waste{background:rgba(185,28,28,.38);border-style:solid;border-color:#F87171;}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft);}
+.legend-swatch{width:11px;height:11px;border-radius:3px;}
+.check-item{display:flex;gap:10px;align-items:flex-start;font-size:13px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg-soft);margin-bottom:9px;}
+.check-item input{margin-top:2px;}
+
+/* ---------------- monitor ---------------- */
+.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px;}
+.summary-cell{border:1px solid var(--border);border-radius:8px;padding:11px 13px;background:var(--bg-soft);}
+.summary-cell span{display:block;font-size:11px;color:var(--ink-soft);margin-bottom:3px;}
+.summary-cell b{font-size:13.5px;}
+.monitor{display:none;}
+.monitor.active{display:block;}
+.mon-status{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.mon-status-left{display:flex;align-items:center;gap:10px;}
+.pulse{width:10px;height:10px;border-radius:50%;background:var(--primary);position:relative;}
+.pulse::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--primary);animation:pulse 1.6s infinite;}
+@keyframes pulse{0%{transform:scale(.6);opacity:1;}100%{transform:scale(1.8);opacity:0;}}
+.mon-title{font-size:15px;font-weight:700;}
+.mon-sub{font-size:12px;color:var(--ink-soft);font-family:var(--mono);}
+.progress-outer{height:9px;border-radius:999px;background:var(--border);overflow:hidden;margin:14px 0 6px;}
+.progress-inner{height:100%;background:linear-gradient(90deg,var(--primary),#5B8CF2);width:0%;transition:width .4s ease;}
+.progress-labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-soft);font-family:var(--mono);margin-bottom:20px;}
+.mon-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.mon-metric{border:1px solid var(--border);border-radius:8px;padding:12px;background:var(--bg-soft);text-align:center;}
+.mon-metric b{display:block;font-size:17px;font-family:var(--mono);}
+.mon-metric span{font-size:10.5px;color:var(--ink-soft);}
+.mon-cols{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;}
+.tl-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed var(--border);font-size:12.6px;align-items:center;}
+.tl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--border);}
+.tl-item.done .tl-dot{background:#1C8A46;}
+.tl-item.now .tl-dot{background:var(--primary);}
+.tl-item.now{font-weight:700;}
+.log-box{background:var(--nav-dark);border-radius:8px;padding:12px 14px;height:220px;overflow-y:auto;font-family:var(--mono);font-size:11.3px;color:#B9C9E6;display:flex;flex-direction:column-reverse;}
+.log-line{padding:2px 0;color:#9FB2CE;}
+.log-line b{color:#6FE3B0;}
+.mon-actions{display:flex;gap:10px;margin-top:18px;}
+
+.panel-body{flex:1;min-height:0;overflow-y:auto;padding:4px 0 18px;}
+.panel-foot{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0 2px;border-top:1px solid var(--border);}
+.panel-foot .foot-hint{font-size:11.5px;font-weight:600;letter-spacing:.2px;color:var(--ink-faint);text-transform:uppercase;}
+.panel-foot .foot-btns{display:flex;align-items:center;gap:10px;margin-left:auto;}
+
+@media (max-width:860px){
+  .field-row,.settings-cols,.deck-wrap,.mon-cols,.branch-grid,.quicklinks{grid-template-columns:1fr;}
+}
+
+/* ---- 임베드 시 부모가 주입하는 다크 GNB 리셋(.gnb{background:#2C2C2C}) 위에서도
+   브랜드/탭/우측 메뉴 텍스트가 보이도록 밝은 색으로 강제한다. ---- */
+#__embedCanvas .gnb-brand{color:#fff !important;}
+#__embedCanvas .gnb-brand .sq{background:#fff !important;}
+#__embedCanvas .gnb-tab{color:rgba(255,255,255,.6) !important;border-bottom-color:transparent !important;}
+#__embedCanvas .gnb-tab.active{color:#fff !important;border-bottom-color:#fff !important;}
+#__embedCanvas .gnb-right,#__embedCanvas .gnb-right a{color:rgba(255,255,255,.62) !important;}
+</style>
+</head>
+<body>
+
+<div class="window">
+  <!-- ================= browser chrome ================= -->
+  <div class="chrome-bar">
+    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+    <span class="chrome-title">LabFlow · Experiment Workspace</span>
+  </div>
+
+  <!-- ================= GNB (공통, 모든 케이스 동일) ================= -->
+  <div class="gnb">
+    <div class="gnb-left">
+      <div class="gnb-brand"><span class="sq"></span>LabFlow</div>
+      <div class="gnb-tabs">
+        <div class="gnb-tab">Notice</div>
+        <div class="gnb-tab">Feasibility</div>
+        <div class="gnb-tab">Prototype / V&amp;V</div>
+        <div class="gnb-tab active">Experiment</div>
+      </div>
+    </div>
+    <div class="gnb-right">
+      <span>👤 user1(user1)</span>
+      <a href="#">Log Out</a>
+      <a href="#">About</a>
+    </div>
+  </div>
+
+  <div class="window-body">
+    <div class="shell" id="shell"></div>
+  </div>
+
+  <div id="modal-root"></div>
+</div>
+
+<script>
+/* ------------------------------------------------------------------ */
+/* DATA (예시 데이터 — 실제 제품/시약/LOT 정보 대신 가상의 값으로 대체함)       */
+/* ------------------------------------------------------------------ */
+const PRODUCTS = [
+  {code:'LH-2409-B1', name:'Assay Panel A', notes:'demo', date:'2026-09-04 18:22', user:'oprA', status:'new', auth:'oprC'},
+  {code:'LH-2309-D2', name:'Bulk Reagent Batch 07', notes:'demo', date:'2026-09-03 09:47', user:'oprB', status:'update', auth:'oprC'},
+  {code:'LH-2409-F3', name:'Reagent Mix Set 3', notes:'demo', date:'2026-09-01 14:10', user:'oprA', status:'new', auth:'oprC'},
+  {code:'LH-2208-A4', name:'Dilution Template Set A', notes:'demo', date:'2026-08-29 11:03', user:'oprC', status:'complete', auth:'oprC'},
+];
+const METHODS = [
+  {id:'oligomix', name:'Reagent Mixing', desc:'여러 시약을 지정 비율로 혼합해 믹스를 조제',
+    reagents:[
+      {name:'Reagent Pool A', pos:'Res-1', lot:'LOT-A2', vol:'12.5 µL'},
+      {name:'Reagent Pool B', pos:'Res-2', lot:'LOT-B7', vol:'12.5 µL'},
+      {name:'Diluent Water', pos:'Res-3', lot:'LOT-W1', vol:'25.0 µL'},
+    ],
+    params:[{l:'최종 반응 부피', v:'50 µL/well'},{l:'믹싱 반복', v:'5회'},{l:'분주 웰 수', v:'96 well'}]},
+  {id:'dilution', name:'Sample Dilution', desc:'시료를 목표 농도로 단계 희석',
+    reagents:[
+      {name:'Sample Stock', pos:'Res-1', lot:'LOT-T4', vol:'가변'},
+      {name:'Dilution Buffer', pos:'Res-2', lot:'LOT-C9', vol:'가변'},
+    ],
+    params:[{l:'희석 배율', v:'1:10 (2단)'},{l:'목표 농도', v:'10 ng/µL'},{l:'처리 시료 수', v:'48개'}]},
+  {id:'pcrsetup', name:'Reaction Setup', desc:'믹스 · 시약 · 시료를 반응 플레이트에 분주',
+    reagents:[
+      {name:'Reaction Mix', pos:'Res-1', lot:'LOT-M3', vol:'10.0 µL'},
+      {name:'Additive Mix', pos:'Res-2', lot:'LOT-P8', vol:'2.0 µL'},
+      {name:'Sample (희석액)', pos:'Plate-1', lot:'LOT-T4', vol:'3.0 µL'},
+    ],
+    params:[{l:'최종 반응 부피', v:'15 µL/well'},{l:'플레이트 포맷', v:'384 well'},{l:'대조군', v:'포함 · 2 well'}]},
+  {id:'bulkprod', name:'Bulk Preparation', desc:'대용량 배치를 표준 레시피로 조제',
+    reagents:[
+      {name:'Base Solution', pos:'Res-1', lot:'LOT-S5', vol:'가변(배치)'},
+      {name:'Additive Component', pos:'Res-2', lot:'LOT-X2', vol:'가변(배치)'},
+    ],
+    params:[{l:'배치 규모', v:'40 L'},{l:'교반 조건', v:'180 rpm / 20 min'},{l:'품질 샘플링', v:'3 point'}]},
+  {id:'bulkdist', name:'Bulk Dispensing', desc:'조제된 배치를 용기 단위로 정량 분주',
+    reagents:[{name:'Bulk Stock B12', pos:'Res-1', lot:'LOT-K6', vol:'정량'}],
+    params:[{l:'분주 단위', v:'5 mL/vial'},{l:'분주 대상 수', v:'240 vial'},{l:'분주 정밀도', v:'±1.5%'}]},
+];
+const ANALYSIS_OPTS = ['Feasibility','Prototype·V&V','Experiment'];
+const TEST_OPTS = {
+  oligomix:['A-1. 혼합비 최적화 스크리닝','A-2. (Optional) 조합 재현성 검증'],
+  dilution:['B-1. 표준 희석계열 검증','B-2. 시료 안정성 확인'],
+  pcrsetup:['C-1. (Optional) 다중 조건 성능 평가'],
+  bulkprod:['D-1. 배치 재현성 검증'],
+  bulkdist:['E-1. 분주 정밀도 검증'],
+};
+const PROTOCOLS = {
+  oligomix:[{p:'A', sample:'표준', mmPrep:'자동', mmDisp:'자동', tmpl:'-', date:'2026-08-11', user:'oprA'}],
+  dilution:[{p:'A', sample:'2단 희석', mmPrep:'-', mmDisp:'-', tmpl:'자동', date:'2026-07-20', user:'oprB'}],
+  pcrsetup:[{p:'A', sample:'표준', mmPrep:'자동', mmDisp:'자동', tmpl:'자동', date:'2026-08-29', user:'oprA'},
+            {p:'B', sample:'저농도 보정', mmPrep:'자동', mmDisp:'수동', tmpl:'자동', date:'2026-05-14', user:'oprC'}],
+  bulkprod:[{p:'A', sample:'배치 표준', mmPrep:'자동', mmDisp:'-', tmpl:'-', date:'2026-08-02', user:'oprB'}],
+  bulkdist:[{p:'A', sample:'Vial 50', mmPrep:'-', mmDisp:'자동', tmpl:'-', date:'2026-07-01', user:'oprB'}],
+};
+const DECK = [
+  {t:'tip', l:'팁랙 · 300µL'}, {t:'reagent', l:'시약 리저버'}, {t:'reagent', l:'시약 리저버'},
+  {t:'plate', l:'목적 플레이트'}, {t:'', l:'미사용'},
+  {t:'tip', l:'팁랙 · 50µL'}, {t:'', l:'미사용'}, {t:'plate', l:'소스 플레이트'},
+  {t:'waste', l:'팁 폐기'}, {t:'', l:'미사용'},
+];
+
+/* ------------------------------------------------------------------ */
+/* STATE                                                               */
+/* ------------------------------------------------------------------ */
+const state = {view:'home', mode:null, product:null, customName:'', methodId:'pcrsetup', analysis:ANALYSIS_OPTS[0], testId:0, protocolIdx:null, newProtocol:false, deckOk:false,
+  monoTomCount:4, pcrConsumable:'Standard 96-Well Plate', selReagentRack:null, selReagentRow:null, selTemplateRack:null, selTemplateWell:null, sideView:'info',
+  numTemplate:6, wellPlate1Consumable:'Standard 96-Well Plate', wellPlate2Consumable:'Standard 96-Well Plate', customSideMode:'layout', mastermixTableTab:'reagent',
+  templateSettingActive:false, currentTemplateNum:1, wellPlate1TemplateMap:{},
+  oligomixCards:[newOligomixCard('Mix1')], templateDilutionCards:[newDilutionCard('Target-A')],
+  semiproduct:{name:'Target-A', totalVol:5000, tubType:'50ml Tub', sourceType:'pDNA', sideMode:'config', rows:[]},
+  semidispense:{tubeType:'2mL Screw(Type B)', noOfTubes:'', volPerTube:''}};
+
+function crumb(items, extraRight){
+  return `<div class="subbar"><div class="crumb">${items.map((it,i)=>{
+    const isLast = i===items.length-1;
+    const seg = isLast?`<span>${it.label}</span>`:`<span class="seg-muted" onclick="${it.go}">${it.label}</span>`;
+    return (i>0?'<span class="sep">›</span>':'')+seg;
+  }).join('')}</div><div style="display:flex;align-items:center;gap:14px;"><div class="status-pill"><span class="status-dot"></span>장비 연동 · 정상</div>${extraRight||''}</div></div>`;
+}
+/* UX: 이전/다음 버튼을 화면 양 끝으로 갈라놓지 않고 오른쪽에 한 묶음으로 모은다.
+   (이전이 왼쪽 끝에 떨어져 있으면 다음 버튼과 시선·커서 이동 거리가 멀어 조작성이 떨어짐)
+   왼쪽에는 현재 단계 안내(stepHint) 또는 비활성 사유 힌트를 둔다. */
+function panelFoot(prevGo, nextHTML, stepHint){
+  const prevBtn = prevGo ? `<button class="btn" onclick="${prevGo}">← 이전</button>` : '';
+  return `<div class="panel-foot">
+    <span class="foot-hint">${stepHint||''}</span>
+    <div class="foot-btns">${prevBtn}${nextHTML||''}</div>
+  </div>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* HOME : Product List                                                 */
+/* ------------------------------------------------------------------ */
+function pillFor(s){
+  if(s==='new') return '<span class="pill pill-new">신규</span>';
+  if(s==='update') return '<span class="pill pill-update">수정됨</span>';
+  return '<span class="pill pill-complete">완료</span>';
+}
+const ICONS = {
+  search: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
+  copy: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`,
+  trash: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>`,
+  play: `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>`,
+  plus: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
+};
+function icon(name){ return `<span class="icn">${ICONS[name]}</span>`; }
+function renderHome(){
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List'}])}
+    <div class="card">
+      <div class="panel-body" style="padding-top:14px;">
+        <div class="row-between" style="margin-bottom:14px;">
+          <div class="home-stat-chips">
+            <span class="stat-chip"><b>${PRODUCTS.length}</b>등록 제품</span>
+            <span class="stat-chip"><b>2/4</b>가동 장비</span>
+            <span class="stat-chip"><b>98.6%</b>최근 30일 성공률</span>
+          </div>
+          <div class="search-box">${icon('search')}<input placeholder="제품명 또는 코드로 검색"></div>
+        </div>
+        <div class="row-between">
+          <div style="display:flex;gap:8px;">
+            <button class="btn">${icon('copy')}<span>Copy</span></button>
+            <button class="btn btn-danger-ghost">${icon('trash')}<span>Delete</span></button>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline-primary" onclick="openSingleRunModal()">${icon('play')}<span>Single Run</span></button>
+            <button class="btn btn-primary" onclick="openAddModal()">${icon('plus')}<span>Add List</span></button>
+          </div>
+        </div>
+        <table class="dense-tbl">
+          <thead><tr><th></th><th>No</th><th>Product</th><th>Notes</th><th>Record Date</th><th>Record User</th><th>Status</th><th>Auth</th></tr></thead>
+          <tbody>
+            ${PRODUCTS.map((p,i)=>`<tr class="selectable" onclick="openProductDirect(${i})">
+              <td><input type="checkbox" onclick="event.stopPropagation()"></td><td class="mono">${i+1}</td>
+              <td>${p.name} <span class="mono" style="font-size:10.5px;color:var(--ink-faint);">${p.code}</span></td>
+              <td>${p.notes}</td><td class="mono">${p.date}</td><td class="mono">${p.user}</td>
+              <td>${pillFor(p.status)}</td><td class="mono">${p.auth}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <div class="quicklinks-plain">
+          <a>Maintenance</a><a>UV Scan</a><a>Teaching Validation</a><a>Document Library</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* 제품 리스트 행 클릭 → 등록된 제품 바로 진입                              */
+/* ------------------------------------------------------------------ */
+function openProductDirect(i){
+  state.mode='std'; state.product=i; state.methodId='pcrsetup'; state.protocolIdx=null; state.testId=0;
+  renderTestSelection();
+}
+
+/* ------------------------------------------------------------------ */
+/* MODAL : + Add List → 제품 추가 (표준 제품을 리스트에 신규 등록)          */
+/* ------------------------------------------------------------------ */
+function openAddModal(){
+  renderAddModal();
+}
+function closeModal(){
+  document.getElementById('modal-root').innerHTML='';
+}
+function renderAddModal(){
+  const nameVal = document.getElementById('new-product-name')?.value ?? '';
+  const notesVal = document.getElementById('new-product-notes')?.value ?? '';
+  const canNext = nameVal.trim().length>0;
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal-card">
+        <div class="modal-head"><b>제품 추가</b><button class="modal-close" onclick="closeModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="lead" style="margin-bottom:16px;">Product List에 새로 등록할 제품 정보를 입력하세요. 등록 후 바로 Test Selection으로 이동합니다.</p>
+          <div class="field"><label>제품명</label><input id="new-product-name" placeholder="ex) Multiplex Assay Panel R(EU)" value="${nameVal}" oninput="toggleAddSubmit()"></div>
+          <div class="field"><label>Notes</label><input id="new-product-notes" placeholder="ex) test" value="${notesVal}"></div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" id="add-submit-btn" ${canNext?'':'disabled'} onclick="submitNewProduct()">추가</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('new-product-name').focus();
+}
+function toggleAddSubmit(){
+  const v = document.getElementById('new-product-name').value;
+  document.getElementById('add-submit-btn').toggleAttribute('disabled', v.trim().length===0);
+}
+function submitNewProduct(){
+  const name = document.getElementById('new-product-name').value.trim();
+  const notes = document.getElementById('new-product-notes').value.trim() || 'test';
+  if(!name) return;
+  const today = new Date();
+  const code = 'LH-'+today.getFullYear().toString().slice(2)+String(today.getMonth()+1).padStart(2,'0')+'-'+String(PRODUCTS.length+1).padStart(2,'0');
+  PRODUCTS.push({code, name, notes, date:today.toISOString().slice(0,10)+' '+today.toTimeString().slice(0,5), user:'user1', status:'new', auth:'user1'});
+  closeModal();
+  state.mode='std'; state.product=PRODUCTS.length-1; state.methodId='pcrsetup'; state.protocolIdx=null; state.testId=0;
+  renderTestSelection();
+}
+
+/* ------------------------------------------------------------------ */
+/* MODAL : Single Run → 커스텀 1회 구동 (리스트에 등록하지 않고 바로 실행)   */
+/* ------------------------------------------------------------------ */
+function openSingleRunModal(){
+  state.customName='';
+  state.singleRunMethodId = state.singleRunMethodId || 'pcrsetup';
+  renderSingleRunModal();
+}
+function renderSingleRunModal(){
+  const v = document.getElementById('single-run-name')?.value ?? state.customName;
+  const canNext = v.trim().length>0;
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal-card">
+        <div class="modal-head"><b>Single Run · 커스텀 1회 구동</b><button class="modal-close" onclick="closeModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="lead" style="margin-bottom:16px;">Product List에 등록하지 않고, 이번 한 번만 실행할 조합을 구성합니다. 별도 실험 항목(Test) 선택 없이 Method만 선택하면 바로 설정 화면으로 이동합니다.</p>
+          <div class="field"><label>커스텀 실행명</label><input id="single-run-name" placeholder="ex) 0905_긴급 시료 테스트" value="${v}" oninput="onSingleRunName(this.value)"></div>
+          <div class="field"><label>Method</label>
+            <select id="single-run-method" onchange="state.singleRunMethodId=this.value">
+              ${METHODS.map(m=>`<option value="${m.id}" ${state.singleRunMethodId===m.id?'selected':''}>${m.name}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" id="single-run-btn" ${canNext?'':'disabled'} onclick="confirmSingleRun()">시작 →</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('single-run-name').focus();
+}
+function onSingleRunName(v){
+  state.customName=v;
+  document.getElementById('single-run-btn').toggleAttribute('disabled', v.trim().length===0);
+}
+function confirmSingleRun(){
+  closeModal();
+  state.mode='custom';
+  state.methodId = state.singleRunMethodId || 'pcrsetup';
+  state.analysis='Custom'; state.protocolIdx=null; state.testId=0;
+  renderSettings();
+}
+
+/* ------------------------------------------------------------------ */
+/* STEP : Test Selection (Method / Analysis / Test) + Protocol         */
+/* ------------------------------------------------------------------ */
+function renderTestSelection(){
+  const target = state.mode==='std'?PRODUCTS[state.product].name:(state.customName||'커스텀 실행');
+  const protoList = PROTOCOLS[state.methodId]||[];
+  const canNext = state.protocolIdx!==null;
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target}])}
+    <div class="card">
+      <div class="panel-body">
+        <div class="section-label">Test Selection</div>
+        <div class="field-row">
+          <div class="field"><label>1. Test Method</label>
+            <select onchange="onMethodChange(this.value)">
+              ${METHODS.map(m=>`<option value="${m.id}" ${state.methodId===m.id?'selected':''}>${m.name}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field"><label>2. Analysis</label>
+            <select onchange="state.analysis=this.value">
+              ${ANALYSIS_OPTS.map(a=>`<option ${state.analysis===a?'selected':''}>${a}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field"><label>3. Test</label>
+            <select onchange="state.testId=this.value">
+              ${(TEST_OPTS[state.methodId]||[]).map((t,i)=>`<option value="${i}">${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="section-label">4. Protocol</div>
+        <div class="row-between">
+          <div style="display:flex;gap:8px;"><button class="btn">✕ Delete</button><button class="btn">⇩ Export</button></div>
+          <div style="display:flex;gap:8px;"><button class="btn">⇧ Import</button><button class="btn btn-primary" onclick="addProtocolRow()">+ Add List</button></div>
+        </div>
+        <table>
+          <thead><tr><th></th><th>No</th><th>Protocol</th><th>Sample Option</th><th>Mastermix<br>Preparation</th><th>Mastermix<br>Dispensing</th><th>Template<br>Transfer</th><th>Date</th><th>User ID</th></tr></thead>
+          <tbody id="proto-tbody">
+            ${protoList.map((r,i)=>protoRow(r,i)).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${panelFoot('renderHome()', `<button class="btn btn-primary" ${canNext?'':'disabled'} onclick="advanceToSettings()">다음 →</button>`, canNext?'STEP 1 / 4 · TEST SELECTION':'STEP 1 / 4 · Protocol을 선택하면 다음 단계로 진행할 수 있습니다')}
+    </div>`;
+}
+function protoRow(r,i){
+  const sel = state.protocolIdx===i;
+  return `<tr class="selectable ${sel?'row-selected':''}" onclick="pickProtocol(${i})">
+    <td><input type="radio" ${sel?'checked':''} readonly></td><td class="mono">${i+1}</td>
+    <td>${r.p}</td><td>${r.sample}</td><td>${r.mmPrep}</td><td>${r.mmDisp}</td><td>${r.tmpl}</td>
+    <td class="mono">${r.date}</td><td class="mono">${r.user}</td></tr>`;
+}
+function onMethodChange(id){state.methodId=id;state.protocolIdx=null;state.testId=0;renderTestSelection();}
+function pickProtocol(i){state.protocolIdx=i;renderTestSelection();}
+function addProtocolRow(){
+  const list = PROTOCOLS[state.methodId];
+  const next = {p:String.fromCharCode(65+list.length), sample:'신규', mmPrep:'-', mmDisp:'-', tmpl:'-', date:'2026-09-05', user:'user1'};
+  list.push(next);
+  state.protocolIdx = list.length-1;
+  renderTestSelection();
+}
+function advanceToSettings(){state.view='settings';renderSettings();}
+
+/* ------------------------------------------------------------------ */
+/* STEP : Test Information (Reagent/Mastermix · Template 매핑)          */
+/* ------------------------------------------------------------------ */
+const PCR_CONSUMABLE_OPTS = ['Standard 96-Well Plate','Skirted 96-Well Plate','Standard 384-Well Plate'];
+const COLORS_VIVID = ['#B0413E','#2E8B57','#2E6DA4','#7B3FA0'];
+const COLORS_PASTEL = ['#D98A87','#8FC9A6','#8FB6D9','#C79FD9'];
+const RACK_COLOR = {A:COLORS_VIVID, B:COLORS_PASTEL, C:COLORS_VIVID, D:COLORS_PASTEL};
+const RACK_BATCH = {A:1, B:1, C:2, D:2};
+function reagentRowInfo(batch, rowIdx){
+  const unitNo = rowIdx+1+(batch-1)*4;
+  const cols = rowIdx===0 ? [1,2,3,8] : [8];
+  return cols.map(c=>{
+    if(c===1) return {col:1,name:'Reagent Mix',code:'R-Mix',category:'Reagent',tube:'1.5mL EP (Type A)',req:'122.5 µL',disp:'5 µL'};
+    if(c===2) return {col:2,name:'Buffer A',code:'Buf A',category:'Reagent',tube:'2mL Screw (Type B)',req:'400 µL',disp:'5 µL'};
+    if(c===3) return {col:3,name:'Buffer B',code:'Buf B',category:'Reagent',tube:'2mL Screw (Type B)',req:'400 µL',disp:'5 µL'};
+    return {col:8,name:'MixUnit-'+unitNo,code:'1.5mL EP',category:'Mastermix',tube:'1.5mL EP (Type A)',req:'(922.5 µL)',disp:'(15 µL)'};
+  });
+}
+const SAMPLE_COUNT=47;
+const SAMPLE_COLORS=['#8AA6C2','#7FB8A4','#E08E8E','#C9A8E0','#E0C078','#8ECBD9','#A8C97F','#D98AB0','#B0A08E','#8E9AD9','#D9B98A','#8ED9C4'];
+function sampleName(i){ if(i===0) return 'NC'; if(i===4) return 'Ref-DNA'; return 'Sample '+String(i+1).padStart(2,'0'); }
+
+function colHeaderRow(){
+  return `<div style="display:flex;gap:6px;margin-left:22px;font-size:10px;color:var(--ink-faint);">${[1,2,3,4,5,6,7,8].map(n=>`<span style="width:30px;text-align:center;">${n}</span>`).join('')}</div>`;
+}
+function renderReagentRack(rackId){
+  const batch = RACK_BATCH[rackId];
+  const colors = RACK_COLOR[rackId];
+  const unitsActive = batch===1 ? Math.min(state.monoTomCount,4) : Math.max(0, Math.min(state.monoTomCount-4,4));
+  let rows='';
+  for(let r=0;r<4;r++){
+    const active = r < unitsActive;
+    let cells='';
+    if(active){
+      const info = reagentRowInfo(batch, r);
+      for(let c=1;c<=8;c++){
+        const it = info.find(x=>x.col===c);
+        if(!it){ cells+='<div class="well empty"></div>'; continue; }
+        const mm = it.col===8;
+        cells += `<div class="well" style="background:${colors[r]};${mm?'border:2px solid #1a1a1a;':''}">${it.code.replace(' ','<br>')}</div>`;
+      }
+    } else {
+      for(let c=1;c<=8;c++) cells+='<div class="well empty"></div>';
+    }
+    const sel = state.selReagentRack===rackId && state.selReagentRow===r;
+    rows += `<div class="rack-line ${active?'row-active selectable':''} ${sel?'row-selected':''}" ${active?`onclick="selectReagentRow('${rackId}',${r})"`:''}>
+      <span class="rack-line-label">${['a','b','c','d'][r]}</span>${cells}
+    </div>`;
+  }
+  return `<div class="rack-block"><div class="rack-block-label">${rackId}</div>${colHeaderRow()}<div class="rack-rows">${rows}</div></div>`;
+}
+function renderTemplateRack(rackId, startIdx){
+  let rows='';
+  for(let r=0;r<4;r++){
+    let cells='';
+    for(let c=0;c<8;c++){
+      const idx = startIdx + r*8 + c;
+      if(idx>=SAMPLE_COUNT){ cells+='<div class="well empty"></div>'; continue; }
+      const sel = state.selTemplateRack===rackId && state.selTemplateWell===idx;
+      cells += `<div class="well tmpl" style="background:${SAMPLE_COLORS[idx%SAMPLE_COLORS.length]};${sel?'outline:2px solid var(--primary);outline-offset:1px;':''}" onclick="selectTemplateWell('${rackId}',${idx})">${idx+1}</div>`;
+    }
+    rows += `<div class="rack-line"><span class="rack-line-label">${['a','b','c','d'][r]}</span>${cells}</div>`;
+  }
+  return `<div class="rack-block"><div class="rack-block-label">${rackId}</div>${colHeaderRow()}<div class="rack-rows">${rows}</div></div>`;
+}
+function reagentInfoPanelHTML(){
+  if(state.selReagentRack===null) return `<div class="side-info-head">▶ Reagent / Mastermix Information</div><div class="side-placeholder">← 좌측에서 확인할 시약/마스터믹스 행을 선택하세요</div>`;
+  const batch = RACK_BATCH[state.selReagentRack];
+  const items = reagentRowInfo(batch, state.selReagentRow);
+  const color = RACK_COLOR[state.selReagentRack][state.selReagentRow];
+  return `<div class="side-info-head">▶ Reagent / Mastermix Information</div>
+   <table class="info-tbl"><thead><tr><th>${state.selReagentRack}행 No.</th>${items.map(x=>`<th>${x.col}</th>`).join('')}</tr></thead>
+   <tbody>
+     <tr><td>Icon</td>${items.map(()=>`<td><span class="info-icon-dot" style="background:${color}"></span></td>`).join('')}</tr>
+     <tr><td>Category</td>${items.map(x=>`<td>${x.category}</td>`).join('')}</tr>
+     <tr><td>Name</td>${items.map(x=>`<td>${x.name}</td>`).join('')}</tr>
+     <tr><td>Tube Type</td>${items.map(x=>`<td>${x.tube}</td>`).join('')}</tr>
+     <tr><td>Required Volume</td>${items.map(x=>`<td>${x.req}</td>`).join('')}</tr>
+     <tr><td>Dispensing Volume</td>${items.map(x=>`<td>${x.disp}</td>`).join('')}</tr>
+   </tbody></table>`;
+}
+function templateInfoPanelHTML(){
+  if(state.selTemplateWell===null) return `<div class="side-info-head" style="margin-top:22px;">▶ Template Information</div><div class="side-placeholder">← 좌측에서 확인할 템플릿을 선택하세요</div>`;
+  const idx=state.selTemplateWell, name=sampleName(idx);
+  return `<div class="side-info-head" style="margin-top:22px;">▶ Template Information</div>
+    <table class="info-tbl"><thead><tr><th>Icon</th><th>Name</th><th>Tube Type</th><th>Required Volume</th></tr></thead>
+    <tbody><tr><td><span class="info-icon-dot" style="background:${SAMPLE_COLORS[idx%SAMPLE_COLORS.length]}"></span></td><td>${name}</td><td>1.5mL EP (Type A)</td><td>80 µL</td></tr></tbody></table>`;
+}
+function selectReagentRow(rack,row){state.selReagentRack=rack;state.selReagentRow=row;renderSettings();}
+function selectTemplateWell(rack,idx){state.selTemplateRack=rack;state.selTemplateWell=idx;renderSettings();}
+function onMonoTomChange(v){let n=parseInt(v)||1;n=Math.max(1,Math.min(8,n));state.monoTomCount=n;renderSettings();}
+
+/* ---- 우측 패널 토글 : Information ↔ Layout ---- */
+function setSideView(v){state.sideView=v;renderSettings();}
+function sideToggleHTML(){
+  return `<div class="side-toggle">
+    <button class="side-toggle-btn ${state.sideView==='info'?'active':''}" onclick="setSideView('info')">Information</button>
+    <button class="side-toggle-btn ${state.sideView==='layout'?'active':''}" onclick="setSideView('layout')">Layout</button>
+  </div>`;
+}
+function wellPlateHTML(filled){
+  const rows=['A','B','C','D','E','F','G','H'];
+  const pattern=['NC','Hg','C.1','C.2','C.3'];
+  let html = `<div class="wp-scroll"><div class="wp-grid">`;
+  html += `<div class="wp-row"><span class="wp-rowlabel"></span>${Array.from({length:12},(_,i)=>`<span class="wp-collabel">${i+1}</span>`).join('')}</div>`;
+  rows.forEach(r=>{
+    html += `<div class="wp-row"><span class="wp-rowlabel">${r}</span>`;
+    for(let c=1;c<=12;c++){
+      html += filled ? `<span class="wp-cell">${pattern[(c-1)%pattern.length]}</span>` : `<span class="wp-cell wp-empty"></span>`;
+    }
+    html += `</div>`;
+  });
+  html += `</div></div>`;
+  return html;
+}
+function layoutViewHTML(){
+  return `<div class="section-blue" style="margin-top:0;">Tip &amp; PCR Consumable</div>
+    <div class="tip-row">
+      <div class="tip-box">Tip 300µL</div><div class="tip-box">Tip 1000µL</div><div class="tip-box">Tip 300µL</div>
+    </div>
+    <div class="section-blue">Well Plate 1</div>
+    ${wellPlateHTML(true)}
+    <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-faint);margin:2px 16px 0;"><span>Template-1</span><span>Template-2</span></div>
+    <div class="section-blue" style="margin-top:18px;">Well Plate 2</div>
+    ${wellPlateHTML(false)}`;
+}
+
+function renderSettings(){
+  if(state.methodId==='oligomix') return renderSettingsOligomix();
+  if(state.methodId==='dilution') return renderSettingsDilution();
+  if(state.methodId==='bulkprod') return renderSettingsSemiproduct();
+  if(state.methodId==='bulkdist') return renderSettingsDispensing();
+  if(state.methodId==='pcrsetup' && state.analysis==='Custom') return renderSettingsCustom();
+  return renderSettingsStd();
+}
+function renderSettingsStd(){
+  const m = METHODS.find(x=>x.id===state.methodId);
+  const target = state.mode==='std'?PRODUCTS[state.product].name:(state.customName||'커스텀 실행');
+  const testStr = (TEST_OPTS[state.methodId]||[])[state.testId] || '';
+  const protoLetter = state.protocolIdx!==null ? PROTOCOLS[state.methodId][state.protocolIdx].p : '-';
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target, go:'renderTestSelection()'},{label:'Test Information'}],
+      `<button class="btn btn-primary" onclick="renderDeck()">▶ Run</button>`)}
+    <div class="card">
+      <div class="panel-body">
+        <div class="info-strip">
+          <span><b>Test Method</b> : ${m.name}</span><span class="sep2">•</span>
+          <span><b>Analysis</b> : ${state.analysis}</span><span class="sep2">•</span>
+          <span><b>Test</b> : ${testStr}</span><span class="sep2">•</span>
+          <span><b>Protocol</b> : ${protoLetter}</span>
+        </div>
+        <div class="settings-top-row">
+          <div class="settings-field">
+            <label>1. PCR Consumable</label>
+            <select onchange="state.pcrConsumable=this.value">${PCR_CONSUMABLE_OPTS.map(o=>`<option ${state.pcrConsumable===o?'selected':''}>${o}</option>`).join('')}</select>
+          </div>
+          <div class="settings-field">
+            <label>2. Number of Mix Units</label>
+            <div class="stepper">
+              <input type="number" min="1" max="8" value="${state.monoTomCount}" oninput="onMonoTomChange(this.value)">
+              <span style="font-size:11px;color:var(--ink-faint);">(Min 1 ~ Max 8)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-grid-layout">
+          <div>
+            <div class="section-blue">Reagent / Mastermix</div>
+            <div class="rack-row">${renderReagentRack('A')}${renderReagentRack('B')}</div>
+            <div class="rack-row">${renderReagentRack('C')}${renderReagentRack('D')}</div>
+            <div class="section-blue">Template</div>
+            <div class="rack-row">${renderTemplateRack('E',0)}${renderTemplateRack('F',32)}</div>
+          </div>
+          <div class="side-info">
+            ${sideToggleHTML()}
+            ${state.sideView==='info' ? (reagentInfoPanelHTML()+templateInfoPanelHTML()) : layoutViewHTML()}
+          </div>
+        </div>
+      </div>
+      ${panelFoot('renderTestSelection()', `<button class="btn btn-primary" onclick="renderDeck()">다음 →</button>`, 'STEP 2 / 4 · TEST INFORMATION')}
+    </div>`;
+}
+
+/* ---- Custom 모드 전용 : Number of Mastermix / Template + 이중 PCR Consumable ---- */
+function onNumTemplateChange(v){let n=parseInt(v)||1;n=Math.max(1,Math.min(64,n));state.numTemplate=n;renderSettingsCustom();}
+function setCustomSideMode(v){state.customSideMode=v;renderSettingsCustom();}
+function setMastermixTableTab(v){state.mastermixTableTab=v;renderSettingsCustom();}
+
+function renderTemplateRackColMajor(rackId, offset){
+  let rowsArr=['','','',''];
+  for(let r=0;r<4;r++){
+    let cells='';
+    for(let c=0;c<8;c++){
+      const localIdx = c*4+r;
+      const globalNum = offset+localIdx+1;
+      if(globalNum<=state.numTemplate){
+        cells+=`<div class="well tmpl" style="background:${SAMPLE_COLORS[(globalNum-1)%SAMPLE_COLORS.length]};">${globalNum}</div>`;
+      } else {
+        cells+='<div class="well empty"></div>';
+      }
+    }
+    rowsArr[r]=`<div class="rack-line"><span class="rack-line-label">${['a','b','c','d'][r]}</span>${cells}</div>`;
+  }
+  return `<div class="rack-block"><div class="rack-block-label">${rackId}</div>${colHeaderRow()}<div class="rack-rows">${rowsArr.join('')}</div></div>`;
+}
+
+function computeWellPlate1ColorMap(){
+  const n=Math.min(state.monoTomCount,8);
+  let colorMap={};
+  for(let u=1;u<=n;u++){
+    const bandIdx=(u-1)%4;
+    const colGroup=Math.floor((u-1)/4);
+    const rowA=bandIdx*2, rowB=bandIdx*2+1;
+    const col1=colGroup*2, col2=colGroup*2+1;
+    const color=COLORS_VIVID[bandIdx];
+    colorMap[rowA+'_'+col1]=color; colorMap[rowA+'_'+col2]=color;
+    colorMap[rowB+'_'+col1]=color; colorMap[rowB+'_'+col2]=color;
+  }
+  return colorMap;
+}
+function wellPlate1CustomHTML(){
+  const rows=['A','B','C','D','E','F','G','H'];
+  const colorMap = computeWellPlate1ColorMap();
+  let html=`<div class="wp-scroll"><div class="wp-grid">`;
+  html+=`<div class="wp-row"><span class="wp-rowlabel"></span>${Array.from({length:12},(_,i)=>`<span class="wp-collabel">${i+1}</span>`).join('')}</div>`;
+  rows.forEach((rl,r)=>{
+    html+=`<div class="wp-row"><span class="wp-rowlabel">${rl}</span>`;
+    for(let c=0;c<12;c++){
+      const key=r+'_'+c;
+      const color = colorMap[key];
+      const tnum = state.wellPlate1TemplateMap[key];
+      const style = color ? `background:${color};border-color:${color};` : '';
+      const cls = 'wp-cell'+(color?'':' wp-empty')+(state.templateSettingActive?' wp-clickable':'');
+      html += `<span class="${cls}" style="${style}" ${state.templateSettingActive?`onclick="handleWP1Click(${r},${c})"`:''}>${tnum?`<b>${tnum}</b>`:''}</span>`;
+    }
+    html+='</div>';
+  });
+  html+='</div></div>';
+  return html;
+}
+
+function customTipPlatesHTML(interactive){
+  const iconsHTML = interactive ? `<div class="icon-col">
+      <div class="icon-btn-labeled-wrap"><button class="icon-circle-btn" onclick="setCustomSideMode('table')">✎</button><span>Mastermix</span></div>
+      <div class="icon-btn-labeled-wrap"><button class="icon-circle-btn" onclick="toggleTemplateSetting()">${state.templateSettingActive?'✕':'✎'}</button><span>Template</span></div>
+    </div>` : '';
+  return `<div class="tip-row"><div class="tip-box">Tip 300µL</div><div class="tip-box">Tip 300µL</div></div>
+    <div class="tip-row"><div class="tip-box">Tip 1000µL</div><div class="tip-box">Tip 300µL</div></div>
+    <div class="wp-dual-row">
+      <div style="flex:1;min-width:0;"><div class="section-blue" style="margin:12px 0 8px;">Well Plate 1</div>${wellPlate1CustomHTML()}</div>
+      <div style="flex:1;min-width:0;"><div class="section-blue" style="margin:12px 0 8px;">Well Plate 2</div>${wellPlateHTML(false)}</div>
+      ${iconsHTML}
+    </div>`;
+}
+
+/* ---- Template 분주(Well Plate) 지정 로직 ---- */
+let pendingTemplateAssignCol=null;
+function toggleTemplateSetting(){ state.templateSettingActive=!state.templateSettingActive; renderSettingsCustom(); }
+function handleWP1Click(r,c){
+  const colorMap = computeWellPlate1ColorMap();
+  const key=r+'_'+c;
+  if(!colorMap[key]){ showOutOfRangePopup(); return; }
+  if(state.wellPlate1TemplateMap[key]) return; // 이미 지정된 셀
+  const usedCols = new Set(Object.keys(state.wellPlate1TemplateMap).map(k=>k.split('_')[1]));
+  if(!usedCols.has(String(c)) && usedCols.size>=state.numTemplate){
+    pendingTemplateAssignCol=c;
+    showLackOfVolumePopup();
+    return;
+  }
+  assignTemplateColumn(c);
+}
+function assignTemplateColumn(c){
+  const colorMap = computeWellPlate1ColorMap();
+  const usedCols = new Set(Object.keys(state.wellPlate1TemplateMap).map(k=>k.split('_')[1]));
+  const num = usedCols.has(String(c)) ? state.wellPlate1TemplateMap[Object.keys(state.wellPlate1TemplateMap).find(k=>k.split('_')[1]===String(c))] : (usedCols.size+1);
+  for(let r=0;r<8;r++){ const key=r+'_'+c; if(colorMap[key]) state.wellPlate1TemplateMap[key]=num; }
+  renderSettingsCustom();
+}
+function showOutOfRangePopup(){
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal-card" style="width:420px;">
+        <div class="modal-body" style="text-align:center;padding:28px 22px;">
+          <div style="font-size:24px;margin-bottom:10px;color:var(--amber-tx);">⚠</div>
+          <p style="font-size:13.5px;color:var(--ink);line-height:1.6;">범위를 벗어났습니다.<br>Mastermix가 분주된(색이 채워진) 웰에만 Template를 분주할 수 있습니다.</p>
+          <button class="btn btn-primary" style="margin-top:14px;" onclick="closeModal()">확인</button>
+        </div>
+      </div>
+    </div>`;
+}
+function showLackOfVolumePopup(){
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal-card" style="width:440px;">
+        <div class="modal-body" style="text-align:center;padding:26px 22px;">
+          <div style="font-size:24px;margin-bottom:10px;color:var(--blue-tx);">?</div>
+          <p style="font-size:13.5px;color:var(--ink);line-height:1.6;">Template 용량이 부족합니다.<br>추가 분주를 위해 Template tube를 더 추가할까요?</p>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;">
+            <button class="btn btn-primary" onclick="confirmAddTemplateTube()">추가</button>
+            <button class="btn" onclick="cancelAddTemplateTube()">추가 안 함</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+function confirmAddTemplateTube(){
+  state.numTemplate = Math.min(64, state.numTemplate+1);
+  const col = pendingTemplateAssignCol; pendingTemplateAssignCol=null;
+  closeModal();
+  assignTemplateColumn(col);
+  showToastPopup('Template tube를 추가했습니다.');
+}
+function cancelAddTemplateTube(){
+  pendingTemplateAssignCol=null;
+  closeModal();
+  showToastPopup('Template tube를 추가하지 않았습니다.');
+}
+/* UX: 단순 알림을 어두운 오버레이 + 모달로 2초간 화면을 막던 것을,
+   조작을 막지 않는 가벼운 toast로 변경 */
+function showToastPopup(msg){
+  let t = document.getElementById('lh-toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'lh-toast';
+    (document.querySelector('.window')||document.body).appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToastPopup._tm);
+  showToastPopup._tm = setTimeout(()=>{ t.classList.remove('show'); }, 2200);
+}
+function renderTemplatePickerGrid(){
+  let html='<div style="display:flex;gap:24px;">';
+  [0,32].forEach((offset,gi)=>{
+    let rowsArr=['','','',''];
+    for(let r=0;r<4;r++){
+      let cells='';
+      for(let c=0;c<8;c++){
+        const localIdx=c*4+r; const num=offset+localIdx+1;
+        if(num<=state.numTemplate){
+          const sel = state.currentTemplateNum===num;
+          cells+=`<div class="well tmpl" style="background:${SAMPLE_COLORS[(num-1)%SAMPLE_COLORS.length]};${sel?'outline:2px solid var(--primary);outline-offset:1px;':''}" onclick="pickTemplateNum(${num})">${num}</div>`;
+        } else { cells+='<div class="well empty"></div>'; }
+      }
+      rowsArr[r]=`<div class="rack-line"><span class="rack-line-label">${['a','b','c','d'][r]}</span>${cells}</div>`;
+    }
+    html+=`<div class="rack-block"><div class="rack-block-label">${gi===0?'E':'F'}</div>${colHeaderRow()}<div class="rack-rows">${rowsArr.join('')}</div></div>`;
+  });
+  html+='</div>';
+  return html;
+}
+function openTemplatePicker(){
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal-card" style="width:640px;">
+        <div class="modal-head"><b>Template Picker</b><button class="modal-close" onclick="closeModal()">✕</button></div>
+        <div class="modal-body">${renderTemplatePickerGrid()}</div>
+      </div>
+    </div>`;
+}
+function pickTemplateNum(n){ state.currentTemplateNum=n; closeModal(); renderSettingsCustom(); }
+
+function mastermixTableHTML(){
+  const n=Math.min(state.monoTomCount,8);
+  let rowsHtml='';
+  for(let u=1;u<=n;u++){
+    const bandIdx=(u-1)%4;
+    const color=COLORS_VIVID[bandIdx];
+    rowsHtml+=`<tr class="mm-parent"><td><input type="checkbox"></td><td>▾</td><td><span class="info-icon-dot" style="background:${color};border:2px solid #1a1a1a;"></span></td><td>Mastermix</td><td>1.5mL EP</td><td>1.5mL EP (Type A)</td><td>80 µL</td><td></td></tr>`;
+    ['R-Mix','Buf A','Buf B'].forEach(rname=>{
+      rowsHtml+=`<tr class="mm-child"><td><input type="checkbox"></td><td></td><td><span class="info-icon-dot" style="background:${color};"></span></td><td>&gt; Reagent</td><td>${rname}</td><td>1.5mL EP (Type A)</td><td>80 µL</td><td></td></tr>`;
+    });
+  }
+  return `<div class="mm-tabs">
+      <button class="mm-tab ${state.mastermixTableTab==='reagent'?'active':''}" onclick="setMastermixTableTab('reagent')">Reagent / Mastermix</button>
+      <button class="mm-tab ${state.mastermixTableTab==='template'?'active':''}" onclick="setMastermixTableTab('template')">Template</button>
+    </div>
+    ${state.mastermixTableTab==='reagent' ? `
+    <div class="mm-toolbar">
+      <button class="btn btn-sm">▲</button><button class="btn btn-sm">▼</button>
+      <button class="btn btn-sm">Add</button><button class="btn btn-sm">Delete</button>
+      <span style="flex:1;"></span>
+      <button class="btn btn-sm">Merge Reset</button>
+    </div>
+    <div class="mm-table-scroll"><table class="mm-table">
+      <thead><tr><th></th><th></th><th>Icon</th><th>Type</th><th>Name</th><th>Tube Type</th><th>Required Volume</th><th>Merged</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table></div>` : `<div class="side-placeholder" style="margin-top:14px;">Template 목록 편집 화면은 준비 중입니다.</div>`}`;
+}
+
+function renderSettingsCustom(){
+  const target = state.mode==='std' ? PRODUCTS[state.product].name : (state.customName||'커스텀 실행');
+  const m = METHODS.find(x=>x.id===state.methodId);
+  const testStr = (TEST_OPTS[state.methodId]||[])[state.testId] || '';
+  const protoLetter = state.protocolIdx!==null ? PROTOCOLS[state.methodId][state.protocolIdx].p : '-';
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target, go:'renderTestSelection()'},{label:'Test Information'}],
+      `<button class="btn btn-primary" onclick="renderDeck()">▶ Run</button>`)}
+    <div class="card">
+      <div class="panel-body">
+        <div class="info-strip">
+          <span><b>Test Method</b> : ${m.name}</span><span class="sep2">•</span>
+          <span><b>Analysis</b> : ${state.analysis}</span><span class="sep2">•</span>
+          <span><b>Test</b> : ${testStr}</span><span class="sep2">•</span>
+          <span><b>Protocol</b> : ${protoLetter}</span>
+        </div>
+        <div class="settings-top-row">
+          <div class="settings-field">
+            <label>1. Number of Mastermix</label>
+            <div class="stepper">
+              <input type="number" min="1" max="8" value="${state.monoTomCount}" oninput="onMonoTomChange(this.value)">
+              <span style="font-size:11px;color:var(--ink-faint);">(Min 1 ~ Max 8)</span>
+            </div>
+          </div>
+          <div class="settings-field">
+            <label>2. Number of Template</label>
+            <div class="stepper">
+              <input type="number" min="1" max="64" value="${state.numTemplate}" oninput="onNumTemplateChange(this.value)">
+              <span style="font-size:11px;color:var(--ink-faint);">(Min 1 ~ Max 64)</span>
+            </div>
+          </div>
+          <div class="settings-field">
+            <label>3. PCR Consumable (Well Plate 1)</label>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <select onchange="state.wellPlate1Consumable=this.value">${PCR_CONSUMABLE_OPTS.map(o=>`<option ${state.wellPlate1Consumable===o?'selected':''}>${o}</option>`).join('')}</select>
+              <button class="btn btn-sm" title="적용">↓</button>
+            </div>
+          </div>
+          <div class="settings-field">
+            <label>4. PCR Consumable (Well Plate 2)</label>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <select onchange="state.wellPlate2Consumable=this.value">${PCR_CONSUMABLE_OPTS.map(o=>`<option ${state.wellPlate2Consumable===o?'selected':''}>${o}</option>`).join('')}</select>
+              <button class="btn btn-sm" title="적용">↓</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-grid-layout">
+          <div>
+            <div class="section-blue">Reagent / Mastermix</div>
+            <div class="rack-row">${renderReagentRack('A')}${renderReagentRack('B')}</div>
+            <div class="rack-row">${renderReagentRack('C')}${renderReagentRack('D')}</div>
+            <div class="section-blue">Template</div>
+            <div class="rack-row">${renderTemplateRackColMajor('E',0)}${renderTemplateRackColMajor('F',32)}</div>
+          </div>
+          <div class="side-info">
+            ${state.customSideMode==='layout' ? `
+              <div class="section-blue" style="margin-top:0;">Tip &amp; PCR Consumable</div>
+              ${customTipPlatesHTML(true)}
+            ` : `
+              <div class="row-between" style="margin-bottom:8px;">
+                <div class="section-blue" style="margin:0;">Reagent / Mastermix · Template Setting</div>
+                <button class="btn btn-sm" onclick="setCustomSideMode('layout')">✕ 닫기</button>
+              </div>
+              ${mastermixTableHTML()}
+            `}
+          </div>
+        </div>
+      </div>
+      ${panelFoot('renderTestSelection()', `<button class="btn btn-primary" onclick="renderDeck()">다음 →</button>`, 'STEP 2 / 4 · TEST INFORMATION')}
+    </div>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* STEP : Test Information — Reagent Mixing 전용 화면                    */
+/* ------------------------------------------------------------------ */
+const CARD_COLORS = ['#B0206B','#17A2A8','#E08A2E','#5B8C3E','#6B4FA0','#C24B4B','#3E6FB0','#8C6B3E'];
+const OLIGO_TYPE_NAMES = {F:'Forward Primer', R:'Reverse Primer', 'P-P':'Probe-1', 'P-C':'Probe-2'};
+const REQUIRED_VOL_BY_TYPE = {F:71, R:71, 'P-P':81, 'P-C':71};
+function newOligomixCard(name){
+  return {
+    name: name||'Mix1', totalVol:100, tubeType:'1.5ml EP (Type A)', mode:'dilution',
+    rows:[
+      {name:'-', type:'TE', inputVol:40},
+      {name:'Forward Primer', type:'F', inputVol:15},
+      {name:'Reverse Primer', type:'R', inputVol:15},
+      {name:'Probe-1', type:'P-P', inputVol:15},
+      {name:'Probe-2', type:'P-C', inputVol:15},
+    ]
+  };
+}
+function rowDisplayName(card, rowIdx){
+  const row = card.rows[rowIdx];
+  if(row.type==='TE') return '-';
+  let count=0;
+  for(let i=0;i<=rowIdx;i++){ if(card.rows[i].type===row.type) count++; }
+  const base = OLIGO_TYPE_NAMES[row.type];
+  return count>1 ? `${base}(${count})` : base;
+}
+function allocatePositionsByType(t){
+  let list=[];
+  state.oligomixCards.forEach((card,ci)=>{ card.rows.forEach(row=>{ if(row.type===t) list.push({cardIdx:ci}); }); });
+  return list;
+}
+function allocateOMPositions(){ return state.oligomixCards.map((c,i)=>({cardIdx:i})); }
+function renderGenericBadgeRack(label, list){
+  let rowsArr=['','','',''];
+  for(let r=0;r<4;r++){
+    let cells='';
+    for(let c=0;c<8;c++){
+      const idx=r*8+c;
+      const item=list[idx];
+      if(item){
+        const color=CARD_COLORS[item.cardIdx%CARD_COLORS.length];
+        cells+=`<div class="well badge-well" style="border-color:${color};color:${color};">${item.cardIdx+1}</div>`;
+      } else {
+        cells+='<div class="well empty"></div>';
+      }
+    }
+    rowsArr[r]=`<div class="rack-line"><span class="rack-line-label"></span>${cells}</div>`;
+  }
+  return `<div class="rack-block"><div class="rack-block-label">${label}</div>${colHeaderRow()}<div class="rack-rows">${rowsArr.join('')}</div></div>`;
+}
+function oligoRackHTML(label,type){ return renderGenericBadgeRack(label, allocatePositionsByType(type)); }
+function omRackHTML(label,offset){ return renderGenericBadgeRack(label, allocateOMPositions().slice(offset,offset+32)); }
+
+function addOligomixCard(){
+  state.oligomixCards.push(newOligomixCard('Mix'+(state.oligomixCards.length+1)));
+  renderSettingsOligomix();
+}
+function deleteOligomixCard(idx){
+  if(state.oligomixCards.length<=1) return;
+  state.oligomixCards.splice(idx,1);
+  renderSettingsOligomix();
+}
+function addOligoRow(cardIdx){
+  state.oligomixCards[cardIdx].rows.push({name:'-', type:'F', inputVol:15});
+  renderSettingsOligomix();
+}
+function deleteCheckedRows(cardIdx){
+  const tables = document.querySelectorAll('.oligo-tbl');
+  const table = tables[cardIdx];
+  if(!table) return;
+  const checked = Array.from(table.querySelectorAll('tbody input[type=checkbox]:checked')).map(cb=>parseInt(cb.dataset.row));
+  state.oligomixCards[cardIdx].rows = state.oligomixCards[cardIdx].rows.filter((r,i)=>!checked.includes(i));
+  renderSettingsOligomix();
+}
+function setCardMode(cardIdx,mode){ state.oligomixCards[cardIdx].mode=mode; renderSettingsOligomix(); }
+function updateCardField(cardIdx,field,value){ state.oligomixCards[cardIdx][field]=value; renderSettingsOligomix(); }
+function updateRowField(cardIdx,rowIdx,field,value){
+  state.oligomixCards[cardIdx].rows[rowIdx][field] = field==='inputVol' ? (parseFloat(value)||0) : value;
+  renderSettingsOligomix();
+}
+
+function oligomixCardHTML(cardIdx){
+  const card = state.oligomixCards[cardIdx];
+  const color = CARD_COLORS[cardIdx%CARD_COLORS.length];
+  const isDil = card.mode==='dilution';
+  const headCols = isDil
+    ? ['Oligo Name','Oligo Type','Oligo Conc.<br>(µM)','Dilution Factor','Input Vol.<br>(µL)','Tube Type','Required Vol.<br>(µL)']
+    : ['Oligo Name','Oligo Type','Input Vol.<br>(µL)','Tube Type','Required Vol.<br>(µL)'];
+  let rowsHtml='';
+  card.rows.forEach((row,ri)=>{
+    const isTE = row.type==='TE';
+    const dispName = rowDisplayName(card,ri);
+    const reqVol = isTE ? '-' : (REQUIRED_VOL_BY_TYPE[row.type]||'-');
+    const overLimit = !isTE && row.inputVol>300;
+    const inputCell = overLimit
+      ? `<div class="cell-warning" title="Transfer volume of each oligo cannot exceed 300µL"><span class="warn-tri">⚠</span><input type="number" value="${row.inputVol}" onchange="updateRowField(${cardIdx},${ri},'inputVol',this.value)"></div>`
+      : `<input type="number" value="${row.inputVol}" onchange="updateRowField(${cardIdx},${ri},'inputVol',this.value)">`;
+    const typeCell = isTE ? 'TE' : `<select onchange="updateRowField(${cardIdx},${ri},'type',this.value)">${Object.keys(OLIGO_TYPE_NAMES).map(t=>`<option value="${t}" ${row.type===t?'selected':''}>${t}</option>`).join('')}</select>`;
+    const tubeCell = isTE ? '-' : `<select><option>2mL Screw(Type B)</option></select>`;
+    rowsHtml += `<tr>
+      <td><input type="checkbox" data-row="${ri}"></td>
+      <td style="${isTE?'':`border-left:3px solid ${color};`}">${dispName}</td>
+      <td>${typeCell}</td>
+      ${isDil?`<td>-</td><td>-</td>`:''}
+      <td>${inputCell}</td>
+      <td>${tubeCell}</td>
+      <td>${reqVol}</td>
+    </tr>`;
+  });
+  return `<div class="mm-card" style="border-color:${color};">
+    <div class="mm-card-head">
+      <span class="mm-badge" style="background:${color};">${cardIdx+1}</span>
+      <label>Mix Name</label><input value="${card.name}" onchange="updateCardField(${cardIdx},'name',this.value)">
+      <label>Total Vol.(µL)</label><input type="number" value="${card.totalVol}" style="width:70px;" onchange="updateCardField(${cardIdx},'totalVol',this.value)">
+      <label>Tube Type</label><select onchange="updateCardField(${cardIdx},'tubeType',this.value)"><option>1.5ml EP (Type A)</option></select>
+    </div>
+    <div class="mm-card-toolbar">
+      <button class="btn btn-sm">▲</button><button class="btn btn-sm">▼</button>
+      <button class="btn btn-sm" onclick="addOligoRow(${cardIdx})">Add</button>
+      <button class="btn btn-sm" onclick="deleteCheckedRows(${cardIdx})">Delete</button>
+      <span style="flex:1;"></span>
+      <label class="radio-inline"><input type="radio" name="mode-${cardIdx}" ${isDil?'checked':''} onchange="setCardMode(${cardIdx},'dilution')">Dilution Factor</label>
+      <label class="radio-inline"><input type="radio" name="mode-${cardIdx}" ${!isDil?'checked':''} onchange="setCardMode(${cardIdx},'volume')">Input Volume</label>
+    </div>
+    <table class="oligo-tbl">
+      <thead><tr><th></th>${headCols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <button class="btn btn-sm btn-danger-ghost" style="margin-top:8px;" onclick="deleteOligomixCard(${cardIdx})">🗑 카드 삭제</button>
+  </div>`;
+}
+
+function renderSettingsOligomix(){
+  const target = state.mode==='std' ? PRODUCTS[state.product].name : (state.customName||'커스텀 실행');
+  const m = METHODS.find(x=>x.id===state.methodId);
+  const testStr = (TEST_OPTS[state.methodId]||[])[state.testId] || '';
+  const protoLetter = state.protocolIdx!==null ? PROTOCOLS[state.methodId][state.protocolIdx].p : '-';
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target, go:'renderTestSelection()'},{label:'Test Information'}],
+      `<button class="btn btn-primary" onclick="renderDeck()">▶ Run</button>`)}
+    <div class="card">
+      <div class="panel-body">
+        <div class="info-strip">
+          <span><b>Test Method</b> : ${m.name}</span><span class="sep2">•</span>
+          <span><b>Test Step</b> : ${state.analysis}</span><span class="sep2">•</span>
+          <span><b>Test</b> : ${testStr}</span><span class="sep2">•</span>
+          <span><b>Protocol</b> : ${protoLetter}</span>
+        </div>
+        <div class="settings-grid-layout" style="grid-template-columns:1fr 1.3fr;">
+          <div>
+            <div class="section-blue">Oligo</div>
+            <div class="rack-row">${oligoRackHTML('F','F')}${oligoRackHTML('R','R')}</div>
+            <div class="rack-row">${oligoRackHTML('P-P','P-P')}${oligoRackHTML('P-C','P-C')}</div>
+            <div class="section-blue">Reagent Mix</div>
+            <div class="rack-row">${omRackHTML('MX1',0)}${omRackHTML('MX2',32)}</div>
+          </div>
+          <div class="side-info" style="border-left:none;padding-left:0;">
+            <div class="section-blue" style="margin-top:0;">Reagent Mix</div>
+            ${state.oligomixCards.map((c,i)=>oligomixCardHTML(i)).join('')}
+            <div style="text-align:center;">
+              <button class="btn" style="border-radius:50%;width:34px;height:34px;padding:0;font-size:18px;" onclick="addOligomixCard()">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      ${panelFoot('renderTestSelection()', `<button class="btn btn-primary" onclick="renderDeck()">다음 →</button>`, 'STEP 2 / 4 · TEST INFORMATION')}
+    </div>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* STEP : Test Information — Template Dilution 전용 화면                */
+/* ------------------------------------------------------------------ */
+const TEMPLATE_HUES = ['#8B5E2B','#1F8A8A','#B08628','#4472C4','#D97B29','#3EA06E','#7B5EA7','#4FB0C6','#9E8ACF','#6FA8D6','#57BFA0','#C24B4B'];
+function lightenColor(hex, pct){
+  hex = hex.replace('#','');
+  const r=parseInt(hex.substring(0,2),16), g=parseInt(hex.substring(2,4),16), b=parseInt(hex.substring(4,6),16);
+  const nr=Math.round(r+(255-r)*pct/100), ng=Math.round(g+(255-g)*pct/100), nb=Math.round(b+(255-b)*pct/100);
+  return `rgb(${nr},${ng},${nb})`;
+}
+function newDilutionCard(name){
+  return { name:name||'Template', tubeType:'1.5ml EP (Type A)', mode:'volume', rows:[{total:100}] };
+}
+function dilRowLabel(idx){ return idx===0 ? 'Origin' : `10^-${idx}`; }
+function computeFinalVol(total){ const t=parseFloat(total); return isNaN(t)?'-':(t-10); }
+
+function colHeaderDil(){
+  return `<div class="dil-header-row"><span style="width:30px;"></span>${Array.from({length:8},(_,i)=>`<span>${i===0?'1(Or)':i+1}</span>`).join('')}<span class="dil-gap"></span>${Array.from({length:8},(_,i)=>`<span>${i+9}</span>`).join('')}</div>`;
+}
+function templateDilRowHTML(rowIdx){
+  const card = state.templateDilutionCards[rowIdx];
+  const label = 'T'+(rowIdx+1);
+  let wells='';
+  for(let i=0;i<16;i++){
+    if(card && i<card.rows.length){
+      const color = TEMPLATE_HUES[rowIdx%TEMPLATE_HUES.length];
+      const pct = Math.min(88, i*6);
+      const bg = lightenColor(color,pct);
+      wells += `<span class="dil-well" style="background:${bg};border-color:${color};">${i===0?(rowIdx+1):''}</span>`;
+    } else {
+      wells += `<span class="dil-well empty"></span>`;
+    }
+    if(i===7) wells += `<span class="dil-gap"></span>`;
+  }
+  return `<div class="dil-row"><span class="dil-row-label">${label}</span>${wells}</div>`;
+}
+function dilutionBlockHTML(startRow){
+  let html = colHeaderDil();
+  for(let r=startRow;r<startRow+4;r++) html += templateDilRowHTML(r);
+  return `<div class="dil-block">${html}</div>`;
+}
+
+function addDilCard(){
+  state.templateDilutionCards.push(newDilutionCard(state.templateDilutionCards[0]?.name||'Template'));
+  renderSettingsDilution();
+}
+function deleteDilCard(idx){
+  if(state.templateDilutionCards.length<=1) return;
+  state.templateDilutionCards.splice(idx,1);
+  renderSettingsDilution();
+}
+function addDilRow(cardIdx){
+  const card = state.templateDilutionCards[cardIdx];
+  card.rows.push({templateVol:10, teVol:90, total:100});
+  renderSettingsDilution();
+}
+function deleteDilCheckedRows(cardIdx){
+  const tables = document.querySelectorAll('.dil-tbl');
+  const table = tables[cardIdx];
+  if(!table) return;
+  const checked = Array.from(table.querySelectorAll('tbody input[type=checkbox]:checked')).map(cb=>parseInt(cb.dataset.row));
+  const card = state.templateDilutionCards[cardIdx];
+  card.rows = card.rows.filter((r,i)=>!checked.includes(i));
+  if(card.rows.length===0) card.rows.push({total:100});
+  renderSettingsDilution();
+}
+function setDilMode(cardIdx,mode){ state.templateDilutionCards[cardIdx].mode=mode; renderSettingsDilution(); }
+function updateDilCardField(cardIdx,field,value){ state.templateDilutionCards[cardIdx][field]=value; renderSettingsDilution(); }
+function updateDilRowField(cardIdx,rowIdx,field,value){
+  state.templateDilutionCards[cardIdx].rows[rowIdx][field] = parseFloat(value)||0;
+  renderSettingsDilution();
+}
+
+function templateDilCardHTML(cardIdx){
+  const card = state.templateDilutionCards[cardIdx];
+  const color = TEMPLATE_HUES[cardIdx%TEMPLATE_HUES.length];
+  const hasBadge = cardIdx<12;
+  let rowsHtml='';
+  card.rows.forEach((row,ri)=>{
+    const isOrigin = ri===0;
+    const prevConc = isOrigin ? '-' : dilRowLabel(ri-1);
+    const dilFactor = isOrigin ? '-' : '1/10';
+    const templateVol = isOrigin ? '-' : `<input type="number" value="${row.templateVol??10}" onchange="updateDilRowField(${cardIdx},${ri},'templateVol',this.value)">`;
+    const teVol = isOrigin ? '-' : `<input type="number" value="${row.teVol??90}" onchange="updateDilRowField(${cardIdx},${ri},'teVol',this.value)">`;
+    const total = row.total??100;
+    const cellColor = lightenColor(color, Math.min(85, ri*6));
+    rowsHtml += `<tr>
+      <td><input type="checkbox" data-row="${ri}"></td>
+      <td style="background:${cellColor};color:#fff;font-weight:700;">${dilRowLabel(ri)}</td>
+      <td>${prevConc}</td>
+      <td>${dilFactor}</td>
+      <td>${templateVol}</td>
+      <td>${teVol}</td>
+      <td><input type="number" value="${total}" onchange="updateDilRowField(${cardIdx},${ri},'total',this.value)"></td>
+      <td>${computeFinalVol(total)}</td>
+    </tr>`;
+  });
+  return `<div class="mm-card" style="border-color:${color};">
+    <div class="mm-card-head">
+      <span class="mm-badge" style="background:${hasBadge?color:'var(--ink-faint)'};">${hasBadge?(cardIdx+1):''}</span>
+      <label>Template Name</label><input value="${card.name}" onchange="updateDilCardField(${cardIdx},'name',this.value)">
+      <label>Tube Type</label><select onchange="updateDilCardField(${cardIdx},'tubeType',this.value)"><option>1.5ml EP (Type A)</option></select>
+    </div>
+    <div class="mm-card-toolbar">
+      <button class="btn btn-sm">▲</button><button class="btn btn-sm">▼</button>
+      <button class="btn btn-sm" onclick="addDilRow(${cardIdx})">Add</button>
+      <button class="btn btn-sm" onclick="deleteDilCheckedRows(${cardIdx})">Delete</button>
+      <span style="flex:1;"></span>
+      <label class="radio-inline"><input type="radio" name="dilmode-${cardIdx}" ${card.mode==='dilution'?'checked':''} onchange="setDilMode(${cardIdx},'dilution')">Dilution Factor</label>
+      <label class="radio-inline"><input type="radio" name="dilmode-${cardIdx}" ${card.mode==='volume'?'checked':''} onchange="setDilMode(${cardIdx},'volume')">Input Volume</label>
+    </div>
+    <table class="dil-tbl oligo-tbl">
+      <thead><tr><th></th><th>Reaction<br>Concentration</th><th>Template<br>Concentration</th><th>Dilution Factor<br>(from Previous)</th><th>Template Vol.<br>(µL)</th><th>TE Vol.<br>(µL)</th><th>Total Vol.<br>(µL)</th><th>Final Vol.<br>(µL)</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <button class="btn btn-sm btn-danger-ghost" style="margin-top:8px;" onclick="deleteDilCard(${cardIdx})">🗑 카드 삭제</button>
+  </div>`;
+}
+
+function renderSettingsDilution(){
+  const target = state.mode==='std' ? PRODUCTS[state.product].name : (state.customName||'커스텀 실행');
+  const m = METHODS.find(x=>x.id===state.methodId);
+  const testStr = (TEST_OPTS[state.methodId]||[])[state.testId] || '';
+  const protoLetter = state.protocolIdx!==null ? PROTOCOLS[state.methodId][state.protocolIdx].p : '-';
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target, go:'renderTestSelection()'},{label:'Test Information'}],
+      `<button class="btn btn-primary" onclick="renderDeck()">▶ Run</button>`)}
+    <div class="card">
+      <div class="panel-body">
+        <div class="info-strip">
+          <span><b>Test Method</b> : ${m.name}</span><span class="sep2">•</span>
+          <span><b>Test Step</b> : ${state.analysis}</span><span class="sep2">•</span>
+          <span><b>Test</b> : ${testStr}</span><span class="sep2">•</span>
+          <span><b>Protocol</b> : ${protoLetter}</span>
+        </div>
+        <div class="settings-grid-layout" style="grid-template-columns:1fr 1.3fr;">
+          <div>
+            <div class="section-blue">Template</div>
+            ${dilutionBlockHTML(0)}${dilutionBlockHTML(4)}${dilutionBlockHTML(8)}
+          </div>
+          <div class="side-info" style="border-left:none;padding-left:0;">
+            <div class="section-blue" style="margin-top:0;">Template</div>
+            ${state.templateDilutionCards.map((c,i)=>templateDilCardHTML(i)).join('')}
+            <div style="text-align:center;">
+              <button class="btn" style="border-radius:50%;width:34px;height:34px;padding:0;font-size:18px;" onclick="addDilCard()">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      ${panelFoot('renderTestSelection()', `<button class="btn btn-primary" onclick="renderDeck()">다음 →</button>`, 'STEP 2 / 4 · TEST INFORMATION')}
+    </div>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* STEP : Test Information — Semiproduct Manufacturing 전용 화면        */
+/* ------------------------------------------------------------------ */
+const RAINBOW_COLORS = ['#7FA6D9','#E0937A','#5FAE8C','#E07AA6','#8A6BC2','#4FB8C9','#2E6FB0','#B0304E','#E0A97A','#C9B85F','#E0A7C4','#8A96A0','#3E5FA0','#7ABF8A','#C97AE0','#E0C24F'];
+function computeSemiTE(){
+  const used = state.semiproduct.rows.reduce((s,r)=>s+(parseFloat(r.vol)||0),0);
+  return Math.max(0, (parseFloat(state.semiproduct.totalVol)||0) - used);
+}
+function semiRackHTML(label){
+  const list = label==='A' ? state.semiproduct.rows : [];
+  let rowsArr=['','','',''];
+  for(let r=0;r<4;r++){
+    let cells='';
+    for(let c=0;c<8;c++){
+      const idx=r*8+c;
+      if(list[idx]){
+        const color = RAINBOW_COLORS[idx%RAINBOW_COLORS.length];
+        cells+=`<div class="well" style="background:${color};border-color:${color};color:#fff;">${idx+1}</div>`;
+      } else { cells+='<div class="well empty"></div>'; }
+    }
+    rowsArr[r]=`<div class="rack-line"><span class="rack-line-label"></span>${cells}</div>`;
+  }
+  return `<div class="rack-block"><div class="rack-block-label">${label}</div>${colHeaderRow()}<div class="rack-rows">${rowsArr.join('')}</div></div>`;
+}
+function addSemiRow(){ state.semiproduct.rows.push({vol:100}); renderSettingsSemiproduct(); }
+function deleteSemiCheckedRows(){
+  const table = document.querySelector('.semi-tbl');
+  if(!table) return;
+  const checked = Array.from(table.querySelectorAll('tbody input[type=checkbox]:checked')).map(cb=>parseInt(cb.dataset.row));
+  state.semiproduct.rows = state.semiproduct.rows.filter((r,i)=>!checked.includes(i));
+  renderSettingsSemiproduct();
+}
+function setSemiSourceType(t){ state.semiproduct.sourceType=t; renderSettingsSemiproduct(); }
+function updateSemiField(field,value){ state.semiproduct[field]=value; renderSettingsSemiproduct(); }
+function updateSemiRowVol(ri,value){ state.semiproduct.rows[ri].vol=parseFloat(value)||0; renderSettingsSemiproduct(); }
+function setSemiSideMode(v){ state.semiproduct.sideMode=v; renderSettingsSemiproduct(); }
+
+function semiproductCardHTML(){
+  const sp = state.semiproduct;
+  const nameColLabel = sp.sourceType==='pDNA' ? 'pDNA (PC/IC), TE Name' : 'Oligo, TE Name';
+  const teVol = computeSemiTE();
+  let rowsHtml = `<tr><td></td><td>Tub</td><td>TE</td><td>TE</td><td>${teVol}</td></tr>`;
+  sp.rows.forEach((row,ri)=>{
+    const color = RAINBOW_COLORS[ri%RAINBOW_COLORS.length];
+    const dispName = `${sp.name||'-'} ${sp.sourceType==='pDNA'?'PC':'Oligo'}`;
+    rowsHtml += `<tr>
+      <td><input type="checkbox" data-row="${ri}"></td>
+      <td>A</td>
+      <td><span class="info-icon-dot" style="background:${color};"></span> ${ri+1}</td>
+      <td>${dispName}</td>
+      <td><input type="number" value="${row.vol}" onchange="updateSemiRowVol(${ri},this.value)"></td>
+    </tr>`;
+  });
+  return `<div class="mm-card">
+    <div class="mm-card-head">
+      <label>Semiproduct Name</label><input class="field-required" value="${sp.name}" onchange="updateSemiField('name',this.value)">
+      <label>Total Vol.</label>
+      <span><input class="field-required" type="number" value="${sp.totalVol}" style="width:80px;" onchange="updateSemiField('totalVol',this.value)"> µL</span>
+      <label>Tub Type</label><select class="field-required" onchange="updateSemiField('tubType',this.value)"><option>50ml Tub</option></select>
+    </div>
+    <div class="range-hint">Range 3,000 ~ 52,000</div>
+    <div class="mm-card-toolbar">
+      <button class="btn btn-sm">▲</button><button class="btn btn-sm">▼</button>
+      <button class="btn btn-sm" onclick="addSemiRow()">Add</button>
+      <button class="btn btn-sm" onclick="deleteSemiCheckedRows()">Delete</button>
+      <span style="flex:1;"></span>
+      <label class="radio-inline"><input type="radio" name="semisrc" ${sp.sourceType==='oligo'?'checked':''} onchange="setSemiSourceType('oligo')">Oligo</label>
+      <label class="radio-inline"><input type="radio" name="semisrc" ${sp.sourceType==='pDNA'?'checked':''} onchange="setSemiSourceType('pDNA')">pDNA (PC/IC)</label>
+    </div>
+    <table class="semi-tbl oligo-tbl">
+      <thead><tr><th></th><th>Deck</th><th>Icon</th><th>${nameColLabel}</th><th>Volume<br>(µL)</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+  </div>`;
+}
+function semiLayoutHTML(){
+  const sp = state.semiproduct;
+  const hasName = sp.name && sp.name.trim().length>0;
+  return `<div class="tip-row"><div class="tip-box">Tip 300µL</div><div class="tip-box">Tip 300µL</div></div>
+    <div class="tip-row"><div class="tip-box">Tip 1000µL</div><div class="tip-box">Tip 300µL</div></div>
+    <div class="tip-row">
+      <div class="tip-box" style="flex:1.6;">TE</div>
+      <div class="tip-box" style="${hasName?'background:#FFF6C4;color:var(--ink);font-weight:700;':''}">${hasName?`Semi Product<br>${sp.name}<br>${sp.totalVol}µL`:'Semi Product<br>(Empty Tub 50mL)'}</div>
+    </div>`;
+}
+
+function renderSettingsSemiproduct(){
+  const target = state.mode==='std' ? PRODUCTS[state.product].name : (state.customName||'커스텀 실행');
+  const m = METHODS.find(x=>x.id===state.methodId);
+  const testStr = (TEST_OPTS[state.methodId]||[])[state.testId] || '';
+  const protoLetter = state.protocolIdx!==null ? PROTOCOLS[state.methodId][state.protocolIdx].p : '-';
+  const sp = state.semiproduct;
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target, go:'renderTestSelection()'},{label:'Test Information'}],
+      `<button class="btn btn-primary" onclick="renderDeck()">▶ Run</button>`)}
+    <div class="card">
+      <div class="panel-body">
+        <div class="info-strip">
+          <span><b>Test Method</b> : ${m.name}</span><span class="sep2">•</span>
+          <span><b>Test Step</b> : ${state.analysis}</span><span class="sep2">•</span>
+          <span><b>Test</b> : ${testStr}</span><span class="sep2">•</span>
+          <span><b>Protocol</b> : ${protoLetter}</span>
+        </div>
+        <div class="settings-grid-layout" style="grid-template-columns:1.2fr 1fr;">
+          <div>
+            <div class="section-blue">Oligo / pDNA</div>
+            <div class="rack-row">${semiRackHTML('A')}${semiRackHTML('B')}</div>
+            <div class="rack-row">${semiRackHTML('C')}${semiRackHTML('D')}</div>
+            <div class="rack-row">${semiRackHTML('E')}${semiRackHTML('F')}</div>
+          </div>
+          <div class="side-info" style="border-left:none;padding-left:0;">
+            <div class="row-between" style="margin-bottom:8px;">
+              <div class="section-blue" style="margin:0;">${sp.sideMode==='config'?'Semiproduct':'Tip & Consumable'}</div>
+              ${sp.sideMode==='config'
+                ? `<button class="btn btn-sm" onclick="setSemiSideMode('layout')">✎ Tip &amp; Consumable</button>`
+                : `<button class="btn btn-sm" onclick="setSemiSideMode('config')">✕ 닫기</button>`}
+            </div>
+            ${sp.sideMode==='config' ? semiproductCardHTML() : semiLayoutHTML()}
+          </div>
+        </div>
+      </div>
+      ${panelFoot('renderTestSelection()', `<button class="btn btn-primary" onclick="renderDeck()">다음 →</button>`, 'STEP 2 / 4 · TEST INFORMATION')}
+    </div>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* STEP : Test Information — Semiproduct Dispensing 전용 화면            */
+/* ------------------------------------------------------------------ */
+function onNoOfTubesChange(v){
+  let n=parseInt(v)||0; n=Math.max(0,Math.min(192,n));
+  state.semidispense.noOfTubes = n===0?'':n;
+  renderSettingsDispensing();
+}
+function onVolPerTubeChange(v){
+  let n=parseFloat(v)||0; n=Math.max(0,Math.min(1500,n));
+  state.semidispense.volPerTube = n===0?'':n;
+  renderSettingsDispensing();
+}
+function onTubeTypeChangeDispense(v){ state.semidispense.tubeType=v; renderSettingsDispensing(); }
+
+function dispenseRackHTML(label,startIdx){
+  const n = parseFloat(state.semidispense.noOfTubes)||0;
+  const v = parseFloat(state.semidispense.volPerTube)||0;
+  let rowsArr=['','','',''];
+  for(let r=0;r<4;r++){
+    let cells='';
+    for(let c=0;c<8;c++){
+      const idx = startIdx + r*8 + c;
+      if(idx < n){
+        cells += v>0 ? `<div class="well tube-filled"></div>` : `<div class="well tube-pending"></div>`;
+      } else {
+        cells += `<div class="well empty"></div>`;
+      }
+    }
+    rowsArr[r]=`<div class="rack-line"><span class="rack-line-label"></span>${cells}</div>`;
+  }
+  return `<div class="rack-block"><div class="rack-block-label">${label}</div>${colHeaderRow()}<div class="rack-rows">${rowsArr.join('')}</div></div>`;
+}
+function dispenseTubsHTML(){
+  const n = parseFloat(state.semidispense.noOfTubes)||0;
+  const v = parseFloat(state.semidispense.volPerTube)||0;
+  let remaining = (n*v)/1000;
+  let cells='';
+  for(let i=0;i<6;i++){
+    if(remaining>0.0001){
+      const amt = Math.min(50,remaining);
+      cells += `<div class="tub-slot filled">${amt.toFixed(2)}<br>mL</div>`;
+      remaining -= amt;
+    } else {
+      cells += `<div class="tub-slot"></div>`;
+    }
+  }
+  return `<div class="tub-row">${cells}</div>`;
+}
+
+function renderSettingsDispensing(){
+  const target = state.mode==='std' ? PRODUCTS[state.product].name : (state.customName||'커스텀 실행');
+  const m = METHODS.find(x=>x.id===state.methodId);
+  const testStr = (TEST_OPTS[state.methodId]||[])[state.testId] || '';
+  const protoLetter = state.protocolIdx!==null ? PROTOCOLS[state.methodId][state.protocolIdx].p : '-';
+  const sd = state.semidispense;
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target, go:'renderTestSelection()'},{label:'Test Information'}],
+      `<button class="btn btn-primary" onclick="renderDeck()">▶ Run</button>`)}
+    <div class="card">
+      <div class="panel-body">
+        <div class="info-strip">
+          <span><b>Test Method</b> : ${m.name}</span><span class="sep2">•</span>
+          <span><b>Test Step</b> : ${state.analysis}</span><span class="sep2">•</span>
+          <span><b>Test</b> : ${testStr}</span><span class="sep2">•</span>
+          <span><b>Protocol</b> : ${protoLetter}</span>
+        </div>
+        <div class="settings-top-row">
+          <div class="settings-field">
+            <label>1. Dispensed Tube Type</label>
+            <select onchange="onTubeTypeChangeDispense(this.value)"><option ${sd.tubeType==='2mL Screw(Type B)'?'selected':''}>2mL Screw(Type B)</option></select>
+          </div>
+          <div class="settings-field">
+            <label>2. No. of Tube(s)</label>
+            <div class="stepper">
+              <input type="number" value="${sd.noOfTubes}" oninput="onNoOfTubesChange(this.value)"> EA
+              <span class="range-hint" style="margin:0 0 0 6px;">Range 1 ~ 192</span>
+            </div>
+          </div>
+          <div class="settings-field">
+            <label>3. Dispensed Vol. Per Tube</label>
+            <div class="stepper">
+              <input type="number" value="${sd.volPerTube}" oninput="onVolPerTubeChange(this.value)"> µL
+              <span class="range-hint" style="margin:0 0 0 6px;">Range 40 ~ 1500</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-grid-layout" style="grid-template-columns:1.3fr 1fr;">
+          <div>
+            <div class="section-blue">Dispensed Tubes (Max 192EA)</div>
+            <div class="rack-row">${dispenseRackHTML('A',0)}${dispenseRackHTML('B',32)}</div>
+            <div class="rack-row">${dispenseRackHTML('C',64)}${dispenseRackHTML('D',96)}</div>
+            <div class="rack-row">${dispenseRackHTML('E',128)}${dispenseRackHTML('F',160)}</div>
+          </div>
+          <div class="side-info" style="border-left:none;padding-left:0;">
+            <div class="section-blue" style="margin-top:0;">Tip &amp; PCR Consumable</div>
+            <div class="tip-row"><div class="tip-box">Tip 300µL</div><div class="tip-box">Tip 300µL</div></div>
+            <div class="tip-row"><div class="tip-box">Tip 1000µL</div><div class="tip-box">Tip 300µL</div></div>
+            <div class="section-blue">Semiproduct Tub 50mL</div>
+            ${dispenseTubsHTML()}
+          </div>
+        </div>
+      </div>
+      ${panelFoot('renderTestSelection()', `<button class="btn btn-primary" onclick="renderDeck()">다음 →</button>`, 'STEP 2 / 4 · TEST INFORMATION')}
+    </div>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* STEP : 장비 장착 가이드맵                                             */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* STEP : 장비 장착 가이드맵 (Method별 실제 소모품 기준)                    */
+/* ------------------------------------------------------------------ */
+function getDeckSlotsForMethod(){
+  const base = [
+    {title:'Tip 300µL', sub:'팁랙', t:'tip'},
+    {title:'Tip 300µL', sub:'팁랙', t:'tip'},
+    {title:'Tip 1000µL', sub:'팁랙', t:'tip'},
+    {title:'Tip 300µL', sub:'팁랙', t:'tip'},
+  ];
+  let mid = [];
+  if(state.methodId==='pcrsetup'){
+    if(state.analysis==='Custom'){
+      mid = [
+        {title:'시약 리저버', sub:'Mastermix 랙 A / B / C / D', t:'reagent'},
+        {title:'Well Plate 1', sub:'PCR 반응 · 템플릿 분주 플레이트', t:'plate'},
+        {title:'Well Plate 2', sub:'예비 플레이트', t:'plate'},
+      ];
+    } else {
+      mid = [
+        {title:'시약 리저버', sub:'Mastermix 랙 A / B / C / D', t:'reagent'},
+        {title:'Template 플레이트', sub:'샘플 랙 E / F', t:'plate'},
+      ];
+    }
+  } else if(state.methodId==='oligomix'){
+    mid = [
+      {title:'Oligo 랙', sub:'F / R / P-P / P-C', t:'reagent'},
+      {title:'Reagent Mix 출력 랙', sub:'MX1 / MX2', t:'plate'},
+    ];
+  } else if(state.methodId==='dilution'){
+    mid = [
+      {title:'TE 희석버퍼', sub:'리저버', t:'reagent'},
+      {title:'Template 플레이트', sub:'T1 ~ T12', t:'plate'},
+    ];
+  } else if(state.methodId==='bulkprod'){
+    mid = [
+      {title:'TE 희석버퍼', sub:'리저버', t:'reagent'},
+      {title:'Oligo / pDNA 랙', sub:'A ~ F', t:'reagent'},
+      {title:'Semiproduct Tub', sub:'50mL 용기', t:'plate'},
+    ];
+  } else if(state.methodId==='bulkdist'){
+    mid = [
+      {title:'Semiproduct Tub 50mL', sub:'분주 원액(소스)', t:'reagent'},
+      {title:'Dispensed Tube 랙', sub:'A ~ F · 최대 192EA', t:'plate'},
+    ];
+  } else {
+    mid = [{title:'시약 리저버', sub:'', t:'reagent'}];
+  }
+  const tail = [{title:'폐기물', sub:'팁 폐기', t:'waste'}];
+  return [...base, ...mid, ...tail].map((s,i)=>({...s, num:i+1}));
+}
+function slotVisualHTML(s){
+  if(s.t==='tip'){
+    return `<div class="mini-tip">${Array.from({length:6},()=>'<span></span>').join('')}</div>`;
+  }
+  if(s.t==='reagent'){
+    const colors=['#B0413E','#2E8B57','#2E6DA4','#7B3FA0'];
+    return `<div class="mini-reagent">${colors.map(c=>`<span style="background:${c}"></span>`).join('')}</div>`;
+  }
+  if(s.t==='plate'){
+    return `<div class="mini-plate">${Array.from({length:8},()=>'<span></span>').join('')}</div>`;
+  }
+  return `<div class="mini-waste">🗑</div>`;
+}
+function getDeckLeftHTML(){
+  if(state.methodId==='oligomix'){
+    return `<div class="section-blue">Oligo / pDNA</div>
+      <div class="rack-row">${oligoRackHTML('F','F')}${oligoRackHTML('R','R')}</div>
+      <div class="rack-row">${oligoRackHTML('P-P','P-P')}${oligoRackHTML('P-C','P-C')}</div>
+      <div class="section-blue">Reagent Mix</div>
+      <div class="rack-row">${omRackHTML('MX1',0)}${omRackHTML('MX2',32)}</div>`;
+  }
+  if(state.methodId==='dilution'){
+    return `<div class="section-blue">Template</div>${dilutionBlockHTML(0)}${dilutionBlockHTML(4)}${dilutionBlockHTML(8)}`;
+  }
+  if(state.methodId==='bulkprod'){
+    return `<div class="section-blue">Oligo / pDNA</div>
+      <div class="rack-row">${semiRackHTML('A')}${semiRackHTML('B')}</div>
+      <div class="rack-row">${semiRackHTML('C')}${semiRackHTML('D')}</div>
+      <div class="rack-row">${semiRackHTML('E')}${semiRackHTML('F')}</div>`;
+  }
+  if(state.methodId==='bulkdist'){
+    return `<div class="section-blue">Dispensed Tubes (Max 192EA)</div>
+      <div class="rack-row">${dispenseRackHTML('A',0)}${dispenseRackHTML('B',32)}</div>
+      <div class="rack-row">${dispenseRackHTML('C',64)}${dispenseRackHTML('D',96)}</div>
+      <div class="rack-row">${dispenseRackHTML('E',128)}${dispenseRackHTML('F',160)}</div>`;
+  }
+  if(state.analysis==='Custom'){
+    return `<div class="section-blue">Reagent / Mastermix</div>
+      <div class="rack-row">${renderReagentRack('A')}${renderReagentRack('B')}</div>
+      <div class="rack-row">${renderReagentRack('C')}${renderReagentRack('D')}</div>
+      <div class="section-blue">Template</div>
+      <div class="rack-row">${renderTemplateRackColMajor('E',0)}${renderTemplateRackColMajor('F',32)}</div>`;
+  }
+  return `<div class="section-blue">Reagent / Mastermix</div>
+    <div class="rack-row">${renderReagentRack('A')}${renderReagentRack('B')}</div>
+    <div class="rack-row">${renderReagentRack('C')}${renderReagentRack('D')}</div>
+    <div class="section-blue">Template</div>
+    <div class="rack-row">${renderTemplateRack('E',0)}${renderTemplateRack('F',32)}</div>`;
+}
+function getDeckRightHTML(){
+  if(state.methodId==='oligomix') return '';
+  if(state.methodId==='dilution'){
+    return `<div class="section-blue" style="margin-top:0;">Tip &amp; Consumable</div>
+      <div class="tip-row"><div class="tip-box">Tip 300µL</div><div class="tip-box">Tip 300µL</div></div>
+      <div class="tip-row"><div class="tip-box">Tip 1000µL</div><div class="tip-box">Tip 300µL</div></div>`;
+  }
+  if(state.methodId==='bulkprod') return `<div class="section-blue" style="margin-top:0;">Tip &amp; Consumable</div>${semiLayoutHTML()}`;
+  if(state.methodId==='bulkdist'){
+    return `<div class="section-blue" style="margin-top:0;">Tip &amp; PCR Consumable</div>
+      <div class="tip-row"><div class="tip-box">Tip 300µL</div><div class="tip-box">Tip 300µL</div></div>
+      <div class="tip-row"><div class="tip-box">Tip 1000µL</div><div class="tip-box">Tip 300µL</div></div>
+      <div class="section-blue">Semiproduct Tub 50mL</div>${dispenseTubsHTML()}`;
+  }
+  if(state.methodId==='pcrsetup'){
+    if(state.analysis==='Custom'){
+      return `<div class="section-blue" style="margin-top:0;">Tip &amp; PCR Consumable</div>${customTipPlatesHTML(false)}`;
+    }
+    return layoutViewHTML();
+  }
+  return '';
+}
+function renderDeck(){
+  const target = state.mode==='std'?PRODUCTS[state.product].name:(state.customName||'커스텀 실행');
+  const m = METHODS.find(x=>x.id===state.methodId);
+  const leftHTML = getDeckLeftHTML();
+  const rightHTML = getDeckRightHTML();
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target, go:'renderTestSelection()'},{label:'장착 가이드맵'}])}
+    <div class="card">
+      <div class="panel-body">
+        <div class="eyebrow">STEP 3 · ${m.name}</div>
+        <div class="h1" style="font-size:17px;">장비 장착 가이드맵</div>
+        <p class="lead" style="margin-bottom:18px;">Test Information에서 구성한 그대로, 아래 배치도의 실제 위치에 소모품을 장착하세요.</p>
+        <div class="settings-grid-layout" style="grid-template-columns:${rightHTML?'1.3fr 1fr':'1fr'};">
+          <div>${leftHTML}</div>
+          ${rightHTML?`<div class="side-info" style="border-left:none;padding-left:0;">${rightHTML}</div>`:''}
+        </div>
+        <label class="check-item" style="margin-top:16px;"><input type="checkbox" onchange="checkDeck()"><span>위 배치도대로 소모품을 모두 장착했습니다.</span></label>
+      </div>
+      ${panelFoot('renderSettings()', `<button class="btn btn-primary" id="next-btn" disabled onclick="renderRun()">다음 →</button>`, `<span id="deck-hint">STEP 3 / 4 · 소모품 장착을 확인하면 다음 단계로 진행할 수 있습니다</span>`)}
+    </div>`;
+}
+function checkDeck(){
+  const boxes = document.querySelectorAll('.panel-body input[type=checkbox]');
+  const all = Array.from(boxes).every(b=>b.checked);
+  const btn = document.getElementById('next-btn');
+  if(btn) btn.toggleAttribute('disabled', !all);
+  const hint = document.getElementById('deck-hint');
+  if(hint) hint.textContent = all ? 'STEP 3 / 4 · 장착 가이드맵' : 'STEP 3 / 4 · 소모품 장착을 확인하면 다음 단계로 진행할 수 있습니다';
+}
+
+/* ------------------------------------------------------------------ */
+/* STEP : Run + Monitoring                                             */
+/* ------------------------------------------------------------------ */
+function renderRun(){
+  const m = METHODS.find(x=>x.id===state.methodId);
+  const target = state.mode==='std'?PRODUCTS[state.product].name:(state.customName||'커스텀 실행');
+  const protoObj = state.protocolIdx!==null ? PROTOCOLS[state.methodId][state.protocolIdx] : null;
+  const protoLabel = protoObj ? protoObj.p : '커스텀(미지정)';
+  document.getElementById('shell').innerHTML = `
+    ${crumb([{label:'Product List', go:'renderHome()'},{label:target, go:'renderTestSelection()'},{label:'구동 · 모니터링'}])}
+    <div class="card">
+      <div class="panel-body">
+        <div id="run-summary">
+          <div class="eyebrow">STEP 4</div>
+          <div class="h1" style="font-size:17px;">최종 확인 후 구동을 시작하세요</div>
+          <div class="summary-grid" style="margin-top:14px;">
+            <div class="summary-cell"><span>실행 대상</span><b>${target}</b></div>
+            <div class="summary-cell"><span>Method</span><b>${m.name}</b></div>
+            <div class="summary-cell"><span>Protocol</span><b>${protoLabel}</b></div>
+            <div class="summary-cell"><span>장비 장착</span><b style="color:var(--green-tx)">확인 완료</b></div>
+          </div>
+          <div style="margin-top:18px;">
+            <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:14px;" onclick="startRun()">▶ 구동 시작</button>
+          </div>
+        </div>
+        <div id="monitor" class="monitor">
+          <div class="mon-status">
+            <div class="mon-status-left"><span class="pulse"></span>
+              <div><div class="mon-title" id="mon-title">구동 중 · ${target}</div><div class="mon-sub">Handler-02 · ${m.name}</div></div>
+            </div>
+            <span class="pill pill-update" id="mon-badge">RUNNING</span>
+          </div>
+          <div class="progress-outer"><div class="progress-inner" id="progress-inner"></div></div>
+          <div class="progress-labels"><span id="progress-pct">0%</span><span id="progress-eta">예상 잔여 --:--</span></div>
+          <div class="mon-metrics">
+            <div class="mon-metric"><b id="metric-elapsed">00:00</b><span>경과 시간</span></div>
+            <div class="mon-metric"><b id="metric-wells">0 / 96</b><span>처리 웰</span></div>
+            <div class="mon-metric"><b>21.4℃</b><span>덱 온도</span></div>
+            <div class="mon-metric"><b id="metric-tip">0</b><span>사용 팁 수</span></div>
+          </div>
+          <div class="mon-cols">
+            <div><div class="timeline" id="timeline"></div></div>
+            <div><div class="log-box" id="log-box"></div></div>
+          </div>
+          <div class="mon-actions">
+            <button class="btn" id="pause-btn" onclick="togglePause()">⏸ 일시정지</button>
+            <button class="btn btn-danger-ghost" onclick="stopRun()">■ 중지</button>
+            <button class="btn btn-primary" onclick="renderHome()" id="finish-btn" style="display:none;">완료 · 목록으로</button>
+          </div>
+        </div>
+      </div>
+      ${panelFoot('renderDeck()', '', 'STEP 4 / 4 · 구동 · 모니터링')}
+    </div>`;
+}
+
+/* ---- run simulation ---- */
+let runTimer=null, runPaused=false, runPct=0, runSec=0;
+const TL_STEPS = ['덱 초기화','팁 픽업','시약 흡인','목적 플레이트 분주','믹싱','팁 폐기 · 반복'];
+function startRun(){
+  document.getElementById('run-summary').style.display='none';
+  document.getElementById('monitor').classList.add('active');
+  document.getElementById('timeline').innerHTML = TL_STEPS.map((t,i)=>`<div class="tl-item ${i===0?'now':''}" id="tl-${i}"><span class="tl-dot"></span>${t}</div>`).join('');
+  runPct=0;runSec=0;runPaused=false;
+  logLine('구동 시작 요청 수신');
+  runTimer=setInterval(tick,450);
+}
+function tick(){
+  if(runPaused) return;
+  runSec++;
+  runPct=Math.min(100,runPct+(1+Math.random()*2));
+  document.getElementById('progress-inner').style.width=runPct.toFixed(0)+'%';
+  document.getElementById('progress-pct').textContent=runPct.toFixed(0)+'%';
+  const remain=Math.max(0,Math.round((100-runPct)/2));
+  document.getElementById('progress-eta').textContent='예상 잔여 '+String(Math.floor(remain/60)).padStart(2,'0')+':'+String(remain%60).padStart(2,'0');
+  document.getElementById('metric-elapsed').textContent=String(Math.floor(runSec*0.45/60)).padStart(2,'0')+':'+String(Math.floor(runSec*0.45)%60).padStart(2,'0');
+  document.getElementById('metric-wells').textContent=Math.min(96,Math.round(runPct*0.96))+' / 96';
+  document.getElementById('metric-tip').textContent=Math.round(runPct*1.9);
+  const stageIdx=Math.min(TL_STEPS.length-1,Math.floor(runPct/(100/TL_STEPS.length)));
+  TL_STEPS.forEach((_,i)=>{const el=document.getElementById('tl-'+i);if(!el)return;el.className='tl-item '+(i<stageIdx?'done':i===stageIdx?'now':'');});
+  if(Math.random()<0.35) logLine(randomLog());
+  if(runPct>=100){
+    clearInterval(runTimer);
+    document.getElementById('mon-badge').textContent='DONE';document.getElementById('mon-badge').className='pill pill-complete';
+    document.getElementById('mon-title').textContent='구동 완료';
+    document.querySelector('.pulse').style.display='none';
+    document.getElementById('pause-btn').style.display='none';
+    document.querySelector('.mon-actions .btn-danger-ghost').style.display='none';
+    document.getElementById('finish-btn').style.display='inline-flex';
+    logLine('<b>구동 완료 · QC 로그 저장됨</b>');
+  }
+}
+function randomLog(){
+  const opts=['Res-1 흡인 완료 (12.5 µL)','Plate-1 Well D6 분주 완료','믹싱 사이클 수행 중','팁 교체 완료','온도 센서 정상 범위 확인'];
+  return opts[Math.floor(Math.random()*opts.length)];
+}
+function logLine(msg){
+  const box=document.getElementById('log-box');if(!box)return;
+  const t=new Date().toLocaleTimeString('ko-KR',{hour12:false});
+  const div=document.createElement('div');div.className='log-line';div.innerHTML=`[${t}] ${msg}`;box.appendChild(div);
+}
+function togglePause(){
+  runPaused=!runPaused;
+  const btn=document.getElementById('pause-btn');
+  btn.textContent=runPaused?'▶ 재개':'⏸ 일시정지';
+  logLine(runPaused?'일시정지됨':'재개됨');
+}
+function stopRun(){
+  clearInterval(runTimer);
+  document.getElementById('mon-badge').textContent='STOPPED';document.getElementById('mon-badge').className='pill pill-warn';
+  document.getElementById('mon-title').textContent='구동 중지됨';
+  document.querySelector('.pulse').style.display='none';
+  document.getElementById('pause-btn').style.display='none';
+  document.querySelector('.mon-actions .btn-danger-ghost').style.display='none';
+  document.getElementById('finish-btn').style.display='inline-flex';
+  logLine('사용자 요청으로 중지됨');
+}
+
+/* init */
+renderHome();
+</script>
+
+<style>
+/* ===== Liquid Handler 운영 workflow 가이드 투어 (포트폴리오 임베드 전용) =====
+   제품 선택 → Test Selection(Method·Analysis·Test·Protocol) → Test Information
+   구성 → 장비 장착 가이드맵 → 구동·모니터링 까지, 실제 화면 전환을 따라가며
+   각 단계에서 다음에 눌러야 할 지점을 순서대로 강조한다.
+   - 파란 링  : 잠깐 살펴보는 단계(잠시 후 자동 진행)
+   - 주황 링  : 사용자가 실제로 클릭해야 다음 단계로 넘어가는 지점        */
+.lh-tour-hl{outline:3px solid rgba(14,122,117,.95) !important;outline-offset:2px;border-radius:8px;
+  position:relative;z-index:6;animation:lhTourRing 1.3s ease-in-out infinite;}
+@keyframes lhTourRing{
+  0%,100%{outline-color:rgba(14,122,117,.95);box-shadow:0 0 0 0 rgba(14,122,117,.34);}
+  50%{outline-color:rgba(14,122,117,.5);box-shadow:0 0 16px 5px rgba(14,122,117,.28);}
+}
+.lh-tour-hl.lh-tour-wait{outline-color:rgba(200,120,10,.95) !important;animation:lhTourRingWait .9s ease-in-out infinite;cursor:pointer;}
+@keyframes lhTourRingWait{
+  0%,100%{outline-color:rgba(200,120,10,.95);box-shadow:0 0 0 0 rgba(200,120,10,.42);}
+  50%{outline-color:rgba(200,120,10,.6);box-shadow:0 0 18px 6px rgba(200,120,10,.36);}
+}
+@keyframes lhTourDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
+@media (prefers-reduced-motion: reduce){
+  .lh-tour-hl,.lh-tour-hl.lh-tour-wait{animation:none;}
+}
+</style>
+<script>
+(function(){
+  // 부모(포트폴리오)가 이 문서를 #__embedCanvas 로 감싸 스케일을 적용한
+  // 뒤에 시작해야 스크롤/강조 위치 보정이 가능하다. 단독으로 열었을 때는
+  // 캔버스가 없으므로 몇 초 후 조용히 포기한다.
+  var tries = 0;
+  function whenCanvasReady(fn){
+    var c = document.getElementById('__embedCanvas');
+    if(c){ fn(c); return; }
+    if(++tries > 120) return;          // ~7초 후 포기(임베드가 아님)
+    setTimeout(function(){ whenCanvasReady(fn); }, 60);
+  }
+
+  whenCanvasReady(function(canvas){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---- 상시 진행상태 HUD (스케일 영향을 받지 않도록 body 에 직접 부착) ----
+    var hud = document.createElement('div');
+    hud.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);'+
+      'background:rgba(22,32,43,.93);color:#fff;font:600 11.5px/1 var(--sans),-apple-system,sans-serif;'+
+      'padding:9px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;'+
+      'display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none;letter-spacing:.02em;';
+    var dot = document.createElement('span');
+    dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:#34D399;display:inline-block;animation:lhTourDot 1.4s ease-in-out infinite;';
+    var hudText = document.createElement('span');
+    hud.appendChild(dot); hud.appendChild(hudText);
+    document.body.appendChild(hud);
+    function setPhase(t, waiting){
+      var label = t + (waiting ? ' · 강조된 지점을 클릭하세요' : '');
+      if(hudText.textContent !== label) hudText.textContent = label;
+      dot.style.background = waiting ? '#F59E0B' : '#34D399';
+    }
+
+    // ---- 스케일된 캔버스 안에서도 정확한 위치로 스크롤 ----
+    function scrollContainerFor(el){
+      var p = el && el.parentElement;
+      while(p && p !== document.body){
+        var cs = getComputedStyle(p);
+        if((cs.overflowY === 'auto' || cs.overflowY === 'scroll') && p.scrollHeight > p.clientHeight + 2) return p;
+        p = p.parentElement;
+      }
+      return null;
+    }
+    function scaleOf(){
+      var r = canvas.getBoundingClientRect();
+      return (r.width / canvas.offsetWidth) || 1;
+    }
+    function scrollIntoContainer(el){
+      var container = scrollContainerFor(el);
+      if(!container) return;
+      var s = scaleOf();
+      var er = el.getBoundingClientRect(), cr = container.getBoundingClientRect();
+      var target = container.scrollTop + (er.top - cr.top) / s - 40;
+      target = Math.max(0, Math.min(target, container.scrollHeight - container.clientHeight));
+      try { container.scrollTo({top: target, behavior: reduce ? 'auto' : 'smooth'}); } catch(e){ container.scrollTop = target; }
+      clearTimeout(container.__lhSnap);
+      container.__lhSnap = setTimeout(function(){ container.scrollTop = target; }, reduce ? 0 : 280);
+    }
+
+    // ---- 강조 ----
+    var hlEl = null;
+    function clearHl(){ if(hlEl){ hlEl.classList.remove('lh-tour-hl','lh-tour-wait'); hlEl = null; } }
+    function highlight(el, waiting){
+      clearHl();
+      if(!el) return;
+      el.classList.add('lh-tour-hl');
+      if(waiting) el.classList.add('lh-tour-wait');
+      hlEl = el;
+      scrollIntoContainer(el);
+    }
+
+    // ---- 화면(컨텍스트) 판별 : #shell 이 매 단계 innerHTML 로 다시 그려지므로
+    //      DOM 시그니처로 지금 어느 화면인지 알아낸다. ----
+    function currentContextId(){
+      var s = document.getElementById('shell');
+      if(!s) return null;
+      if(s.querySelector('#run-summary')) return 'run';
+      if(s.querySelector('.check-item'))  return 'deck';
+      if(s.querySelector('.info-strip'))  return 'settings';
+      if(s.querySelector('#proto-tbody')) return 'testselection';
+      if(s.querySelector('.dense-tbl'))   return 'home';
+      return null;
+    }
+
+    var GUIDES = {
+      home: [
+        {phase:'① 제품 목록', sel:'.home-stat-chips', hold:1500},
+        {phase:'① 제품 선택', sel:'.dense-tbl tbody tr:nth-child(1)', click:true}
+      ],
+      testselection: [
+        {phase:'② Method · Analysis · Test', sel:'.field-row', hold:1900},
+        {phase:'② Protocol 선택', sel:'#proto-tbody tr:nth-child(1)', click:true},
+        {phase:'② 다음 단계로', sel:'.panel-foot .foot-btns .btn-primary', click:true}
+      ],
+      settings: [
+        {phase:'③ Test Information 구성', sel:'.settings-grid-layout', hold:2100},
+        {phase:'③ 장착 가이드맵으로', sel:'.panel-foot .foot-btns .btn-primary', click:true}
+      ],
+      deck: [
+        {phase:'④ 소모품 배치 확인', sel:'.settings-grid-layout', hold:1900},
+        {phase:'④ 장착 완료 체크', sel:'.check-item', click:true},
+        {phase:'④ 구동 단계로', sel:'#next-btn', click:true}
+      ],
+      run: [
+        {phase:'⑤ 최종 확인', sel:'#run-summary .summary-grid', hold:1900},
+        {phase:'⑤ 구동 시작', sel:'#run-summary .btn-primary', click:true},
+        {phase:'⑤ 실시간 진행률', sel:'#monitor .progress-outer', hold:2200},
+        {phase:'⑤ 처리 지표', sel:'#monitor .mon-metrics', hold:2200},
+        {phase:'⑤ 단계별 타임라인 · 로그', sel:'#monitor .mon-cols', hold:2800},
+        {phase:'⑤ workflow 완료', sel:'#monitor', hold:2600}
+      ]
+    };
+
+    var activeContext = null, stepIdx = -1, stepTimer = null, stepWait = null;
+
+    function cleanupStepWait(){
+      clearTimeout(stepTimer);
+      if(stepWait){ try { stepWait.el.removeEventListener('click', stepWait.fn, true); } catch(e){} stepWait = null; }
+    }
+    function advanceFrom(fromCtx, fromIdx){
+      var ctx = currentContextId();
+      if(ctx && ctx !== fromCtx){ enterContext(ctx); }
+      else if(activeContext === fromCtx){ stepIdx = fromIdx + 1; attemptStep(); }
+    }
+    function attemptStep(){
+      var list = GUIDES[activeContext] || [];
+      if(stepIdx >= list.length){ clearHl(); return; }
+      var st = list[stepIdx];
+      var el = document.querySelector(st.sel);
+      if(!el){ stepTimer = setTimeout(attemptStep, 120); return; }
+      setPhase(st.phase, !!st.click);
+      highlight(el, !!st.click);
+      var myCtx = activeContext, myIdx = stepIdx;
+      if(st.click){
+        var onClick = function(){ cleanupStepWait(); advanceFrom(myCtx, myIdx); };
+        el.addEventListener('click', onClick, true);
+        stepWait = {el: el, fn: onClick};
+      } else {
+        stepTimer = setTimeout(function(){ advanceFrom(myCtx, myIdx); }, st.hold || 1600);
+      }
+    }
+    function enterContext(ctx){
+      cleanupStepWait();
+      activeContext = ctx;
+      stepIdx = 0;
+      attemptStep();
+    }
+
+    // 가이드된 지점이 아닌 경로(이전 버튼, 브레드크럼 등)로 이동했거나,
+    // 같은 화면이 innerHTML 로 다시 그려져 강조 대상이 사라진 경우도 복구한다.
+    setInterval(function(){
+      var ctx = currentContextId();
+      if(ctx && ctx !== activeContext){ enterContext(ctx); return; }
+      if(stepWait && stepWait.el && !stepWait.el.isConnected) attemptStep();
+    }, 300);
+
+    var initialCtx = currentContextId();
+    if(initialCtx) setTimeout(function(){ enterContext(initialCtx); }, 1000);
+  });
+})();
+</script>
+</body>
+</html>

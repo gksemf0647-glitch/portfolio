@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 667" width="1000" height="667" font-family="'Satoshi','Pretendard',-apple-system,'Segoe UI',sans-serif">
+  <rect width="1000" height="667" fill="#EEEEE7"/>
+  <rect x="56" y="60" width="888" height="524" rx="16" fill="#0B0C10" opacity="0.05" transform="translate(0,12)"/>
+  <rect x="56" y="60" width="888" height="524" rx="16" fill="#FFFFFF" stroke="#E2E2DA"/>
+
+  <text x="104" y="140" font-size="27" font-weight="700" fill="#17181C" letter-spacing="-0.015em">Result &#8594; report</text>
+
+  <line x1="104" y1="180" x2="896" y2="180" stroke="#EBEBE3"/>
+  <text x="104" y="214" font-size="13" font-weight="700" letter-spacing="0.09em" fill="#9CA0A8">WELL</text>
+  <text x="360" y="214" font-size="13" font-weight="700" letter-spacing="0.09em" fill="#9CA0A8">CT</text>
+  <text x="700" y="214" font-size="13" font-weight="700" letter-spacing="0.09em" fill="#9CA0A8">RESULT</text>
+
+  <g font-size="19" fill="#2B2D34">
+    <text x="104" y="278">A1 · Target 1</text><text x="360" y="278" fill="#63666E">24.3</text>
+    <rect x="700" y="256" width="116" height="30" rx="15" fill="#ECECE5"/><text x="758" y="276" font-size="14" font-weight="600" fill="#17181C" text-anchor="middle">Positive</text>
+    <line x1="104" y1="314" x2="896" y2="314" stroke="#F3F3EC"/>
+
+    <text x="104" y="378">A3 · Target 3</text><text x="360" y="378" fill="#63666E">&#8212;</text>
+    <rect x="700" y="356" width="122" height="30" rx="15" fill="#F5F5EF"/><text x="761" y="376" font-size="14" font-weight="600" fill="#9CA0A8" text-anchor="middle">Negative</text>
+    <line x1="104" y1="414" x2="896" y2="414" stroke="#F3F3EC"/>
+
+    <text x="104" y="478">IC · Internal control</text><text x="360" y="478" fill="#63666E">29.5</text>
+    <rect x="700" y="456" width="88" height="30" rx="15" fill="#17181C"/><text x="744" y="476" font-size="14" font-weight="600" fill="#FFF" text-anchor="middle">Valid</text>
+    <line x1="104" y1="514" x2="896" y2="514" stroke="#F3F3EC"/>
+  </g>
+
+  <text x="104" y="556" font-size="16" fill="#63666E">Acceptance criteria applied automatically · one defined report format</text>
+</svg>

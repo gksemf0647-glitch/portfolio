@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 667" width="1000" height="667" font-family="'Satoshi','Pretendard',-apple-system,'Segoe UI',sans-serif">
+  <rect width="1000" height="667" fill="#EEEEE7"/>
+  <rect x="56" y="60" width="888" height="524" rx="16" fill="#0B0C10" opacity="0.05" transform="translate(0,12)"/>
+  <rect x="56" y="60" width="888" height="524" rx="16" fill="#FFFFFF" stroke="#E2E2DA"/>
+
+  <text x="104" y="140" font-size="27" font-weight="700" fill="#17181C" letter-spacing="-0.015em">Guided device run</text>
+
+  <g font-size="16" font-weight="600">
+    <rect x="104" y="176" width="184" height="48" rx="12" fill="#F1F1EA"/>
+    <text x="196" y="206" fill="#63666E" text-anchor="middle">1 · Setup</text>
+    <rect x="300" y="176" width="220" height="48" rx="12" fill="#17181C"/>
+    <text x="410" y="206" fill="#FFFFFF" text-anchor="middle">2 · Plate map</text>
+    <rect x="532" y="176" width="150" height="48" rx="12" fill="#F1F1EA"/>
+    <text x="607" y="206" fill="#9CA0A8" text-anchor="middle">3 · Run</text>
+    <rect x="694" y="176" width="170" height="48" rx="12" fill="#F1F1EA"/>
+    <text x="779" y="206" fill="#9CA0A8" text-anchor="middle">4 · Result</text>
+  </g>
+
+  <g>
+    <g fill="#F2F3F0" stroke="#DDDDD4">
+      <circle cx="128" cy="300" r="16"/><circle cx="174" cy="300" r="16"/><circle cx="220" cy="300" r="16"/><circle cx="266" cy="300" r="16"/><circle cx="312" cy="300" r="16"/><circle cx="358" cy="300" r="16"/><circle cx="404" cy="300" r="16"/><circle cx="450" cy="300" r="16"/>
+      <circle cx="128" cy="352" r="16"/><circle cx="174" cy="352" r="16"/><circle cx="220" cy="352" r="16"/><circle cx="266" cy="352" r="16"/><circle cx="312" cy="352" r="16"/><circle cx="358" cy="352" r="16"/><circle cx="404" cy="352" r="16"/><circle cx="450" cy="352" r="16"/>
+      <circle cx="128" cy="404" r="16"/><circle cx="174" cy="404" r="16"/><circle cx="220" cy="404" r="16"/><circle cx="266" cy="404" r="16"/><circle cx="312" cy="404" r="16"/><circle cx="358" cy="404" r="16"/><circle cx="404" cy="404" r="16"/><circle cx="450" cy="404" r="16"/>
+      <circle cx="128" cy="456" r="16"/><circle cx="174" cy="456" r="16"/><circle cx="220" cy="456" r="16"/><circle cx="266" cy="456" r="16"/><circle cx="312" cy="456" r="16"/><circle cx="358" cy="456" r="16"/><circle cx="404" cy="456" r="16"/><circle cx="450" cy="456" r="16"/>
+    </g>
+    <g fill="#17181C">
+      <circle cx="128" cy="300" r="16"/><circle cx="174" cy="300" r="16"/><circle cx="220" cy="300" r="16"/>
+      <circle cx="128" cy="352" r="16"/><circle cx="174" cy="352" r="16"/><circle cx="220" cy="352" r="16"/>
+    </g>
+  </g>
+
+  <text x="540" y="308" font-size="17" font-weight="600" fill="#17181C">Auto-filled from method</text>
+  <g font-size="15" fill="#2B2D34">
+    <path d="M540 336 l9 9 l16 -19" fill="none" stroke="#17181C" stroke-width="2"/>
+    <text x="576" y="345">Reagent volumes &amp; tip layout</text>
+    <path d="M540 376 l9 9 l16 -19" fill="none" stroke="#17181C" stroke-width="2"/>
+    <text x="576" y="385">Non-programmer run validated</text>
+  </g>
+
+  <line x1="104" y1="500" x2="896" y2="500" stroke="#F3F3EC"/>
+  <text x="104" y="552" font-size="16" fill="#63666E">Setup + run time <tspan font-size="26" font-weight="700" fill="#17181C">&#8722;30%</tspan><tspan dx="36" fill="#63666E">manual errors</tspan> <tspan font-size="26" font-weight="700" fill="#17181C">&#8722;50%+</tspan></text>
+</svg>
