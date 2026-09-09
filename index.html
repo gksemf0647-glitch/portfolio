@@ -12,11 +12,25 @@
 <meta property="og:description" content="Technical PM / Product Owner specializing in turning complex domain processes into structured digital products.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%232c4bd4'/%3E%3Cline x1='10' y1='11' x2='16' y2='22' stroke='%23fff' stroke-width='1.6'/%3E%3Cline x1='22' y1='11' x2='16' y2='22' stroke='%23fff' stroke-width='1.6'/%3E%3Cline x1='10' y1='11' x2='22' y2='11' stroke='%23fff' stroke-width='1.6'/%3E%3Ccircle cx='10' cy='11' r='2.6' fill='%23fff'/%3E%3Ccircle cx='22' cy='11' r='2.6' fill='%23fff'/%3E%3Ccircle cx='16' cy='22' r='2.6' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
-<!-- One editorial grotesque for the whole type system; Pretendard carries body + all Korean glyphs. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<!-- Display / headings → Cabinet Grotesk (Fontshare, free commercial): a warm
+     grotesque with real character. UI / body → Satoshi. Korean rides on
+     Pretendard, tuned to sit on the same rhythm.
+     Loaded non-render-blocking (media=print → all on load): first paint never
+     waits on a font CSS round-trip; text shows in the fallback stack and
+     upgrades when the web fonts arrive (all faces are font-display:swap). -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
+      media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800,500&f[]=satoshi@400,500,700,900&display=swap"
+      media="print" onload="this.media='all'">
+<noscript>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800,500&f[]=satoshi@400,500,700,900&display=swap">
+  <!-- Scroll-reveal starts elements at opacity:0 and JS fades them in. With no
+       JS there is no observer, so show everything up front. -->
+  <style>.reveal,.title-reveal,.work-thumb-reveal{opacity:1!important;transform:none!important}</style>
+</noscript>
 <style>
   :root {
     --bg: #ffffff;
@@ -34,9 +48,9 @@
        One container width + one padding token for every section, and a
        single vertical-rhythm token so Skills / Experience / About / Contact
        breathe at exactly the same cadence as Work above them. */
-    --wrap-max: 1280px;
-    --wrap-pad: clamp(20px, 5vw, 64px);
-    --section-y: clamp(52px, 6.5vw, 92px);
+    --wrap-max: 1240px;
+    --wrap-pad: clamp(22px, 5vw, 60px);
+    --section-y: clamp(56px, 6vw, 96px);
     --gap-card: clamp(16px, 2.2vw, 28px);
 
     --space-1: 6px;
@@ -57,11 +71,11 @@
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --duration: 200ms;
 
-    /* Type: Archivo (a grotesque with editorial character) for display/Latin,
-       Pretendard for body + every Korean glyph. Archivo has no Hangul so KR
-       headings fall through to Pretendard at a matched weight. */
-    --font-display: "Archivo", "Pretendard", -apple-system, "Segoe UI", sans-serif;
-    --font-sans: "Pretendard", -apple-system, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", sans-serif;
+    /* Type: Latin display / headings → Cabinet Grotesk (warm grotesque with
+       character). Latin UI / body → Satoshi. Hangul → Pretendard, tuned to
+       sit on the same rhythm. Hierarchy is size / weight / tracking. */
+    --font-display: "Cabinet Grotesk", "Pretendard", -apple-system, "Segoe UI", sans-serif;
+    --font-sans: "Satoshi", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   }
 
   /* These are registered as typed <color> custom properties so a plain CSS
@@ -210,14 +224,15 @@
     font-family: var(--font-display);
     font-size: 0.82rem;
     font-weight: 600;
-    color: var(--text);
+    color: var(--bg);
+    background: var(--text);
     text-decoration: none;
-    padding: 6px 0;
-    border-bottom: 1.5px solid var(--text);
-    transition: opacity var(--duration) var(--ease);
+    padding: 7px 15px;
+    border-radius: 5px;
+    transition: background var(--duration) var(--ease), transform var(--duration) var(--ease);
   }
 
-  .nav-contact:hover { opacity: 0.6; }
+  .nav-contact:hover { background: var(--accent); transform: translateY(-1px); }
 
   nav a {
     display: inline-flex;
@@ -357,37 +372,35 @@
     flex-wrap: wrap;
   }
 
+  /* Primary = a solid object; secondary = a plain text link. Real hierarchy. */
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    border: 1px solid var(--accent-border);
-    padding: 8px 18px;
-    font-size: 0.82rem;
-    border-radius: 8px;
+    gap: 8px;
+    background: var(--text);
+    color: var(--bg);
+    border: 1px solid var(--text);
+    padding: 11px 22px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
     text-decoration: none;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: opacity 0.15s ease;
   }
 
-  .btn:hover {
-    background: rgba(44, 75, 212, 0.16);
-    border-color: rgba(44, 75, 212, 0.5);
-  }
+  .btn:hover { opacity: 0.82; }
 
   .btn.ghost {
     background: transparent;
-    color: var(--text-dim);
-    border-color: var(--card-border);
+    color: var(--text);
+    border: none;
+    border-radius: 0;
+    padding: 11px 4px;
+    box-shadow: inset 0 -1px 0 var(--text);
   }
 
-  .btn.ghost:hover {
-    color: var(--text);
-    border-color: var(--text-dim);
-  }
+  .btn.ghost:hover { opacity: 0.6; box-shadow: inset 0 -1px 0 var(--text); }
 
   /* 섹션 공통 — one vertical rhythm token drives every section so the page
      no longer feels loose up top and cramped at the bottom. */
@@ -418,23 +431,21 @@
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.4em;
-    font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+    font-size: clamp(1.55rem, 2.3vw, 2.1rem);
     font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.035em;
     padding-bottom: clamp(14px, 1.8vw, 22px);
     border-bottom: 1px solid var(--line);
   }
 
-  /* Small real index figure set against the word, not a giant ghost */
+  /* Index figure sits on the same baseline as the word, just smaller */
   section .section-head .section-eyebrow .num {
-    align-self: flex-start;
-    font-size: 0.32em;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    font-size: 0.44em;
+    font-weight: 600;
+    letter-spacing: 0;
     color: var(--text-dim);
     font-variant-numeric: tabular-nums;
-    margin-right: 0.15em;
   }
 
   section .section-head .section-eyebrow .code {
@@ -528,10 +539,12 @@
   /* ---- Section visual identity: each chapter gets a barely-there off-white
      so sections read as distinct without any visible "design". Sits on top
      of the global body::before watermark. ---- */
-  #projects { background: #FCFCFB; }
-  #about { background: #FAFAF9; }
-  #experience { background: #F7F7F6; }
-  #skills { background: #F4F4F3; }
+  /* Alternating tonal blocks give the page a rhythm of density rather than
+     one flat white plane from top to bottom. */
+  #projects { background: #FFFFFF; }
+  #about { background: #F4F4F1; }
+  #experience { background: #FFFFFF; }
+  #skills { background: #F4F4F1; }
 
   #projects, #about, #skills {
     position: relative;
@@ -814,13 +827,23 @@
     .footer-grid { grid-template-columns: 1fr auto; }
   }
 
+  .footer-eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: clamp(20px, 3vw, 34px);
+  }
+
   .footer-contact-label {
-    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-size: clamp(2.6rem, 7vw, 5rem);
     font-weight: 700;
-    letter-spacing: -0.04em;
-    line-height: 1;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
     color: var(--text);
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
 
   .footer-mail {
@@ -899,11 +922,11 @@
   }
 
   .hero-headline {
-    font-size: clamp(2.1rem, 5vw, 4.5rem);
+    font-size: clamp(2.5rem, 6.4vw, 5.4rem);
     font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.06;
-    margin-bottom: clamp(30px, 4.5vw, 52px);
+    letter-spacing: -0.028em;
+    line-height: 1.02;
+    margin-bottom: clamp(32px, 4.5vw, 56px);
   }
 
   .hero-headline-dot,
@@ -1001,27 +1024,24 @@
   .hero-scrolldown {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     margin-top: clamp(36px, 5vh, 56px);
     color: var(--text-dim);
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0;
     text-decoration: none;
     transition: color var(--duration) var(--ease);
   }
 
   .hero-scrolldown::after {
-    content: "";
-    width: 44px;
-    height: 1px;
-    background: currentColor;
-    transition: width var(--duration) var(--ease);
+    content: "↓";
+    font-size: 0.9em;
+    transition: transform var(--duration) var(--ease);
   }
 
-  .hero-scrolldown:hover { color: var(--accent); }
-  .hero-scrolldown:hover::after { width: 64px; }
+  .hero-scrolldown:hover { color: var(--text); }
+  .hero-scrolldown:hover::after { transform: translateY(3px); }
 
   @media (prefers-reduced-motion: reduce) {
     .hero-status::before { animation: none; }
@@ -1144,7 +1164,7 @@
 
   @media (min-width: 800px) {
     .work-item {
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 0.95fr 1.05fr;
       align-items: start;
       gap: clamp(36px, 4.5vw, 64px);
     }
@@ -1177,9 +1197,9 @@
   .work-thumb {
     order: -1;
     overflow: hidden;
-    border-radius: 10px;
-    aspect-ratio: 16 / 11;
-    background: var(--bg-soft);
+    border-radius: 8px;
+    aspect-ratio: 3 / 2;
+    background: #fff;
     border: 1px solid var(--line);
   }
 
@@ -1405,10 +1425,10 @@
 
   .more-work-thumb {
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 8px;
     margin-bottom: 20px;
-    aspect-ratio: 16 / 11;
-    background: var(--bg-soft);
+    aspect-ratio: 3 / 2;
+    background: #fff;
     border: 1px solid var(--line);
   }
 
@@ -2073,6 +2093,48 @@
   }
 
   .cursor-dot, .cursor-ring { display: none !important; }
+
+  /* ============================================================================
+     CANONICAL RAMPS — placed last so they win on equal specificity. Every
+     small caption on the page resolves to ONE label spec; display sizes to
+     one modular scale; the accent means exactly one thing.
+     ========================================================================== */
+  .approach-eyebrow,
+  .approach-step .step-label,
+  .work-role-scope strong,
+  .skills-subhead,
+  .more-work-label,
+  .tool-row-label,
+  .hero-meta dt,
+  .capability-card .num,
+  .capability-mini .num,
+  .about-compact-block h3 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+  .approach-eyebrow { margin-bottom: 16px; }
+  .hero-meta dt { margin-bottom: 0; }
+  .work-role-scope strong { margin-bottom: 5px; }
+
+  /* Numeric year / index tags share one treatment */
+  .work-year, .more-work-year,
+  .work-number, .more-work-number {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .work-number, .more-work-number { color: var(--text); }
+  .work-year, .more-work-year { color: var(--text-dim); }
+
+  /* Body-copy measure: never wider than ~68 characters */
+  .hero-sub, .work-desc, .more-work-desc,
+  .approach-step p, .about-statement, .exp-rail-note { max-width: 62ch; }
 </style>
 </head>
 <body>
@@ -2242,6 +2304,7 @@
 <footer>
   <div class="wrap footer-grid">
     <div>
+      <div class="footer-eyebrow">Contact</div>
       <div class="footer-contact-label">Get in touch</div>
       <a class="footer-mail" href="mailto:handl94@naver.com">handl94@naver.com</a>
     </div>
@@ -9235,8 +9298,9 @@ renderHome();
       ],
       validation: "자동화 장비 조작 시나리오·예외 처리 검증",
       tools: null,
-      thumbnail: imgReady("assets/projects/automation-experiment-planning/thumbnail.svg"),
-      // Multiple screen thumbnails — the work-list card cross-fades through them on hover.
+      thumbnail: imgReady("assets/projects/automation-experiment-planning/cover.svg"),
+      // Work-list card: 3 product-UI mockup screens, cross-fading on hover
+      // (same screens shown inside the case-study detail view).
       thumbnails: [
         imgReady("assets/projects/automation-experiment-planning/thumbnail.svg"),
         imgReady("assets/projects/automation-experiment-planning/thumbnail-2.svg"),
@@ -9278,7 +9342,14 @@ renderHome();
       ],
       validation: "테스트 시나리오 작성 및 QA 리드",
       tools: null,
-      thumbnail: imgReady("assets/projects/feasibility-automation-sw/thumbnail.png"),
+      thumbnail: imgReady("assets/projects/feasibility-automation-sw/cover.svg"),
+      // Work-list card: 3 screens from the interactive prototype (Home dashboard,
+      // Feasibility Lab-book list, Test list), cross-fading on hover.
+      thumbnails: [
+        imgReady("assets/projects/feasibility-automation-sw/mock-1.png"),
+        imgReady("assets/projects/feasibility-automation-sw/mock-2.png"),
+        imgReady("assets/projects/feasibility-automation-sw/mock-3.png")
+      ],
       // Detail-view hero uses the interactive embedded mockup below
       // (<template id="prototype-embed--feasibility-automation-sw">), same as
       // projects 01 and 04.
@@ -9311,7 +9382,14 @@ renderHome();
       ],
       validation: null,
       tools: null,
-      thumbnail: imgReady("assets/projects/prototype-doc-automation/thumbnail.png"),
+      thumbnail: imgReady("assets/projects/prototype-doc-automation/cover.svg"),
+      // Work-list card: 3 screens from the interactive prototype (Home dashboard,
+      // experiment wizard — Material & Method, Result viewer), cross-fading on hover.
+      thumbnails: [
+        imgReady("assets/projects/prototype-doc-automation/mock-1.png"),
+        imgReady("assets/projects/prototype-doc-automation/mock-2.png"),
+        imgReady("assets/projects/prototype-doc-automation/mock-3.png")
+      ],
       detailImages: [imgDiagram("assets/projects/prototype-doc-automation/menu-structure.svg")],
       workflowImages: [imgDiagram("assets/projects/prototype-doc-automation/user-scenario-flow.svg")]
     },
@@ -9342,7 +9420,7 @@ renderHome();
       ],
       validation: null,
       tools: ["Jira", "Confluence", "Slack"],
-      thumbnail: imgReady("assets/projects/qc-report-automation/thumbnail.png"),
+      thumbnail: imgReady("assets/projects/qc-report-automation/cover.svg"),
       // Existing QC Report screenshot (1200×632) + two more screens of the same
       // mockup — the More-Work card cross-fades through all three on hover.
       thumbAspect: "1200 / 632",
@@ -9392,8 +9470,8 @@ renderHome();
       ],
       validation: "실제 사용자 테스트로 개선 흐름 검증",
       tools: null,
-      thumbnail: imgReady("assets/projects/liquid-handler-workflow/thumbnail.svg"),
-      // Multiple screen thumbnails — the work-list card cross-fades through them on hover.
+      thumbnail: imgReady("assets/projects/liquid-handler-workflow/cover.svg"),
+      // Work-list card: 3 product-UI mockup screens, cross-fading on hover.
       thumbnails: [
         imgReady("assets/projects/liquid-handler-workflow/thumbnail.svg"),
         imgReady("assets/projects/liquid-handler-workflow/thumbnail-2.svg"),

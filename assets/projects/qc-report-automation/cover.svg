@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600" font-family="'Host Grotesk','Pretendard',system-ui,sans-serif">
+  <rect width="900" height="600" fill="#FCFCFB"/>
+  <rect x="0.5" y="0.5" width="899" height="599" fill="none" stroke="#E6E7EB"/>
+
+  <!-- left: repeated manual documents -->
+  <g stroke="#16181D" stroke-width="1.5" fill="none" opacity="0.65">
+    <rect x="130" y="182" width="78" height="100" rx="2"/>
+    <rect x="130" y="182" width="78" height="100" rx="2" transform="translate(14,14)"/>
+    <rect x="130" y="182" width="78" height="100" rx="2" transform="translate(28,28)"/>
+    <rect x="130" y="182" width="78" height="100" rx="2" transform="translate(42,42)"/>
+  </g>
+  <g stroke="#16181D" stroke-width="1.5" opacity="0.35">
+    <line x1="186" y1="240" x2="238" y2="240"/>
+    <line x1="186" y1="262" x2="238" y2="262"/>
+    <line x1="186" y1="284" x2="222" y2="284"/>
+  </g>
+
+  <!-- converging arrows -->
+  <g stroke="#16181D" stroke-width="1.5" fill="none">
+    <path d="M300 210 C 360 210, 400 250, 470 258"/>
+    <path d="M320 314 C 380 314, 405 274, 470 266"/>
+    <path d="M462 256 L470 262 L462 268"/>
+  </g>
+
+  <!-- right: single automated output -->
+  <g stroke="#16181D" stroke-width="1.5" fill="none">
+    <rect x="520" y="190" width="150" height="184" rx="2"/>
+    <line x1="548" y1="232" x2="642" y2="232" opacity="0.45"/>
+    <line x1="548" y1="258" x2="642" y2="258" opacity="0.45"/>
+    <line x1="548" y1="284" x2="612" y2="284" opacity="0.45"/>
+  </g>
+  <g transform="translate(670,352)">
+    <circle cx="0" cy="0" r="17" fill="#2C4BD4"/>
+    <g stroke="#FCFCFB" stroke-width="2" fill="none">
+      <circle cx="0" cy="0" r="4.5"/>
+      <line x1="0" y1="-10" x2="0" y2="-6"/><line x1="0" y1="6" x2="0" y2="10"/>
+      <line x1="-10" y1="0" x2="-6" y2="0"/><line x1="6" y1="0" x2="10" y2="0"/>
+    </g>
+  </g>
+
+  <line x1="48" y1="506" x2="852" y2="506" stroke="#E6E7EB"/>
+  <text x="48" y="548" font-size="13" font-weight="600" letter-spacing="0.1em" fill="#16181D">05<tspan fill="#8A8D96" dx="14">REPEATED REPORT WORK &#8594; DEFINED AUTOMATION</tspan></text>
+  <text x="852" y="548" font-size="13" font-weight="500" fill="#8A8D96" text-anchor="end">2020</text>
+</svg>
