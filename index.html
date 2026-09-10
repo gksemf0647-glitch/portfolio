@@ -1715,10 +1715,8 @@
      script below; source markup lives in the <template id="prototype-embed--…">
      blocks just before the main <script>. */
   .prototype-embed {
-    width: min(1200px, 95vw);
+    width: 100%;   /* fills the shared-gutter column; the 1200px canvas scales to fit */
     position: relative;
-    left: 50%;
-    transform: translateX(-50%);   /* centre the wider frame on the column */
     border: 1px dashed var(--card-border);
     border-radius: 8px;
     background: var(--bg-soft);
@@ -2519,30 +2517,54 @@
   .work-item:focus-visible .case-cta::after,
   .more-work-item:hover .case-cta::after { transform: translateX(5px); background: none; width: auto; }
 
-  /* ---- Thumbnail hover: a clean 2-frame screen swap (replaces the old
-     infinite cycle). Frame 1 at rest; on hover it cross-fades to frame 2,
-     the stack lifts + scales slightly, and a "View case" tag rises in. ---- */
+  /* ---- Thumbnail hover: hold a moment on frame 1, then auto-cycle the
+     project's ~3 screens with a soft cross-fade, looping while hovered.
+     Snaps back to frame 1 on mouse-out. ---- */
   .thumb-stack { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; }
   .thumb-stack img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; object-position: left top;
-    opacity: 0; animation: none !important;
-    transition: opacity .5s var(--ease-out), transform .6s var(--ease-out);
+    opacity: 0; animation: none;
+    transition: opacity .5s var(--ease-out), transform .7s var(--ease-out);
   }
   .thumb-stack img:first-child { opacity: 1; }
-  .work-item:hover .thumb-stack img:first-child,
-  .work-item:focus-visible .thumb-stack img:first-child,
-  .more-work-item:hover .thumb-stack img:first-child { opacity: 0; }
-  .work-item:hover .thumb-stack img:nth-child(2),
-  .work-item:focus-visible .thumb-stack img:nth-child(2),
-  .more-work-item:hover .thumb-stack img:nth-child(2) { opacity: 1; }
+
   .work-item:hover .thumb-stack img,
   .work-item:focus-visible .thumb-stack img,
-  .more-work-item:hover .thumb-stack img { transform: scale(1.03); }
+  .more-work-item:hover .thumb-stack img,
+  .more-work-item:focus-visible .thumb-stack img {
+    animation: thumbCycle3 5.4s linear .5s infinite;
+    transform: scale(1.03);
+  }
+  .work-item:hover .thumb-stack img:nth-child(1),
+  .work-item:focus-visible .thumb-stack img:nth-child(1),
+  .more-work-item:hover .thumb-stack img:nth-child(1),
+  .more-work-item:focus-visible .thumb-stack img:nth-child(1) { animation-delay: .5s; }
+  .work-item:hover .thumb-stack img:nth-child(2),
+  .work-item:focus-visible .thumb-stack img:nth-child(2),
+  .more-work-item:hover .thumb-stack img:nth-child(2),
+  .more-work-item:focus-visible .thumb-stack img:nth-child(2) { animation-delay: 2.3s; }
+  .work-item:hover .thumb-stack img:nth-child(3),
+  .work-item:focus-visible .thumb-stack img:nth-child(3),
+  .more-work-item:hover .thumb-stack img:nth-child(3),
+  .more-work-item:focus-visible .thumb-stack img:nth-child(3) { animation-delay: 4.1s; }
+
+  @keyframes thumbCycle3 {
+    0%     { opacity: 1; }
+    27.8%  { opacity: 1; }   /* ~1.5s visible */
+    33.3%  { opacity: 0; }   /* 1.8s: faded out */
+    94.4%  { opacity: 0; }
+    100%   { opacity: 1; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .thumb-stack img { transition: opacity .2s linear; }
     .work-item:hover .thumb-stack img,
-    .more-work-item:hover .thumb-stack img { transform: none; }
+    .work-item:focus-visible .thumb-stack img,
+    .more-work-item:hover .thumb-stack img,
+    .more-work-item:focus-visible .thumb-stack img { animation: none; transform: none; }
+    /* still hint there's more than one screen */
+    .work-item:hover .thumb-stack img:nth-child(2),
+    .more-work-item:hover .thumb-stack img:nth-child(2) { opacity: 1; }
   }
 
   /* ============================================================= *
@@ -2550,8 +2572,28 @@
      main page (cool paper, ink labels, rationed accent, type scale,
      hairline rhythm, chips, transform-pill one-liner).
    * ============================================================= */
-  .work-detail-overlay { background: var(--bg); }
-  .work-detail-inner { padding-top: clamp(88px, 12vh, 120px); padding-bottom: 96px; max-width: 780px; }
+  /* Same off-white ground + structural grid watermark as the main page, so the
+     case-study view reads as the same document rather than a bare panel. */
+  .work-detail-overlay {
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(rgba(17, 24, 39, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17, 24, 39, 0.015) 1px, transparent 1px);
+    background-size: 104px 104px;
+    background-attachment: fixed;
+  }
+  /* Match the main page's container: full 1240px wrap + the same clamp() side
+     gutter (this element also carries .wrap). The old 780px cap centred the
+     column and pushed its left edge ~220px past the main page's content edge. */
+  .work-detail-inner { padding-top: clamp(88px, 12vh, 120px); padding-bottom: 96px; max-width: var(--wrap-max); }
+  /* Text blocks keep a readable measure but stay left-aligned to the shared
+     gutter; hero embed / image rows / nav span the full width. */
+  .detail-header-row,
+  .detail-title,
+  .detail-meta-row,
+  .detail-section { max-width: 760px; }
+  .detail-section > p,
+  .detail-section ul { max-width: 68ch; }
 
   .detail-back { font-family: var(--font-display); font-size: var(--fs-small); }
 
@@ -2575,7 +2617,7 @@
   }
 
   /* one-liner as the same before → after pill pair used in the Work list */
-  .detail-desc.work-transform { margin-bottom: 30px; max-width: none; }
+  .detail-desc.work-transform { margin-bottom: 30px; max-width: 760px; }
 
   .detail-meta-row {
     gap: clamp(28px, 5vw, 56px);
@@ -3102,7 +3144,15 @@
     50%  { box-shadow: 0 0 0 8px rgba(31,111,184,0);  transform: scale(1.02); }
     100% { box-shadow: 0 0 0 0 rgba(31,111,184,0);    transform: scale(1); }
   }
-  .flow-highlight{ animation: pulseHighlight 2s infinite ease-in-out; border-color: var(--blue) !important; position: relative; z-index: 5; }
+  .flow-highlight{ position: relative; z-index: 5; } /* tour ring replaces the pulse */
+
+/* ===== guide-tour HUD (ported from projects 3 & 5) ===== */
+.pf-tour-hl{outline:3px solid rgba(31,111,184,.95) !important;outline-offset:2px;border-radius:6px;position:relative;z-index:6;animation:pfTourRing 1.3s ease-in-out infinite;cursor:default;}
+@keyframes pfTourRing{0%,100%{outline-color:rgba(31,111,184,.95);box-shadow:0 0 0 0 rgba(31,111,184,.35);}50%{outline-color:rgba(31,111,184,.5);box-shadow:0 0 16px 5px rgba(31,111,184,.28);}}
+.pf-tour-hl.pf-tour-wait{outline-color:rgba(245,158,11,.95) !important;animation:pfTourRingWait .9s ease-in-out infinite;cursor:pointer;}
+@keyframes pfTourRingWait{0%,100%{outline-color:rgba(245,158,11,.95);box-shadow:0 0 0 0 rgba(245,158,11,.45);}50%{outline-color:rgba(245,158,11,.6);box-shadow:0 0 18px 6px rgba(245,158,11,.38);}}
+@keyframes pfTourDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
+@media (prefers-reduced-motion: reduce){.pf-tour-hl,.pf-tour-hl.pf-tour-wait{animation:none;}}
 </style>
 </head>
 <body>
@@ -3750,6 +3800,168 @@
     c.insertBefore(body, actions);
   });
 </script>
+
+<script>
+/* Guide-tour: a bottom-centre HUD that names the current step and rings the
+   element to look at (blue = auto-advances) or click (amber = waits for you).
+   Only runs when embedded in the portfolio (#__embedCanvas present). */
+(function(){
+  function whenCanvasReady(fn){
+    var c = document.getElementById('__embedCanvas');
+    if(c){ fn(c); return; }
+    if((whenCanvasReady._n = (whenCanvasReady._n||0)+1) > 160) return;
+    setTimeout(function(){ whenCanvasReady(fn); }, 60);
+  }
+  whenCanvasReady(function(canvas){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var hud = document.createElement('div');
+    hud.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);'+
+      'background:rgba(22,32,43,.93);color:#fff;font:600 11.5px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;'+
+      'padding:9px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;'+
+      'display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none;letter-spacing:.02em;';
+    var dot = document.createElement('span');
+    dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:#34D399;display:inline-block;animation:pfTourDot 1.4s ease-in-out infinite;';
+    var hudText = document.createElement('span');
+    hud.appendChild(dot); hud.appendChild(hudText);
+    document.body.appendChild(hud);
+    function setPhase(t, wait){
+      var label = t + (wait ? ' \u00b7 click the highlighted spot' : '');
+      if(hudText.textContent !== label) hudText.textContent = label;
+      dot.style.background = wait ? '#F59E0B' : '#34D399';
+    }
+
+    function scrollContainerFor(el){
+      var p = el && el.parentElement;
+      while(p && p !== document.body){
+        var cs = getComputedStyle(p);
+        if((cs.overflowY === 'auto' || cs.overflowY === 'scroll') && p.scrollHeight > p.clientHeight + 2) return p;
+        p = p.parentElement;
+      }
+      return null;
+    }
+    function scaleOf(){ var r = canvas.getBoundingClientRect(); return (r.width / canvas.offsetWidth) || 1; }
+    function scrollIntoContainer(el){
+      var c = scrollContainerFor(el); if(!c) return;
+      var s = scaleOf(), er = el.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      var target = c.scrollTop + (er.top - cr.top) / s - 46;
+      target = Math.max(0, Math.min(target, c.scrollHeight - c.clientHeight));
+      try { c.scrollTo({top: target, behavior: reduce ? 'auto' : 'smooth'}); } catch(e){ c.scrollTop = target; }
+      clearTimeout(c.__pfSnap);
+      c.__pfSnap = setTimeout(function(){ c.scrollTop = target; }, reduce ? 0 : 300);
+    }
+
+    var hlEl = null;
+    function clearHl(){ if(hlEl){ hlEl.classList.remove('pf-tour-hl','pf-tour-wait'); hlEl = null; } }
+    function highlight(el, wait){
+      clearHl(); if(!el) return;
+      el.classList.add('pf-tour-hl');
+      if(wait) el.classList.add('pf-tour-wait');
+      hlEl = el; scrollIntoContainer(el);
+    }
+
+    function findByText(scopeSel, childSel, text){
+      var scope = document.querySelector(scopeSel); if(!scope) return null;
+      var nodes = scope.querySelectorAll(childSel);
+      for(var i=0;i<nodes.length;i++){ if(nodes[i].textContent.indexOf(text) > -1) return nodes[i]; }
+      return null;
+    }
+    function resolve(st){
+      if(typeof st.pick === 'function') return st.pick();
+      if(st.find) return findByText(st.find.scope, st.find.child, st.find.text);
+      return document.querySelector(st.sel);
+    }
+
+    var TOUR = {};
+    
+    TOUR['screen:home'] = [
+      {phase:'\u2460 Home / Dashboard', sel:'#screen-home .grid-2', hold:1800},
+      {phase:'\u2461 Open the Prototype Lab-book', sel:'#screen-home .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:labbooklist'] = [
+      {phase:'\u2462 Prototype Lab-books', sel:'#screen-labbooklist table', hold:1500},
+      {phase:'\u2462 Open Lab-book 2', sel:'#screen-labbooklist tbody tr.clickable', click:true}
+    ];
+    TOUR['screen:testlist'] = [
+      {phase:'\u2463 Test list', sel:'#screen-testlist table', hold:1400},
+      {phase:'\u2463 Open the first test', sel:'#screen-testlist tbody tr.clickable', click:true}
+    ];
+    TOUR['screen:plan'] = [
+      {phase:'\u2464 Step 1 \u00b7 Material & Method', sel:'#screen-plan .wizard-steps', hold:1500},
+      {phase:'\u2464 Continue to Well information', sel:'#screen-plan .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:wellinfo'] = [
+      {phase:'\u2465 Step 2 \u00b7 Well information (auto-generated)', sel:'#screen-wellinfo .plate-wrap', hold:2000},
+      {phase:'\u2465 Continue to method', sel:'#screen-wellinfo .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:method'] = [
+      {phase:'\u2466 Step 3 \u00b7 Select method', sel:'#screen-method .method-row', hold:1800},
+      {phase:'\u2466 Continue to data upload', sel:'#screen-method .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:dataupload'] = [
+      {phase:'\u2467 Step 4 \u00b7 Data upload', sel:'#screen-dataupload table', hold:1600},
+      {phase:'\u2467 Continue to result', sel:'#screen-dataupload .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:result'] = [
+      {phase:'\u2468 Step 5 \u00b7 Result', sel:'#screen-result .result-layout', hold:1800},
+      {phase:'\u2468 Continue to acceptance criteria', sel:'#screen-result .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:criteria'] = [
+      {phase:'\u2469 Step 6 \u00b7 Acceptance criteria', sel:'#screen-criteria table', hold:1900},
+      {phase:'\u2469 Complete the test', sel:'#screen-criteria .wizard-actions .btn.dark', click:true}
+    ];
+
+
+    function currentContextId(){
+      var s = document.querySelector('.screen.active');
+      return s ? 'screen:' + s.id.replace('screen-', '') : null;
+    }
+
+    var activeContext = null, stepIdx = -1, stepTimer = null, stepWait = null;
+    function cleanupStepWait(){
+      clearTimeout(stepTimer);
+      if(stepWait){ try { stepWait.el.removeEventListener('click', stepWait.fn, true); } catch(e){} stepWait = null; }
+    }
+    function advanceFrom(fromCtx, fromIdx){
+      var ctx = currentContextId();
+      if(ctx && ctx !== fromCtx){ enterContext(ctx); }
+      else if(activeContext === fromCtx){ stepIdx = fromIdx + 1; attemptStep(); }
+    }
+    function attemptStep(){
+      var list = TOUR[activeContext] || [];
+      if(stepIdx >= list.length){ clearHl(); return; }
+      var st = list[stepIdx];
+      var el = resolve(st);
+      if(!el){ stepTimer = setTimeout(attemptStep, 130); return; }
+      if(st.phase) setPhase(st.phase, !!st.click);
+      highlight(el, !!st.click);
+      var myCtx = activeContext, myIdx = stepIdx;
+      if(st.click){
+        var onClick = function(){
+          cleanupStepWait();
+          if(typeof st.then === 'function'){ try { st.then(); } catch(e){} }
+          advanceFrom(myCtx, myIdx);
+        };
+        el.addEventListener('click', onClick, true);
+        stepWait = {el: el, fn: onClick};
+      } else {
+        stepTimer = setTimeout(function(){ advanceFrom(myCtx, myIdx); }, st.hold || 1600);
+      }
+    }
+    function enterContext(ctx){ cleanupStepWait(); activeContext = ctx; stepIdx = 0; attemptStep(); }
+
+    setInterval(function(){
+      var ctx = currentContextId();
+      if(ctx && ctx !== activeContext){ enterContext(ctx); return; }
+      if(stepWait && stepWait.el && !stepWait.el.isConnected) attemptStep();
+    }, 320);
+
+    var initial = currentContextId();
+    if(initial) setTimeout(function(){ enterContext(initial); }, 1200);
+  });
+})();
+</script>
+
 </body>
 </html>
 </template>
@@ -3987,12 +4199,7 @@ tbody tr.clickable:hover{background:var(--bg);}
   50% { box-shadow: 0 0 0 8px rgba(91, 84, 232, 0); transform: scale(1.02); }
   100% { box-shadow: 0 0 0 0 rgba(91, 84, 232, 0); transform: scale(1); }
 }
-.flow-highlight {
-  animation: pulseHighlight 2s infinite ease-in-out;
-  border-color: var(--accent) !important;
-  position: relative;
-  z-index: 5;
-}
+.flow-highlight{ position: relative; z-index: 5; } /* tour ring replaces the pulse */
 
 /* ---- Modal (reused) ---- */
 .modal-overlay{position:fixed;inset:0;background:rgba(20,20,40,.45);display:none;align-items:center;justify-content:center;z-index:100;}
@@ -4030,6 +4237,14 @@ tbody tr.clickable:hover{background:var(--bg);}
    강제하므로, 이 목업의 가로 레이아웃(sidenav | main)을 되돌린다. */
 .portfolio-head,.jumpbar,.note-toggle,.note-panel{display:none!important;}
 .screen>.device{flex-direction:row!important;}
+
+/* ===== guide-tour HUD (ported from projects 3 & 5) ===== */
+.pf-tour-hl{outline:3px solid rgba(31,111,184,.95) !important;outline-offset:2px;border-radius:6px;position:relative;z-index:6;animation:pfTourRing 1.3s ease-in-out infinite;cursor:default;}
+@keyframes pfTourRing{0%,100%{outline-color:rgba(31,111,184,.95);box-shadow:0 0 0 0 rgba(31,111,184,.35);}50%{outline-color:rgba(31,111,184,.5);box-shadow:0 0 16px 5px rgba(31,111,184,.28);}}
+.pf-tour-hl.pf-tour-wait{outline-color:rgba(245,158,11,.95) !important;animation:pfTourRingWait .9s ease-in-out infinite;cursor:pointer;}
+@keyframes pfTourRingWait{0%,100%{outline-color:rgba(245,158,11,.95);box-shadow:0 0 0 0 rgba(245,158,11,.45);}50%{outline-color:rgba(245,158,11,.6);box-shadow:0 0 18px 6px rgba(245,158,11,.38);}}
+@keyframes pfTourDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
+@media (prefers-reduced-motion: reduce){.pf-tour-hl,.pf-tour-hl.pf-tour-wait{animation:none;}}
 </style>
 </head>
 <body>
@@ -4889,6 +5104,170 @@ document.addEventListener('DOMContentLoaded', function(){
   renderNotes('itemlist');
 });
 </script>
+
+<script>
+/* Guide-tour: a bottom-centre HUD that names the current step and rings the
+   element to look at (blue = auto-advances) or click (amber = waits for you).
+   Only runs when embedded in the portfolio (#__embedCanvas present). */
+(function(){
+  function whenCanvasReady(fn){
+    var c = document.getElementById('__embedCanvas');
+    if(c){ fn(c); return; }
+    if((whenCanvasReady._n = (whenCanvasReady._n||0)+1) > 160) return;
+    setTimeout(function(){ whenCanvasReady(fn); }, 60);
+  }
+  whenCanvasReady(function(canvas){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var hud = document.createElement('div');
+    hud.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);'+
+      'background:rgba(22,32,43,.93);color:#fff;font:600 11.5px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;'+
+      'padding:9px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;'+
+      'display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none;letter-spacing:.02em;';
+    var dot = document.createElement('span');
+    dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:#34D399;display:inline-block;animation:pfTourDot 1.4s ease-in-out infinite;';
+    var hudText = document.createElement('span');
+    hud.appendChild(dot); hud.appendChild(hudText);
+    document.body.appendChild(hud);
+    function setPhase(t, wait){
+      var label = t + (wait ? ' \u00b7 click the highlighted spot' : '');
+      if(hudText.textContent !== label) hudText.textContent = label;
+      dot.style.background = wait ? '#F59E0B' : '#34D399';
+    }
+
+    function scrollContainerFor(el){
+      var p = el && el.parentElement;
+      while(p && p !== document.body){
+        var cs = getComputedStyle(p);
+        if((cs.overflowY === 'auto' || cs.overflowY === 'scroll') && p.scrollHeight > p.clientHeight + 2) return p;
+        p = p.parentElement;
+      }
+      return null;
+    }
+    function scaleOf(){ var r = canvas.getBoundingClientRect(); return (r.width / canvas.offsetWidth) || 1; }
+    function scrollIntoContainer(el){
+      var c = scrollContainerFor(el); if(!c) return;
+      var s = scaleOf(), er = el.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      var target = c.scrollTop + (er.top - cr.top) / s - 46;
+      target = Math.max(0, Math.min(target, c.scrollHeight - c.clientHeight));
+      try { c.scrollTo({top: target, behavior: reduce ? 'auto' : 'smooth'}); } catch(e){ c.scrollTop = target; }
+      clearTimeout(c.__pfSnap);
+      c.__pfSnap = setTimeout(function(){ c.scrollTop = target; }, reduce ? 0 : 300);
+    }
+
+    var hlEl = null;
+    function clearHl(){ if(hlEl){ hlEl.classList.remove('pf-tour-hl','pf-tour-wait'); hlEl = null; } }
+    function highlight(el, wait){
+      clearHl(); if(!el) return;
+      el.classList.add('pf-tour-hl');
+      if(wait) el.classList.add('pf-tour-wait');
+      hlEl = el; scrollIntoContainer(el);
+    }
+
+    function findByText(scopeSel, childSel, text){
+      var scope = document.querySelector(scopeSel); if(!scope) return null;
+      var nodes = scope.querySelectorAll(childSel);
+      for(var i=0;i<nodes.length;i++){ if(nodes[i].textContent.indexOf(text) > -1) return nodes[i]; }
+      return null;
+    }
+    function resolve(st){
+      if(typeof st.pick === 'function') return st.pick();
+      if(st.find) return findByText(st.find.scope, st.find.child, st.find.text);
+      return document.querySelector(st.sel);
+    }
+
+    var TOUR = {};
+    
+    var itemCreated = false;
+    TOUR['screen:itemlist'] = [
+      {phase: (itemCreated ? '\u2462 Open the Item' : '\u2460 Create a new Item'),
+       pick:function(){
+         return itemCreated
+           ? document.querySelector('#screen-itemlist table tbody tr.clickable')
+           : document.querySelector('#screen-itemlist .item-title-row .btn.primary');
+       }, click:true}
+    ];
+    TOUR['screen:createitem'] = [
+      {phase:'\u2461 Fill in the Item', sel:'#screen-createitem .fieldset', hold:1900},
+      {phase:'\u2461 Create the Item', sel:'#screen-createitem .checklist-bar .btn.primary', click:true,
+       then:function(){ itemCreated = true; }}
+    ];
+    TOUR['screen:itemdetail-empty'] = [
+      {phase:'\u2463 No Exp Groups yet', sel:'#screen-itemdetail-empty .empty-state', hold:1500},
+      {phase:'\u2463 Create an Exp Group', sel:'#screen-itemdetail-empty .btn.primary[onclick*="step1"]', click:true}
+    ];
+    TOUR['screen:step1'] = [
+      {phase:'\u2464 Step 1 \u00b7 Experiment plan', sel:'#screen-step1 .wizard-nav', hold:1700},
+      {phase:'\u2464 Continue to Template check', sel:'#screen-step1 .checklist-bar .btn.primary', click:true}
+    ];
+    TOUR['screen:step2'] = [
+      {phase:'\u2465 Step 2 \u00b7 Template check', sel:'#screen-step2 .fieldset', hold:1700},
+      {phase:'\u2465 Continue to Template preparation', sel:'#screen-step2 .checklist-bar .btn.primary', click:true}
+    ];
+    TOUR['screen:step3'] = [
+      {phase:'\u2466 Step 3 \u00b7 Template preparation', sel:'#screen-step3 .fieldset', hold:1700},
+      {phase:'\u2466 Continue to Input Confirmation', sel:'#screen-step3 .checklist-bar .btn.primary', click:true}
+    ];
+    TOUR['screen:step4'] = [
+      {phase:'\u2467 Step 4 \u00b7 Input Confirmation', sel:'#screen-step4 #s4tabs', hold:1700},
+      {phase:'\u2467 Finish the Exp Group', sel:'#screen-step4 .checklist-bar .btn.primary', click:true}
+    ];
+    TOUR['screen:itemdetail-filled'] = [
+      {phase:'\u2468 Exp Group ready', sel:'#screen-itemdetail-filled .expgroup-card', hold:1700},
+      {phase:'\u2468 Run it', sel:'#screen-itemdetail-filled .expgroup-card .btn.primary', click:true}
+    ];
+
+
+    function currentContextId(){
+      var s = document.querySelector('.screen.active');
+      return s ? 'screen:' + s.id.replace('screen-', '') : null;
+    }
+
+    var activeContext = null, stepIdx = -1, stepTimer = null, stepWait = null;
+    function cleanupStepWait(){
+      clearTimeout(stepTimer);
+      if(stepWait){ try { stepWait.el.removeEventListener('click', stepWait.fn, true); } catch(e){} stepWait = null; }
+    }
+    function advanceFrom(fromCtx, fromIdx){
+      var ctx = currentContextId();
+      if(ctx && ctx !== fromCtx){ enterContext(ctx); }
+      else if(activeContext === fromCtx){ stepIdx = fromIdx + 1; attemptStep(); }
+    }
+    function attemptStep(){
+      var list = TOUR[activeContext] || [];
+      if(stepIdx >= list.length){ clearHl(); return; }
+      var st = list[stepIdx];
+      var el = resolve(st);
+      if(!el){ stepTimer = setTimeout(attemptStep, 130); return; }
+      if(st.phase) setPhase(st.phase, !!st.click);
+      highlight(el, !!st.click);
+      var myCtx = activeContext, myIdx = stepIdx;
+      if(st.click){
+        var onClick = function(){
+          cleanupStepWait();
+          if(typeof st.then === 'function'){ try { st.then(); } catch(e){} }
+          advanceFrom(myCtx, myIdx);
+        };
+        el.addEventListener('click', onClick, true);
+        stepWait = {el: el, fn: onClick};
+      } else {
+        stepTimer = setTimeout(function(){ advanceFrom(myCtx, myIdx); }, st.hold || 1600);
+      }
+    }
+    function enterContext(ctx){ cleanupStepWait(); activeContext = ctx; stepIdx = 0; attemptStep(); }
+
+    setInterval(function(){
+      var ctx = currentContextId();
+      if(ctx && ctx !== activeContext){ enterContext(ctx); return; }
+      if(stepWait && stepWait.el && !stepWait.el.isConnected) attemptStep();
+    }, 320);
+
+    var initial = currentContextId();
+    if(initial) setTimeout(function(){ enterContext(initial); }, 1200);
+  });
+})();
+</script>
+
 </body>
 </html>
 </template>
@@ -5167,7 +5546,15 @@ document.addEventListener('DOMContentLoaded', function(){
     50%  { box-shadow: 0 0 0 8px rgba(79,70,229,0);  transform: scale(1.02); }
     100% { box-shadow: 0 0 0 0 rgba(79,70,229,0);    transform: scale(1); }
   }
-  .flow-highlight{ animation: pulseHighlight 2s infinite ease-in-out; border-color: var(--accent) !important; position: relative; z-index: 5; }
+  .flow-highlight{ position: relative; z-index: 5; } /* tour ring replaces the pulse */
+
+/* ===== guide-tour HUD (ported from projects 3 & 5) ===== */
+.pf-tour-hl{outline:3px solid rgba(31,111,184,.95) !important;outline-offset:2px;border-radius:6px;position:relative;z-index:6;animation:pfTourRing 1.3s ease-in-out infinite;cursor:default;}
+@keyframes pfTourRing{0%,100%{outline-color:rgba(31,111,184,.95);box-shadow:0 0 0 0 rgba(31,111,184,.35);}50%{outline-color:rgba(31,111,184,.5);box-shadow:0 0 16px 5px rgba(31,111,184,.28);}}
+.pf-tour-hl.pf-tour-wait{outline-color:rgba(245,158,11,.95) !important;animation:pfTourRingWait .9s ease-in-out infinite;cursor:pointer;}
+@keyframes pfTourRingWait{0%,100%{outline-color:rgba(245,158,11,.95);box-shadow:0 0 0 0 rgba(245,158,11,.45);}50%{outline-color:rgba(245,158,11,.6);box-shadow:0 0 18px 6px rgba(245,158,11,.38);}}
+@keyframes pfTourDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
+@media (prefers-reduced-motion: reduce){.pf-tour-hl,.pf-tour-hl.pf-tour-wait{animation:none;}}
 </style>
 </head>
 <body>
@@ -6006,6 +6393,175 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 
 </script>
+
+<script>
+/* Guide-tour: a bottom-centre HUD that names the current step and rings the
+   element to look at (blue = auto-advances) or click (amber = waits for you).
+   Only runs when embedded in the portfolio (#__embedCanvas present). */
+(function(){
+  function whenCanvasReady(fn){
+    var c = document.getElementById('__embedCanvas');
+    if(c){ fn(c); return; }
+    if((whenCanvasReady._n = (whenCanvasReady._n||0)+1) > 160) return;
+    setTimeout(function(){ whenCanvasReady(fn); }, 60);
+  }
+  whenCanvasReady(function(canvas){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var hud = document.createElement('div');
+    hud.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);'+
+      'background:rgba(22,32,43,.93);color:#fff;font:600 11.5px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;'+
+      'padding:9px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;'+
+      'display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none;letter-spacing:.02em;';
+    var dot = document.createElement('span');
+    dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:#34D399;display:inline-block;animation:pfTourDot 1.4s ease-in-out infinite;';
+    var hudText = document.createElement('span');
+    hud.appendChild(dot); hud.appendChild(hudText);
+    document.body.appendChild(hud);
+    function setPhase(t, wait){
+      var label = t + (wait ? ' \u00b7 click the highlighted spot' : '');
+      if(hudText.textContent !== label) hudText.textContent = label;
+      dot.style.background = wait ? '#F59E0B' : '#34D399';
+    }
+
+    function scrollContainerFor(el){
+      var p = el && el.parentElement;
+      while(p && p !== document.body){
+        var cs = getComputedStyle(p);
+        if((cs.overflowY === 'auto' || cs.overflowY === 'scroll') && p.scrollHeight > p.clientHeight + 2) return p;
+        p = p.parentElement;
+      }
+      return null;
+    }
+    function scaleOf(){ var r = canvas.getBoundingClientRect(); return (r.width / canvas.offsetWidth) || 1; }
+    function scrollIntoContainer(el){
+      var c = scrollContainerFor(el); if(!c) return;
+      var s = scaleOf(), er = el.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      var target = c.scrollTop + (er.top - cr.top) / s - 46;
+      target = Math.max(0, Math.min(target, c.scrollHeight - c.clientHeight));
+      try { c.scrollTo({top: target, behavior: reduce ? 'auto' : 'smooth'}); } catch(e){ c.scrollTop = target; }
+      clearTimeout(c.__pfSnap);
+      c.__pfSnap = setTimeout(function(){ c.scrollTop = target; }, reduce ? 0 : 300);
+    }
+
+    var hlEl = null;
+    function clearHl(){ if(hlEl){ hlEl.classList.remove('pf-tour-hl','pf-tour-wait'); hlEl = null; } }
+    function highlight(el, wait){
+      clearHl(); if(!el) return;
+      el.classList.add('pf-tour-hl');
+      if(wait) el.classList.add('pf-tour-wait');
+      hlEl = el; scrollIntoContainer(el);
+    }
+
+    function findByText(scopeSel, childSel, text){
+      var scope = document.querySelector(scopeSel); if(!scope) return null;
+      var nodes = scope.querySelectorAll(childSel);
+      for(var i=0;i<nodes.length;i++){ if(nodes[i].textContent.indexOf(text) > -1) return nodes[i]; }
+      return null;
+    }
+    function resolve(st){
+      if(typeof st.pick === 'function') return st.pick();
+      if(st.find) return findByText(st.find.scope, st.find.child, st.find.text);
+      return document.querySelector(st.sel);
+    }
+
+    var TOUR = {};
+    
+    TOUR['screen:home'] = [
+      {phase:'\u2460 Home / Dashboard', sel:'#screen-home .grid-2', hold:1800},
+      {phase:'\u2461 Enter Feasibility', sel:'#screen-home .cat-stages .stage-card[onclick]', click:true}
+    ];
+    TOUR['screen:labbooklist'] = [
+      {phase:'\u2462 Feasibility Lab-books', sel:'#screen-labbooklist table', hold:1500},
+      {phase:'\u2462 Open a Lab-book', sel:'#screen-labbooklist tbody tr.clickable', click:true}
+    ];
+    TOUR['screen:testlist'] = [
+      {phase:'\u2463 Test list', sel:'#screen-testlist table', hold:1400},
+      {phase:'\u2463 Open the first test', sel:'#screen-testlist tbody tr.clickable', click:true}
+    ];
+    TOUR['screen:plan'] = [
+      {phase:'\u2464 Step 1 \u00b7 Material & Method', sel:'#screen-plan .wizard-steps', hold:1500},
+      {phase:'\u2464 Continue to Well information', sel:'#screen-plan .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:wellinfo'] = [
+      {phase:'\u2465 Step 2 \u00b7 Well information (auto-generated)', sel:'#screen-wellinfo .plate-wrap', hold:2000},
+      {phase:'\u2465 Continue to Experiment', sel:'#screen-wellinfo .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:method'] = [
+      {phase:'\u2466 Experiment \u00b7 pick the next sub-process', pick:function(){ return document.querySelector('#screen-method .flow-highlight'); }, click:true}
+    ];
+    TOUR['screen:tprep'] = [
+      {phase:'\u2466a Template preparation (manual)', sel:'#screen-tprep .fieldset', hold:1700},
+      {phase:'\u2466a Save & mark done', sel:'#screen-tprep .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:pcrsetup'] = [
+      {phase:'\u2466b PCR Setup \u00b7 choose Manual / Automation', sel:'#screen-pcrsetup .method-row', hold:1800},
+      {phase:'\u2466b Save & mark done', sel:'#screen-pcrsetup .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:dataupload'] = [
+      {phase:'\u2467 Step 4 \u00b7 Data upload', sel:'#screen-dataupload table', hold:1600},
+      {phase:'\u2467 Continue to Result', sel:'#screen-dataupload .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:result'] = [
+      {phase:'\u2468 Step 5 \u00b7 Result', sel:'#screen-result .result-layout', hold:1800},
+      {phase:'\u2468 Continue to Discussion', sel:'#screen-result .wizard-actions .btn.primary', click:true}
+    ];
+    TOUR['screen:discussion'] = [
+      {phase:'\u2469 Step 6 \u00b7 Discussion', sel:'#screen-discussion .fieldset', hold:1800},
+      {phase:'\u2469 Complete the test', sel:'#screen-discussion .wizard-actions .btn.primary', click:true}
+    ];
+
+
+    function currentContextId(){
+      var s = document.querySelector('.screen.active');
+      return s ? 'screen:' + s.id.replace('screen-', '') : null;
+    }
+
+    var activeContext = null, stepIdx = -1, stepTimer = null, stepWait = null;
+    function cleanupStepWait(){
+      clearTimeout(stepTimer);
+      if(stepWait){ try { stepWait.el.removeEventListener('click', stepWait.fn, true); } catch(e){} stepWait = null; }
+    }
+    function advanceFrom(fromCtx, fromIdx){
+      var ctx = currentContextId();
+      if(ctx && ctx !== fromCtx){ enterContext(ctx); }
+      else if(activeContext === fromCtx){ stepIdx = fromIdx + 1; attemptStep(); }
+    }
+    function attemptStep(){
+      var list = TOUR[activeContext] || [];
+      if(stepIdx >= list.length){ clearHl(); return; }
+      var st = list[stepIdx];
+      var el = resolve(st);
+      if(!el){ stepTimer = setTimeout(attemptStep, 130); return; }
+      if(st.phase) setPhase(st.phase, !!st.click);
+      highlight(el, !!st.click);
+      var myCtx = activeContext, myIdx = stepIdx;
+      if(st.click){
+        var onClick = function(){
+          cleanupStepWait();
+          if(typeof st.then === 'function'){ try { st.then(); } catch(e){} }
+          advanceFrom(myCtx, myIdx);
+        };
+        el.addEventListener('click', onClick, true);
+        stepWait = {el: el, fn: onClick};
+      } else {
+        stepTimer = setTimeout(function(){ advanceFrom(myCtx, myIdx); }, st.hold || 1600);
+      }
+    }
+    function enterContext(ctx){ cleanupStepWait(); activeContext = ctx; stepIdx = 0; attemptStep(); }
+
+    setInterval(function(){
+      var ctx = currentContextId();
+      if(ctx && ctx !== activeContext){ enterContext(ctx); return; }
+      if(stepWait && stepWait.el && !stepWait.el.isConnected) attemptStep();
+    }, 320);
+
+    var initial = currentContextId();
+    if(initial) setTimeout(function(){ enterContext(initial); }, 1200);
+  });
+})();
+</script>
+
 </body>
 </html>
 </template>
@@ -9804,7 +10360,8 @@ renderHome();
       thumbnail: imgReady("assets/projects/automation-experiment-planning/shot-1.png"),
       thumbnails: [
         imgReady("assets/projects/automation-experiment-planning/shot-1.png"),
-        imgReady("assets/projects/automation-experiment-planning/shot-2.png")
+        imgReady("assets/projects/automation-experiment-planning/shot-2.png"),
+        imgReady("assets/projects/automation-experiment-planning/shot-3.png")
       ],
       detailImages: [imgDiagram("assets/projects/automation-experiment-planning/menu-structure.svg")],
       workflowImages: [imgDiagram("assets/projects/automation-experiment-planning/user-scenario-flow.svg")]
@@ -9846,7 +10403,8 @@ renderHome();
       thumbnail: imgReady("assets/projects/feasibility-automation-sw/shot-1.png"),
       thumbnails: [
         imgReady("assets/projects/feasibility-automation-sw/shot-1.png"),
-        imgReady("assets/projects/feasibility-automation-sw/shot-2.png")
+        imgReady("assets/projects/feasibility-automation-sw/shot-2.png"),
+        imgReady("assets/projects/feasibility-automation-sw/shot-3.png")
       ],
       // Detail-view hero uses the interactive embedded mockup below
       // (<template id="prototype-embed--feasibility-automation-sw">), same as
@@ -9884,7 +10442,8 @@ renderHome();
       thumbnail: imgReady("assets/projects/prototype-doc-automation/shot-1.png"),
       thumbnails: [
         imgReady("assets/projects/prototype-doc-automation/shot-1.png"),
-        imgReady("assets/projects/prototype-doc-automation/shot-2.png")
+        imgReady("assets/projects/prototype-doc-automation/shot-2.png"),
+        imgReady("assets/projects/prototype-doc-automation/shot-3.png")
       ],
       detailImages: [imgDiagram("assets/projects/prototype-doc-automation/menu-structure.svg")],
       workflowImages: [imgDiagram("assets/projects/prototype-doc-automation/user-scenario-flow.svg")]
@@ -9920,7 +10479,8 @@ renderHome();
       thumbnail: imgReady("assets/projects/qc-report-automation/shot-1.png"),
       thumbnails: [
         imgReady("assets/projects/qc-report-automation/shot-1.png"),
-        imgReady("assets/projects/qc-report-automation/shot-2.png")
+        imgReady("assets/projects/qc-report-automation/shot-2.png"),
+        imgReady("assets/projects/qc-report-automation/shot-3.png")
       ],
       detailImages: [],
       // Ordered so the two images sharing row 1 of the 2-col grid have similar
@@ -9965,6 +10525,11 @@ renderHome();
       validation: "실제 사용자 테스트로 개선 흐름 검증",
       tools: null,
       thumbnail: imgReady("assets/projects/liquid-handler-workflow/shot.png"),
+      thumbnails: [
+        imgReady("assets/projects/liquid-handler-workflow/thumbnail.svg"),
+        imgReady("assets/projects/liquid-handler-workflow/thumbnail-2.svg"),
+        imgReady("assets/projects/liquid-handler-workflow/thumbnail-3.svg")
+      ],
       detailImages: [imgDiagram("assets/projects/liquid-handler-workflow/menu-structure.svg")],
       workflowImages: [imgDiagram("assets/projects/liquid-handler-workflow/user-scenario-flow.svg")]
     }
