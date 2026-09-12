@@ -1776,6 +1776,82 @@
     line-height: 1.6;
   }
 
+  /* Before → After: the transformation made visible as two stacked step
+     chains rather than a sentence — this is the "evidence" the HR feedback
+     asked for right under the Problem statement. */
+  .before-after {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 22px clamp(18px, 3vw, 28px);
+    background: var(--bg-soft);
+  }
+  @media (min-width: 700px) {
+    .before-after { grid-template-columns: 1fr auto 1fr; align-items: center; }
+  }
+  .ba-col-label {
+    font-size: var(--fs-caption); font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .ba-col.before .ba-col-label { color: var(--text-mute); }
+  .ba-col.after .ba-col-label { color: var(--accent); }
+  .ba-steps { display: flex; flex-direction: column; gap: 8px; }
+  .ba-step {
+    font-size: var(--fs-small); line-height: 1.5; color: var(--text-dim);
+    padding: 8px 12px; border-radius: 7px; background: transparent;
+    border: 1px solid var(--card-border);
+  }
+  .ba-col.after .ba-step { border-color: rgba(44, 75, 212, 0.25); background: rgba(44, 75, 212, 0.05); }
+  .ba-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-mute); font-size: 1.3rem; transform: rotate(90deg);
+  }
+  @media (min-width: 700px) { .ba-arrow { transform: none; } }
+
+  /* Key decisions as a decision log: the call itself, then why it won —
+     the piece the HR feedback said was missing from a flat bullet list. */
+  .decision-list { display: flex; flex-direction: column; gap: 16px; }
+  .decision-card {
+    border-left: 2px solid var(--accent);
+    padding: 2px 0 2px 18px;
+  }
+  .decision-card .dc-options { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .decision-card .dc-option {
+    font-size: var(--fs-caption); padding: 3px 10px; border-radius: 12px;
+    border: 1px solid var(--card-border); color: var(--text-mute);
+  }
+  .decision-card .dc-option.chosen {
+    border-color: var(--accent); color: var(--accent); font-weight: 700;
+    background: rgba(44, 75, 212, 0.06);
+  }
+  .decision-card .dc-decision {
+    font-size: var(--fs-small); font-weight: 600; color: var(--text);
+    line-height: 1.6; margin-bottom: 5px;
+  }
+  .decision-card .dc-why {
+    font-size: var(--fs-small); color: var(--text-dim); line-height: 1.7;
+  }
+  .decision-card .dc-why::before {
+    content: "WHY  "; font-weight: 700; letter-spacing: 0.06em;
+    color: var(--text-mute); font-size: var(--fs-caption);
+  }
+
+  /* My contribution: a simple bar row per category — how much of this
+     project's surface area was actually the candidate's own work. */
+  .contribution-list { display: flex; flex-direction: column; gap: 11px; }
+  .contrib-row { display: grid; grid-template-columns: 168px 1fr 38px; align-items: center; gap: 12px; }
+  .contrib-label { font-size: var(--fs-small); color: var(--text-dim); }
+  .contrib-bar { height: 7px; border-radius: 4px; background: var(--card-border); overflow: hidden; }
+  .contrib-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+  .contrib-pct { font-size: var(--fs-caption); color: var(--text-mute); text-align: right; }
+  @media (max-width: 480px) {
+    .contrib-row { grid-template-columns: 112px 1fr 34px; gap: 8px; }
+  }
+
+  .detail-note { margin-top: 10px; font-size: var(--fs-caption); color: var(--text-mute); line-height: 1.6; }
+
   .detail-image-row {
     display: grid;
     grid-template-columns: 1fr;
@@ -10334,8 +10410,23 @@ renderHome();
       scope: "Workflow · Requirement · Device Integration",
       context: null,
       problem: "제품개발 실험계획 업무가 표준화된 시스템 없이 개별적으로 처리되고 있었고, 자동화 장비와 연계된 일관된 workflow가 없었습니다.",
+      beforeAfter: {
+        before: ["실험계획 정보가 개인·부서별로 분산 관리", "자동화 장비가 실험계획과 별도로 운영", "화면·데이터 표준 없이 건별 대응"],
+        after: ["실험계획 모듈에서 조건·기준정보·업무 규칙을 통합 관리", "자동화 장비 workflow와 실험계획 데이터 연계", "요구사항 기준선 기반의 공통 구조"]
+      },
       goal: null,
       myRole: "실험계획 모듈의 분석/설계를 주도하고, 자동화 장비의 운영 workflow·조작 시나리오·예외 처리 로직을 설계했습니다. 외주 SI 업체와 화면 요구사항, 개발 범위, 구현 이슈, 일정을 직접 조율했습니다.",
+      // Draft estimate — placeholder percentages pending the candidate's own
+      // review; adjust to match actual participation before publishing.
+      contribution: [
+        { label: "Product Strategy", pct: 90 },
+        { label: "Workflow Design", pct: 100 },
+        { label: "Requirement", pct: 100 },
+        { label: "UX / UI", pct: 60 },
+        { label: "Development", pct: 10 },
+        { label: "QA / Validation", pct: 80 },
+        { label: "Stakeholder Management", pct: 100 }
+      ],
       process: [
         { stage: "Domain", desc: "제품개발 실험계획 업무 관찰" },
         { stage: "Workflow", desc: "자동화 대상 범위 정의" },
@@ -10345,8 +10436,22 @@ renderHome();
         { stage: "Validation", desc: "자동화 장비 조작 시나리오·예외 처리 검증" }
       ],
       keyDecisions: [
-        "실험 조건 입력부터 기준정보·업무 규칙까지 하나의 요구사항 구조로 정의해 SI와의 커뮤니케이션 기준선 마련",
-        "장비 운영 workflow에 예외 처리 로직을 별도로 설계해 운영 안정성을 확보"
+        {
+          options: [
+            { label: "화면 단위로 요구사항 개별 정의" },
+            { label: "조건·기준정보·업무 규칙 통합 구조", chosen: true }
+          ],
+          decision: "실험 조건 입력부터 기준정보·업무 규칙까지를 하나의 요구사항 구조로 정의",
+          why: "화면 단위로 흩어진 요구사항을 하나의 기준으로 묶어야 외주 SI와 개발 범위·일정을 같은 기준으로 논의할 수 있다고 판단했습니다."
+        },
+        {
+          options: [
+            { label: "정상 흐름 안에 예외 처리 포함" },
+            { label: "예외 처리를 별도 레이어로 분리", chosen: true }
+          ],
+          decision: "장비 운영 workflow에 예외 처리 로직을 별도 레이어로 분리 설계",
+          why: "정상 동작 흐름만 정의하면 실제 운영 중 오류 상황에서 장비가 불확실한 상태로 남을 위험이 있어, 예외 상황별 대응을 workflow 설계 단계에서부터 명시적으로 분리했습니다."
+        }
       ],
       result: [
         "실험계획 모듈의 요구사항 기준선과 개발 범위 수립",
@@ -10378,8 +10483,23 @@ renderHome();
       scope: "Workflow · Requirement · UX · Validation",
       context: null,
       problem: "실험계획·결과정리 업무가 Excel/NAS 기반 수작업으로 처리되어 제품개발 단계별로 반복적인 비효율이 발생하고 있었습니다.",
+      beforeAfter: {
+        before: ["Excel 파일로 실험계획 관리", "NAS 공유 폴더로 결과 공유", "수작업으로 데이터 정리·계산", "개별 문서로 산출물 작성"],
+        after: ["웹 기반 화면에서 실험계획 입력", "End-to-End workflow로 단계 간 데이터 연계", "표준 정책서·양식 기반 문서 자동 산출"]
+      },
       goal: null,
       myRole: "시스템 기획과 workflow 분석을 주도하고, 화면/기능 설계와 QA를 리드했습니다. 연구원 업무 관찰을 통해 AS-IS/TO-BE 프로세스를 직접 정의했습니다.",
+      // Draft estimate — placeholder percentages pending the candidate's own
+      // review; adjust to match actual participation before publishing.
+      contribution: [
+        { label: "Product Strategy", pct: 90 },
+        { label: "Workflow Design", pct: 100 },
+        { label: "Requirement", pct: 100 },
+        { label: "UX / UI", pct: 90 },
+        { label: "Development", pct: 20 },
+        { label: "QA / Validation", pct: 100 },
+        { label: "Stakeholder Management", pct: 80 }
+      ],
       process: [
         { stage: "Domain", desc: "연구원 업무 관찰" },
         { stage: "Workflow", desc: "AS-IS/TO-BE 프로세스 정의" },
@@ -10389,8 +10509,22 @@ renderHome();
         { stage: "Validation", desc: "테스트 시나리오 작성 및 QA 리드" }
       ],
       keyDecisions: [
-        "실험계획부터 문서화까지 하나의 End-to-End workflow로 설계해 단계 간 데이터 재입력을 제거",
-        "자동화 범위를 단계적으로(약 30% → 80% 목표) 확대하는 로드맵을 수립해 우선순위를 관리"
+        {
+          options: [
+            { label: "단계별 도구를 그대로 시스템화" },
+            { label: "End-to-End 단일 workflow로 재설계", chosen: true }
+          ],
+          decision: "실험계획부터 문서화까지를 하나의 End-to-End workflow로 설계",
+          why: "단계별로 분리된 도구(Excel/NAS/개별 문서)를 그대로 시스템화하면 동일한 정보를 여러 번 재입력하는 비효율이 반복된다고 판단해, 데이터가 한 번 입력되면 다음 단계까지 이어지도록 구조를 통일했습니다."
+        },
+        {
+          options: [
+            { label: "전체 업무를 한 번에 자동화" },
+            { label: "30% → 80% 단계적 로드맵", chosen: true }
+          ],
+          decision: "자동화 범위를 한 번에 확대하지 않고 약 30% → 80% 목표의 단계적 로드맵으로 설계",
+          why: "연구원 업무 전체를 한 번에 자동화하면 검증 범위와 현업 적응 부담이 커진다고 판단해, WBS·유저스토리 기반으로 우선순위를 나눠 단계적으로 확대했습니다."
+        }
       ],
       result: [
         "제품개발 시간 약 50% 단축에 기여",
@@ -10398,6 +10532,7 @@ renderHome();
         "실험 항목 작성 시간 약 50% 단축, 오류율 약 80% 감소",
         "자동화 범위를 약 30% → 80% 수준으로 확대하는 로드맵 수립"
       ],
+      resultNote: "측정 기준: 도입 전 유사 프로젝트 평균 대비, 적용 후 프로젝트 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
       validation: "테스트 시나리오 작성 및 QA 리드",
       tools: null,
       thumbnail: imgReady("assets/projects/feasibility-automation-sw/shot-1.png"),
@@ -10423,9 +10558,24 @@ renderHome();
       role: "워크플로 분석, 기능 설계, QA 담당",
       scope: null,
       context: null,
-      problem: null,
+      problem: "Feasibility 단계 자동화 구조가 Prototype 단계까지 이어지지 않아, 다음 단계에서는 다시 수작업 문서화로 되돌아가고 있었습니다.",
+      beforeAfter: {
+        before: ["Feasibility 단계만 자동화 구조 적용", "Prototype 단계는 별도 수작업 문서화"],
+        after: ["Prototype 단계까지 자동화 구조 확장", "단계별 입력 데이터·산출 문서·검토 흐름 정의"]
+      },
       goal: null,
       myRole: "workflow 분석, 기능 설계, QA를 담당했습니다. Feasibility 단계 자동화 구조를 Prototype 단계로 확장하며 단계별 입력 데이터, 산출 문서, 검토 흐름을 정의했습니다.",
+      // Draft estimate — placeholder percentages pending the candidate's own
+      // review; adjust to match actual participation before publishing.
+      contribution: [
+        { label: "Product Strategy", pct: 50 },
+        { label: "Workflow Design", pct: 100 },
+        { label: "Requirement", pct: 90 },
+        { label: "UX / UI", pct: 40 },
+        { label: "Development", pct: 10 },
+        { label: "QA / Validation", pct: 90 },
+        { label: "Stakeholder Management", pct: 40 }
+      ],
       process: [
         "Feasibility 단계 자동화 구조를 Prototype 단계로 확장",
         "단계별 입력 데이터, 산출 문서, 검토 흐름 정의",
@@ -10437,6 +10587,7 @@ renderHome();
         "문서 작성시간 약 70% 단축을 기대할 수 있는 구조 설계",
         "제품개발 문서 품질 일관성 확보 기반 마련"
       ],
+      resultNote: "\"기대\" 수치는 설계 단계에서의 추정치이며, 실측 데이터로 교체 예정입니다.",
       validation: null,
       tools: null,
       thumbnail: imgReady("assets/projects/prototype-doc-automation/shot-1.png"),
@@ -10459,9 +10610,24 @@ renderHome();
       role: "시스템 기획, 문서 표준화, QA, 운영 개선",
       scope: null,
       context: null,
-      problem: null,
+      problem: "QC 리포트·관련 문서가 담당자별로 반복 작성되며 형식과 품질이 제각각이었고, 표준화된 workflow가 없었습니다.",
+      beforeAfter: {
+        before: ["담당자별 반복 수작업 문서 작성", "산출물 형식·품질이 담당자마다 상이"],
+        after: ["표준 출력 양식과 QA 기준 정립", "재사용 가능한 표준 문서 workflow"]
+      },
       goal: null,
       myRole: "시스템 기획, 문서 표준화, QA, 운영 개선을 담당했습니다. 반복 문서 작성 workflow를 분석해 자동화 대상을 정의하고, 출력 양식·기능 요구사항·QA 기준을 설계했습니다.",
+      // Draft estimate — placeholder percentages pending the candidate's own
+      // review; adjust to match actual participation before publishing.
+      contribution: [
+        { label: "Product Strategy", pct: 80 },
+        { label: "Workflow Design", pct: 90 },
+        { label: "Requirement", pct: 70 },
+        { label: "UX / UI", pct: 30 },
+        { label: "Development", pct: 10 },
+        { label: "QA / Validation", pct: 90 },
+        { label: "Stakeholder Management", pct: 60 }
+      ],
       process: [
         "반복 문서 작성 workflow를 분석하고 자동화 대상 정의",
         "출력 양식, 기능 요구사항, QA 기준 설계",
@@ -10474,6 +10640,7 @@ renderHome();
         "R&D 및 품질 문서의 일관성과 재현성 개선",
         "반복 사용 가능한 표준 문서 workflow 구축"
       ],
+      resultNote: "측정 기준: 표준화 이전 문서 작성 시간 대비, 적용 후 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
       validation: null,
       tools: ["Jira", "Confluence", "Slack"],
       thumbnail: imgReady("assets/projects/qc-report-automation/shot-1.png"),
@@ -10505,8 +10672,23 @@ renderHome();
       scope: "Device Workflow · Usability · Validation",
       context: null,
       problem: "Liquid Handler 장비의 구동 절차가 복잡해 비전문 사용자가 운영하기 어려웠고, 수동 입력 단계에서 오류가 자주 발생했습니다.",
+      beforeAfter: {
+        before: ["복잡한 다단계 구동 절차", "수동 파라미터 입력에 크게 의존", "비전문 사용자의 단독 운영이 어려움"],
+        after: ["비전문 사용자 기준으로 단순화된 조작 흐름", "오류 발생 지점 우선 제거", "실제 사용자 테스트로 검증된 workflow"]
+      },
       goal: null,
       myRole: "장비 운영 workflow를 분석하고 사용성 개선안을 설계했으며, 실제 사용자 테스트를 통해 개선된 흐름을 직접 검증했습니다.",
+      // Draft estimate — placeholder percentages pending the candidate's own
+      // review; adjust to match actual participation before publishing.
+      contribution: [
+        { label: "Product Strategy", pct: 60 },
+        { label: "Workflow Design", pct: 100 },
+        { label: "Requirement", pct: 70 },
+        { label: "UX / UI", pct: 50 },
+        { label: "Development", pct: 10 },
+        { label: "QA / Validation", pct: 100 },
+        { label: "Stakeholder Management", pct: 50 }
+      ],
       process: [
         { stage: "Domain", desc: "장비 구동 절차·사용자 조작 흐름 분석" },
         { stage: "Requirement", desc: "수동 입력 단계·오류 발생 지점 식별" },
@@ -10514,14 +10696,29 @@ renderHome();
         { stage: "Validation", desc: "실제 사용자 테스트로 개선 흐름 검증" }
       ],
       keyDecisions: [
-        "오류 발생 가능성이 높은 수동 입력 지점을 우선 식별해 단순화 범위를 좁게 설정",
-        "실제 사용자 테스트를 통한 검증을 설계 프로세스에 포함"
+        {
+          options: [
+            { label: "전체 절차를 한 번에 재설계" },
+            { label: "오류 집중 지점부터 좁혀서 개선", chosen: true }
+          ],
+          decision: "오류 발생 가능성이 높은 수동 입력 지점을 먼저 식별해 단순화 범위를 좁게 설정",
+          why: "전체 절차를 한 번에 뜯어고치기보다 오류가 실제로 몰리는 지점부터 좁혀서 개선해야 비전문 사용자 기준의 체감 효과가 빠르게 나온다고 판단했습니다."
+        },
+        {
+          options: [
+            { label: "설계자 판단만으로 확정" },
+            { label: "사용자 테스트 검증 단계 포함", chosen: true }
+          ],
+          decision: "설계 프로세스 안에 실제 사용자 테스트 검증 단계를 포함",
+          why: "장비 조작 흐름은 설계자의 직관과 실제 사용자의 체감이 다를 수 있어, 개선안을 확정하기 전 사용자 테스트로 직접 확인하는 단계를 두었습니다."
+        }
       ],
       result: [
         "장비 setup 및 실행 시간 약 30% 단축",
         "비프로그래머 사용자의 장비 운영 가능성 제고",
         "수동 입력 오류 50% 이상 감소"
       ],
+      resultNote: "측정 기준: 개선 전/후 동일 장비·동일 작업 기준 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
       validation: "실제 사용자 테스트로 개선 흐름 검증",
       tools: null,
       thumbnail: imgReady("assets/projects/liquid-handler-workflow/shot.png"),
@@ -10805,6 +11002,54 @@ renderHome();
     return `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
   }
 
+  // Key decisions as a decision log. Accepts either a plain string (legacy
+  // shape) or a {decision, why, options} object — so older/unmigrated
+  // entries never break, they just render without the WHY line / options row.
+  // `options` is an optional array of {label, chosen} — the alternatives
+  // weighed before landing on `decision`.
+  function renderDecisions(items) {
+    if (!items || !items.length) return '';
+    return `<div class="decision-list">${items.map(d => {
+      const isObj = typeof d === 'object' && d !== null;
+      const decision = isObj ? d.decision : d;
+      const why = isObj ? d.why : null;
+      const options = isObj ? d.options : null;
+      return `<div class="decision-card">
+        ${options && options.length ? `<div class="dc-options">${options.map(o => `<span class="dc-option${o.chosen ? ' chosen' : ''}">${o.label}</span>`).join('')}</div>` : ''}
+        <div class="dc-decision">${decision}</div>
+        ${why ? `<div class="dc-why">${why}</div>` : ''}
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  // My contribution: `items` is [{label, pct}] — pct is 0-100.
+  function renderContribution(items) {
+    if (!items || !items.length) return '';
+    return `<div class="contribution-list">${items.map(c => `
+      <div class="contrib-row">
+        <div class="contrib-label">${c.label}</div>
+        <div class="contrib-bar"><div class="contrib-fill" style="width:${c.pct}%"></div></div>
+        <div class="contrib-pct">${c.pct}%</div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  // Before → After: the transformation this project produced, as two step
+  // chains rather than a sentence. `ba` is {before: string[], after: string[]}.
+  function renderBeforeAfter(ba) {
+    if (!ba || !ba.before || !ba.after) return '';
+    const col = (label, steps, cls) => `
+      <div class="ba-col ${cls}">
+        <div class="ba-col-label">${label}</div>
+        <div class="ba-steps">${steps.map(s => `<div class="ba-step">${s}</div>`).join('')}</div>
+      </div>`;
+    return `<div class="before-after">
+      ${col('Before', ba.before, 'before')}
+      <div class="ba-arrow" aria-hidden="true">→</div>
+      ${col('After', ba.after, 'after')}
+    </div>`;
+  }
+
   function renderParagraph(text) {
     return text ? `<p>${text}</p>` : '';
   }
@@ -11066,11 +11311,13 @@ renderHome();
       }</div>
       ${detailSection('Context', renderParagraph(cs.context))}
       ${detailSection('Problem', renderParagraph(cs.problem))}
+      ${detailSection('Before → After', renderBeforeAfter(cs.beforeAfter))}
       ${detailSection('Goal', renderParagraph(cs.goal))}
       ${detailSection('My role', renderParagraph(cs.myRole))}
+      ${detailSection('My contribution', renderContribution(cs.contribution))}
       ${detailSection('Process', renderProcess(cs.process))}
-      ${detailSection('Key decisions', renderList(cs.keyDecisions))}
-      ${detailSection('Result', renderList(cs.result))}
+      ${detailSection('Key decisions', renderDecisions(cs.keyDecisions))}
+      ${detailSection('Impact', renderList(cs.result) + (cs.resultNote ? `<p class="detail-note">${cs.resultNote}</p>` : ''))}
       ${detailSection('Validation', renderParagraph(cs.validation))}
       ${detailSection('Tools &amp; techniques', cs.tools && cs.tools.length ? `<div class="skills">${cs.tools.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>` : '')}
       <div class="detail-image-row">${cs.detailImages.map(i => imgPlaceholder(i, cs.name + ' detail')).join('')}</div>
