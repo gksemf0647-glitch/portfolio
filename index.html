@@ -588,35 +588,69 @@
 
   .about-statement .accent { color: inherit; }
 
-  /* ---- About: 3 capability statements — plain hairline-separated columns,
-     no cards, no marquee. ---- */
+  /* ---- About: "My Specialties" — an auto-scrolling card marquee (left →
+     right), pausing on hover. The viewport clips the track and fades its
+     two edges; the track itself is the card list rendered twice so the
+     infinite loop's seam is never visible. ---- */
   .strength-ticker {
     margin-bottom: clamp(36px, 4.5vw, 52px);
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent);
   }
 
   .capability-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
-    border-top: 1px solid var(--line);
+    display: flex;
+    gap: clamp(16px, 2vw, 24px);
+    width: max-content;
+    animation: capabilityMarquee 32s linear infinite;
   }
 
-  @media (min-width: 720px) {
-    .capability-grid { grid-template-columns: repeat(3, 1fr); }
+  .strength-ticker:hover .capability-grid,
+  .strength-ticker:focus-within .capability-grid {
+    animation-play-state: paused;
+  }
+
+  @keyframes capabilityMarquee {
+    from { transform: translateX(0%); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .capability-grid { animation: none; }
   }
 
   .capability-card {
-    padding: clamp(20px, 2.4vw, 28px) clamp(20px, 2.4vw, 28px) clamp(20px, 2.4vw, 28px) 0;
-    border-bottom: 1px solid var(--line);
+    flex: 0 0 clamp(260px, 34vw, 320px);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    padding: clamp(22px, 2.6vw, 28px);
   }
 
-  @media (min-width: 720px) {
-    .capability-card {
-      border-bottom: none;
-      border-left: 1px solid var(--line);
-      padding: 4px 0 4px clamp(20px, 2.4vw, 28px);
-    }
-    .capability-card:first-child { border-left: none; padding-left: 0; }
+  .capability-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .capability-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .capability-icon svg {
+    width: 20px;
+    height: 20px;
   }
 
   .capability-card .num {
@@ -625,7 +659,6 @@
     font-size: 0.66rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    margin-bottom: 14px;
     font-variant-numeric: tabular-nums;
   }
 
@@ -10358,12 +10391,30 @@ renderHome();
   const aboutStatement =
     "복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·개발·검증·운영을 하나로 잇고, 실제로 쓰이는 제품으로 만듭니다.";
 
-  // Paraphrases of the site's own existing positioning copy (hero-sub) and
-  // the former "강점" cards — no new claims introduced.
+  // "My Specialties" — per user-provided reference content. `icon` is a
+  // small hand-drawn line icon (currentColor stroke) so the card doesn't
+  // need any external icon asset.
   const capabilities = [
-    { num: "01", title: "DOMAIN → PRODUCT", desc: "복잡한 도메인 프로세스를 관찰하고 구조화해 제품으로 전환합니다." },
-    { num: "02", title: "SYSTEM THINKING", desc: "현행 프로세스를 분해해 자동화 가능한 영역을 정의하고, 시스템 관점의 구조로 설계합니다." },
-    { num: "03", title: "END-TO-END", desc: "요구사항부터 설계·개발·검증·운영까지 전 과정에 관여합니다." }
+    {
+      num: "01", title: "Stakeholder Communication",
+      desc: "다양한 이해관계자(개발, 사용자, 외주 등)와 협업하며 프로젝트 목표를 일관되게 조율하고 이끌어 갑니다.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c0-3 2.5-5.2 5.5-5.2s5.5 2.2 5.5 5.2"/><circle cx="17.5" cy="7.8" r="2.3"/><path d="M15.8 14c2.3.5 3.7 2.3 3.7 5"/></svg>'
+    },
+    {
+      num: "02", title: "Documentation & Traceability",
+      desc: "Jira, Confluence, MS DevOps 등 다양한 협업 툴을 활용해 산출물을 표준화하고, 요구사항부터 테스트까지 전 과정을 추적 가능한 형태로 문서화합니다.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3.2h6v2.4H9z"/><path d="M8.3 11h7.4M8.3 14.3h7.4M8.3 17.6h4.5"/></svg>'
+    },
+    {
+      num: "03", title: "END-TO-END",
+      desc: "사용자 요구 분석부터 화면 설계, 기능 정의, QA, 릴리즈까지 전 과정에 관여합니다.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.5" cy="12" r="2.1"/><circle cx="19.5" cy="12" r="2.1"/><path d="M6.6 12h10.8"/><path d="M14.3 8.2 18.1 12l-3.8 3.8"/></svg>'
+    },
+    {
+      num: "04", title: "VOC-Driven Improvement",
+      desc: "사용자 피드백을 분석해 문제의 원인을 파악하고, 개선 및 기능 재설계를 통해 사용자 만족도를 향상시킵니다.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.8h16v9.4H9.5L5 19v-3.8H4z"/><path d="M8 10.3h.01M12 10.3h.01M16 10.3h.01"/></svg>'
+    }
   ];
 
   // Compact subset only — full history lives in each project's case study.
@@ -11270,14 +11321,23 @@ renderHome();
   })();
   document.getElementById('aboutStatement').textContent = aboutStatement;
 
-  // Static 3-up list (was an infinite marquee — removed in the 2025 refactor).
-  document.getElementById('capabilityList').innerHTML = capabilities.map((c, i) => `
-    <div class="capability-card reveal" style="--i:${i}">
-      <div class="num">${c.num}</div>
-      <h3>${c.title}</h3>
-      <p>${c.desc}</p>
-    </div>
-  `).join('');
+  // Auto-scrolling marquee (left → right), pausing on hover. The track is
+  // the card list rendered twice back-to-back so the loop point (translateX
+  // -50% → 0) lands on identical content and reads as seamless.
+  (function renderCapabilityMarquee() {
+    const cardHtml = (c) => `
+      <div class="capability-card interactive-card">
+        <div class="capability-card-head">
+          <span class="capability-icon" aria-hidden="true">${c.icon}</span>
+          <span class="num">${c.num}</span>
+        </div>
+        <h3>${c.title}</h3>
+        <p>${c.desc}</p>
+      </div>
+    `;
+    document.getElementById('capabilityList').innerHTML =
+      capabilities.map(cardHtml).join('') + capabilities.map(cardHtml).join('');
+  })();
 
   document.getElementById('aboutCompactGrid').innerHTML = `
     <div class="about-compact-block reveal" style="--i:0">
