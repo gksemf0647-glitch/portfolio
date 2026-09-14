@@ -800,8 +800,26 @@
   }
 
   .timeline-item .role {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
     font-weight: 700;
     font-size: 0.98rem;
+  }
+
+  .company-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 7px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 800;
   }
 
   .timeline-item .period {
@@ -813,13 +831,47 @@
   .timeline-item .focus {
     color: var(--text-dim);
     font-size: 0.82rem;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
+  }
+
+  /* Career summary: categorized duty breakdown, between the role line and
+     the skill tags — same caption/list treatment as a case study's
+     .detail-section so it reads consistently with the rest of the site. */
+  .career-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px 28px;
+    padding: 16px 0;
+    margin-bottom: 4px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .career-summary-group h4 {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+    margin-bottom: 7px;
+  }
+
+  .career-summary-group ul {
+    padding-left: 1.1em;
+    margin: 0;
+  }
+
+  .career-summary-group li {
+    font-size: var(--fs-small);
+    line-height: 1.7;
+    color: var(--text-dim);
   }
 
   .timeline-item .tag-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
+    margin-top: 14px;
   }
 
   /* Dark bookend chapter, mirroring Hero at the other end of the page.
@@ -2180,15 +2232,21 @@
     align-items: center;
     gap: 8px;
     font-size: 0.82rem;
+    font-weight: 500;
     color: var(--text);
-    background: var(--bg-soft);
-    border: 1px solid var(--line);
+    background: var(--surface);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 7px 13px;
-    transition: border-color var(--duration) var(--ease);
+    box-shadow: var(--card-shadow);
+    transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease), transform var(--duration) var(--ease);
   }
 
-  .tool-chip:hover { border-color: var(--text-dim); }
+  .tool-chip:hover {
+    border-color: var(--accent-border);
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-1px);
+  }
 
   .tool-chip-icon {
     width: 15px;
@@ -2533,9 +2591,9 @@
   .capability-mini .skills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
   .capability-mini .skill-tag {
     display: inline-flex;
-    font-size: 0.78rem; font-weight: 500; color: var(--text-dim);
-    padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px;
-    background: transparent;
+    font-size: 0.78rem; font-weight: 600; color: var(--accent-strong);
+    padding: 6px 13px; border: 1px solid var(--accent-border); border-radius: 999px;
+    background: var(--accent-soft);
   }
   .capability-mini .skill-tag:not(:last-child)::after { content: none; }
   .capability-mini .num { color: var(--text-mute); }
@@ -10319,13 +10377,21 @@ renderHome();
   // ==== EXPERIENCE ============================================================
   // Same two roles as before, reframed as "selected experience" tags instead
   // of full sentence bullets — every tag is a compression of the corresponding
-  // original bullet, not a new claim.
+  // original bullet, not a new claim. `summary` (added per user request) is
+  // the categorized breakdown of actual duties at each company.
   const experience = [
     {
       period: "2020 — PRESENT",
       domain: "Seegene Inc.",
       focus: "System Planning · Project Manager · Product Owner",
       role: "전략기획2팀 · 대리",
+      summary: [
+        { category: "서비스 기획/설계", items: ["분자진단 제품 개발 자동화 SW 기획", "사내 연구 행동 및 문서 양식 표준화"] },
+        { category: "UI/UX 디자인", items: ["연구원 사용성 기반 전자랩노트, 장비제어 SW 인터페이스 설계", "스타일 가이드 수립", "사용성 개선을 위한 UX 디자인"] },
+        { category: "QA", items: ["Test case 작성", "사용 시나리오 기반 테스트 및 테스트 리포트 작성", "협업툴 이용하여 이슈 트래킹"] },
+        { category: "SW 출시 및 운영", items: ["SW 배포", "사용자 피드백 반영 및 지속 개선"] },
+        { category: "자동화 장비 연구", items: ["신규 입사자들 대상으로 자동화 시스템 교육", "자동화 장비 관리 및 세팅", "신규 자동화 장비 적용 및 매뉴얼 제작"] }
+      ],
       tags: [
         "R&D Workflow Analysis", "Experiment Planning Automation", "Equipment Automation Workflow",
         "Requirement & Screen Design", "Cross-functional Coordination", "Validation & Issue Management"
@@ -10336,6 +10402,11 @@ renderHome();
       domain: "EuBiologics Co., LTD",
       focus: "Lab QA · Technical Support",
       role: "분석연구팀 · 사원",
+      summary: [
+        { category: "안정성 시험", items: ["생화학 시험", "이화학 시험"] },
+        { category: "시험법 개발 및 밸리데이션", items: ["시험법 개발 밸리데이션", "백신 항체가분석 시험법 개발"] },
+        { category: "연구소 QA", items: ["연구소 SOP 제정 및 개정", "임상시험검체 분석기관 지정 관련 문서 관리", "시험일지 작성"] }
+      ],
       tags: ["Test Method Development", "Stability Testing", "SOP Documentation", "Tech Transfer Support"]
     }
   ];
@@ -11224,13 +11295,27 @@ renderHome();
   `;
 
   // ==== EXPERIENCE =============================================================
+  // Company mark: a plain initial-letter badge (no logo assets on file) —
+  // avoids pulling in third-party brand marks while still giving each row
+  // a visual anchor before the company name.
+  function companyLogo(name) {
+    return `<span class="company-logo" aria-hidden="true">${name.trim().charAt(0)}</span>`;
+  }
   document.getElementById('experienceList').innerHTML = experience.map((e, idx) => `
     <div class="timeline-item interactive-card reveal" style="--i:${idx}">
       <div class="role-row">
-        <span class="role">${e.domain}</span>
+        <span class="role">${companyLogo(e.domain)}${e.domain}</span>
         <span class="period">${e.period}</span>
       </div>
       <div class="focus">${e.focus} · ${e.role}</div>
+      <div class="career-summary">
+        ${e.summary.map(g => `
+          <div class="career-summary-group">
+            <h4>${g.category}</h4>
+            <ul>${g.items.map(i => `<li>${i}</li>`).join('')}</ul>
+          </div>
+        `).join('')}
+      </div>
       <div class="tag-row">${e.tags.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>
     </div>
   `).join('');
