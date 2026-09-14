@@ -974,6 +974,11 @@
     margin: 0 0 14px;
   }
 
+  .hero-sub .hero-name {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
   .hero-sub-ko {
     color: var(--text-dim);
     font-size: 0.86rem;
@@ -1980,33 +1985,32 @@
   .hero-stats {
     display: flex;
     flex-wrap: wrap;
-    gap: clamp(28px, 6vw, 72px);
-    margin: clamp(44px, 7vw, 72px) 0 0;
-    padding-top: clamp(28px, 4vw, 40px);
-    border-top: 1px solid var(--line);
+    gap: clamp(28px, 6vw, 56px);
+    margin-top: clamp(28px, 4vw, 40px);
   }
 
   .hero-stat {
-    text-align: left;
-    min-width: 84px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
   .hero-stat-num {
-    display: block;
-    font-size: clamp(1.9rem, 4vw, 2.7rem);
+    font-size: clamp(2rem, 4vw, 2.6rem);
     font-weight: 800;
-    color: var(--text);
+    color: var(--accent);
     letter-spacing: -0.03em;
+    line-height: 1;
     font-variant-numeric: tabular-nums;
   }
 
   .hero-stat-label {
-    display: block;
-    margin-top: 6px;
-    font-size: 0.72rem;
+    max-width: 7em;
+    font-size: 0.7rem;
     font-weight: 600;
-    text-transform: uppercase;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.4;
     color: var(--text-dim);
   }
 
@@ -2582,6 +2586,7 @@
     }
     .hero-lead-col { display: flex; flex-direction: column; }
     .hero-cta { margin-top: auto; padding-top: 28px; }
+    .hero-lead-col .hero-stats { margin-top: auto; padding-top: 28px; }
     .hero-meta {
       border-top: none;
       padding-left: clamp(22px, 2.6vw, 44px);
@@ -2812,11 +2817,9 @@
       <div class="hero-lead-col">
         <p class="hero-sub reveal" style="--i:2">
           복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·검증·운영을
-          하나의 제품 흐름으로 잇습니다.
+          하나의 제품 흐름으로 잇는 기획자 <span class="hero-name">김한들</span>입니다.
         </p>
-        <div class="hero-cta reveal" style="--i:4">
-          <a class="btn ghost" href="#projects">프로젝트 보기</a>
-        </div>
+        <div class="hero-stats reveal" id="heroStats" style="--i:4"></div>
       </div>
       <dl class="hero-meta reveal" style="--i:4">
         <div><dt>Role</dt><dd>Sevice Planner · Producr Manager · Product Owner</dd></div>
@@ -2827,47 +2830,6 @@
     <a href="#projects" class="hero-scrolldown" aria-label="프로젝트 섹션으로 스크롤">Scroll</a>
   </div>
 </header>
-
-<section id="approach" aria-label="Approach">
-  <div class="wrap">
-    <div class="approach-head">
-      <div class="approach-eyebrow reveal">Approach</div>
-      <h2 class="reveal" style="--i:1">복잡성을 구조로, 구조를 제품으로. 요구사항부터 운영까지 하나의 흐름으로 잇습니다.</h2>
-    </div>
-    <div class="approach-flow">
-      <div class="approach-step reveal" style="--i:0">
-        <span class="step-num">01</span>
-        <span class="step-label">Complexity</span>
-        <h3>Complexity is everywhere.</h3>
-        <p>사용자·데이터·규칙·장비·이해관계자·예외가 서로 얽힌 도메인입니다.</p>
-      </div>
-      <div class="approach-step reveal" style="--i:1">
-        <span class="step-num">02</span>
-        <span class="step-label">Structure</span>
-        <h3>Structure the complexity.</h3>
-        <p>복잡한 관계를 구조화하고 핵심 흐름을 정의합니다.</p>
-      </div>
-      <div class="approach-step reveal" style="--i:2">
-        <span class="step-num">03</span>
-        <span class="step-label">Requirement</span>
-        <h3>Turn process into requirements.</h3>
-        <p>도메인 프로세스를 명확한 요구사항과 제품 구조로 전환합니다.</p>
-      </div>
-      <div class="approach-step reveal" style="--i:3">
-        <span class="step-num">04</span>
-        <span class="step-label">Product Lifecycle</span>
-        <h3>From requirements to operation.</h3>
-        <p>발굴부터 정의·설계·전달·검증·운영까지 하나의 흐름으로 연결합니다.</p>
-      </div>
-      <div class="approach-step reveal" style="--i:4">
-        <span class="step-num">05</span>
-        <span class="step-label">Digital Product</span>
-        <h3>From complexity to product.</h3>
-        <p>사용자·업무 흐름·데이터·규칙·화면·검증·운영이 하나의 일관된 제품으로 수렴합니다.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section id="projects">
   <div class="wrap">
@@ -2915,7 +2877,7 @@
             <span class="num title-reveal" style="--i:0">03</span><span class="code title-reveal" style="--i:1">EXPERIENCE</span>
           </div>
         </div>
-        <p class="exp-rail-note reveal" style="--i:2">제품 기획부터 검증·운영까지, 도메인 중심 B2B 제품을 5년째 만들고 있습니다.</p>
+        <p class="exp-rail-note reveal" style="--i:2">제품 기획부터 검증·운영까지, 도메인 중심 B2B 제품을 6년째 만들고 있습니다.</p>
       </div>
       <div class="timeline" id="experienceList"></div>
     </div>
@@ -2942,7 +2904,6 @@
     <div>
       <div class="footer-eyebrow">Contact</div>
       <div class="footer-contact-label">Get in touch</div>
-      <a class="footer-mail" href="mailto:handl94@naver.com">handl94@naver.com</a>
     </div>
     <div class="footer-side">
       <div class="footer-links" id="footerLinks"></div>
@@ -10323,11 +10284,13 @@ renderHome();
   // white ground (never cropped), unlike screenshot thumbnails which cover-fill.
   function imgDiagram(path) { return { path: path, realSrc: path, diagram: true }; }
 
-  // ==== HERO: stat counters + partner logos ===================================
+  // ==== HERO: stat counters ====================================================
+  // Sourced from mycareer.md: 경력사항 6년 6개월(2020.01~현재), 프로젝트 7건,
+  // Feasibility 자동화 SW 프로젝트 성과(제품개발 시간 약 50% 단축).
   const heroStats = [
-    { value: 10, suffix: "+", label: "Projects Completed" },
-    { value: 5, suffix: "+", label: "Years Experience" },
-    { value: 100, suffix: "%", label: "Passion & Quality" }
+    { value: 6, suffix: "+", label: "Years Experience" },
+    { value: 8, suffix: "+", label: "Projects Delivered" },
+    { value: 50, suffix: "%", label: "Faster Product Dev" }
   ];
 
   // ==== ABOUT ================================================================
@@ -10360,8 +10323,9 @@ renderHome();
   const experience = [
     {
       period: "2020 — PRESENT",
-      focus: "Product · System Planning",
-      role: "씨젠 · 전략기획2팀 · 대리",
+      domain: "Seegene Inc.",
+      focus: "System Planning · Project Manager · Product Owner",
+      role: "전략기획2팀 · 대리",
       tags: [
         "R&D Workflow Analysis", "Experiment Planning Automation", "Equipment Automation Workflow",
         "Requirement & Screen Design", "Cross-functional Coordination", "Validation & Issue Management"
@@ -10369,9 +10333,9 @@ renderHome();
     },
     {
       period: "2020.01 — 2020.05",
-      domain: "BIOCHEMISTRY R&D",
+      domain: "EuBiologics Co., LTD",
       focus: "Lab QA · Technical Support",
-      role: "유바이오로직스 · R&D · 사원",
+      role: "분석연구팀 · 사원",
       tags: ["Test Method Development", "Stability Testing", "SOP Documentation", "Tech Transfer Support"]
     }
   ];
@@ -11174,16 +11138,22 @@ renderHome();
     </a>
   `).join('');
 
-  // ==== HERO: stat counters (module removed in 2025 refactor — the meta
-  //      list carries the structured info now; count-up kept as a no-op
-  //      guard in case the markup is reinstated). ==============================
+  // ==== HERO: stat counters (count-up on scroll into view) =====================
   (function initHeroCounters() {
+    const heroStatsEl = document.getElementById('heroStats');
+    if (!heroStatsEl) return;
+    heroStatsEl.innerHTML = heroStats.map(s => `
+      <div class="hero-stat">
+        <span class="hero-stat-num" data-count-to="${s.value}" data-suffix="${s.suffix}">0${s.suffix}</span>
+        <span class="hero-stat-label">${s.label}</span>
+      </div>
+    `).join('');
     const nums = document.querySelectorAll('#heroStats .hero-stat-num');
     if (!nums.length) return;
     function animate(el) {
       const to = parseInt(el.dataset.countTo, 10) || 0;
       const suffix = el.dataset.suffix || '';
-      const duration = 1200;
+      const duration = 1400;
       const start = performance.now();
       function tick(now) {
         const p = Math.min((now - start) / duration, 1);
@@ -11193,14 +11163,18 @@ renderHome();
       }
       requestAnimationFrame(tick);
     }
+    // Delayed to start only after the .reveal fade-in finishes (--i * 70ms
+    // delay + 600ms transition on the parent) — otherwise the count-up runs
+    // while the element is still fading in and is barely seen.
+    function animateAfterReveal(el) { setTimeout(() => animate(el), 700); }
     if (typeof IntersectionObserver === 'undefined') {
-      nums.forEach(animate);
+      nums.forEach(animateAfterReveal);
       return;
     }
     const counterObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          animate(entry.target);
+          animateAfterReveal(entry.target);
           counterObserver.unobserve(entry.target);
         }
       });
