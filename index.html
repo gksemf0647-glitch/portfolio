@@ -588,8 +588,8 @@
 
   .about-statement .accent { color: inherit; }
 
-  /* ---- About: "My Specialties" — an auto-scrolling card marquee (left →
-     right), pausing on hover. The viewport clips the track and fades its
+  /* ---- About: "My Specialties" — an auto-scrolling card marquee (right →
+     left), pausing on hover. The viewport clips the track and fades its
      two edges; the track itself is the card list rendered twice so the
      infinite loop's seam is never visible. ---- */
   .strength-ticker {
@@ -10437,11 +10437,12 @@ renderHome();
       focus: "System Planning · Project Manager · Product Owner",
       role: "전략기획2팀 · 대리",
       summary: [
-        { category: "서비스 기획/설계", items: ["분자진단 제품 개발 자동화 SW 기획", "사내 연구 행동 및 문서 양식 표준화"] },
-        { category: "UI/UX 디자인", items: ["연구원 사용성 기반 전자랩노트, 장비제어 SW 인터페이스 설계", "스타일 가이드 수립", "사용성 개선을 위한 UX 디자인"] },
-        { category: "QA", items: ["Test case 작성", "사용 시나리오 기반 테스트 및 테스트 리포트 작성", "협업툴 이용하여 이슈 트래킹"] },
+        { category: "서비스 기획/설계", items: ["제품 개발 자동화 SW 기획/설계", "사내 연구 행동 및 문서 양식 표준화", "User Story 작성"] },
+        { category: "UI/UX 디자인", items: ["전자랩노트, 장비제어 SW 인터페이스 설계", "스타일 가이드 수립", "사용성 개선을 위한 UX 디자인"] },
+        { category: "QA", items: ["Test case 작성", "사용자 시나리오 작성", "테스트 진행 및 리포트 작성", "이슈 트래킹 및 오류 개선"] },
         { category: "SW 출시 및 운영", items: ["SW 배포", "사용자 피드백 반영 및 지속 개선"] },
-        { category: "자동화 장비 연구", items: ["신규 입사자들 대상으로 자동화 시스템 교육", "자동화 장비 관리 및 세팅", "신규 자동화 장비 적용 및 매뉴얼 제작"] }
+        { category: "자동화 장비 연구", items: ["자동화 시스템 교육", "자동화 장비 관리 및 세팅", "신규 자동화 장비 적용 및 매뉴얼 제작"] },
+        { category: "분자진단 제품 개발", items: ["올리고디자인", "Feasibility", "시작품 생산 및 이관", "Verification & Validation"] }
       ],
       tags: [
         "R&D Workflow Analysis", "Experiment Planning Automation", "Equipment Automation Workflow",
@@ -10451,7 +10452,7 @@ renderHome();
     {
       period: "2020.01 — 2020.05",
       domain: "EuBiologics Co., LTD",
-      focus: "Lab QA · Technical Support",
+      focus: "R&D · Lab QA",
       role: "분석연구팀 · 사원",
       summary: [
         { category: "안정성 시험", items: ["생화학 시험", "이화학 시험"] },
@@ -11321,9 +11322,9 @@ renderHome();
   })();
   document.getElementById('aboutStatement').textContent = aboutStatement;
 
-  // Auto-scrolling marquee (left → right), pausing on hover. The track is
+  // Auto-scrolling marquee (right → left), pausing on hover. The track is
   // the card list rendered twice back-to-back so the loop point (translateX
-  // -50% → 0) lands on identical content and reads as seamless.
+  // 0 → -50%) lands on identical content and reads as seamless.
   (function renderCapabilityMarquee() {
     const cardHtml = (c) => `
       <div class="capability-card interactive-card">
