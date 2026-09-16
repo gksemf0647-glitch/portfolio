@@ -2126,6 +2126,48 @@
     cursor: pointer;
   }
 
+  /* Floating scroll-to-top / scroll-to-bottom shortcuts. Fixed to the
+     viewport so they stay put over both the main page and the case-study
+     detail overlay; z-index sits above the overlay (60) but below the GNB
+     (70) so nav always wins if the two ever visually overlap. */
+  .scroll-fab-group {
+    position: fixed;
+    right: clamp(16px, 3vw, 28px);
+    bottom: clamp(16px, 3vw, 28px);
+    z-index: 65;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .scroll-fab {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--card-border);
+    background: #fff;
+    color: var(--text-dim);
+    box-shadow: 0 4px 16px rgba(17, 24, 39, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background var(--duration) var(--ease), color var(--duration) var(--ease),
+      border-color var(--duration) var(--ease), transform var(--duration) var(--ease), opacity 0.2s ease;
+  }
+  .scroll-fab svg { width: 18px; height: 18px; }
+  .scroll-fab:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: translateY(-2px); }
+  .scroll-fab:disabled { opacity: 0.35; cursor: default; pointer-events: none; transform: none; }
+
+  @media (max-width: 640px) {
+    .scroll-fab { width: 38px; height: 38px; }
+    .scroll-fab svg { width: 16px; height: 16px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-fab { transition: none; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .ps-block, .case-cta::after, .work-title, .more-work-title,
     .work-thumb .img-placeholder, .more-work-thumb .img-placeholder,
@@ -3086,6 +3128,18 @@
      back-button friendly via pushState, but not a separate HTML document. -->
 <div class="work-detail-overlay" id="workDetailOverlay" hidden>
   <div class="wrap work-detail-inner" id="workDetailContent"></div>
+</div>
+
+<!-- Floating scroll shortcuts — jump straight to the top or bottom of
+     whichever view is active (main page, or the case-study detail overlay
+     when it's open; see scrollFabTarget()/initScrollFab() in the script). -->
+<div class="scroll-fab-group" id="scrollFabGroup">
+  <button type="button" class="scroll-fab" id="scrollTopBtn" aria-label="맨 위로 이동">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>
+  </button>
+  <button type="button" class="scroll-fab" id="scrollBottomBtn" aria-label="맨 아래로 이동">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>
+  </button>
 </div>
 
 <!-- ============================================================================
@@ -10506,7 +10560,9 @@ renderHome();
     tickerPrevAria: tr("이전 카드", "Previous card", "前のカード"),
     tickerNextAria: tr("다음 카드", "Next card", "次のカード"),
     lightboxCloseAria: tr("닫기", "Close", "閉じる"),
-    langSwitchAria: tr("언어 선택", "Language", "言語選択")
+    langSwitchAria: tr("언어 선택", "Language", "言語選択"),
+    scrollTopAria: tr("맨 위로 이동", "Scroll to top", "一番上へ移動"),
+    scrollBottomAria: tr("맨 아래로 이동", "Scroll to bottom", "一番下へ移動")
   };
 
   const aboutStatement = tr(
@@ -12260,6 +12316,59 @@ renderHome();
     update();
   })();
 
+  // ---- Floating scroll-to-top / scroll-to-bottom shortcuts ----
+  // Targets the case-study detail overlay's own scroll container while
+  // it's open (it scrolls independently of the frozen main page), and the
+  // window otherwise. Each button disables itself once it's already at
+  // that edge.
+  (function initScrollFab() {
+    var topBtn = document.getElementById('scrollTopBtn');
+    var bottomBtn = document.getElementById('scrollBottomBtn');
+    var overlay = document.getElementById('workDetailOverlay');
+    if (!topBtn || !bottomBtn) return;
+
+    function activeScroller() {
+      return (overlay && !overlay.hidden) ? overlay : null; // null = use window/document
+    }
+
+    function metrics() {
+      var el = activeScroller();
+      if (el) return { top: el.scrollTop, max: el.scrollHeight - el.clientHeight };
+      var doc = document.documentElement;
+      return { top: window.pageYOffset, max: doc.scrollHeight - doc.clientHeight };
+    }
+
+    function update() {
+      var m = metrics();
+      var max = Math.max(m.max, 0);
+      topBtn.disabled = m.top <= 2;
+      bottomBtn.disabled = max <= 2 || m.top >= max - 2;
+    }
+
+    function scrollToEdge(edge) {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var behavior = reduceMotion ? 'auto' : 'smooth';
+      var el = activeScroller();
+      var target = edge === 'top' ? 0 : (el ? el.scrollHeight : document.documentElement.scrollHeight);
+      if (el) el.scrollTo({ top: target, behavior: behavior });
+      else window.scrollTo({ top: target, behavior: behavior });
+    }
+
+    topBtn.addEventListener('click', function () { scrollToEdge('top'); });
+    bottomBtn.addEventListener('click', function () { scrollToEdge('bottom'); });
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    if (overlay) {
+      overlay.addEventListener('scroll', update, { passive: true });
+      // The overlay's own scroll resets each time it opens/closes — re-check
+      // right when its `hidden` attribute flips rather than waiting for a
+      // scroll event that may never fire (e.g. it opens already at top).
+      new MutationObserver(update).observe(overlay, { attributes: true, attributeFilter: ['hidden'] });
+    }
+    update();
+  })();
+
   var navObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
@@ -12308,6 +12417,10 @@ renderHome();
     if (lbClose) lbClose.setAttribute('aria-label', t(UI.lightboxCloseAria));
     var railNote = document.getElementById('expRailNote');
     if (railNote) railNote.textContent = t(expRailNote);
+    var scrollTopBtnEl = document.getElementById('scrollTopBtn');
+    if (scrollTopBtnEl) scrollTopBtnEl.setAttribute('aria-label', t(UI.scrollTopAria));
+    var scrollBottomBtnEl = document.getElementById('scrollBottomBtn');
+    if (scrollBottomBtnEl) scrollBottomBtnEl.setAttribute('aria-label', t(UI.scrollBottomAria));
   }
 
   const LANG_OPTIONS = [
