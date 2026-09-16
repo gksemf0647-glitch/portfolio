@@ -203,11 +203,14 @@
     .scroll-progress { transition: none; }
   }
 
-  /* 상단 네비 — editorial: text + underline indicator, no filled pill */
+  /* 상단 네비 — editorial: text + underline indicator, no filled pill.
+     z-index sits ABOVE .work-detail-overlay (60) so the GNB stays usable
+     (including the language switch and Contact) while a case-study detail
+     is open — it doesn't get covered by the overlay. */
   nav {
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 70;
     background: rgba(255, 255, 255, 0.86);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--card-border);
@@ -226,6 +229,9 @@
     font-size: 0.98rem;
     letter-spacing: -0.01em;
     white-space: nowrap;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
   }
 
   .nav-right {
@@ -253,7 +259,7 @@
     transition: background var(--duration) var(--ease), transform var(--duration) var(--ease);
   }
 
-  .nav-contact:hover { background: var(--accent); transform: translateY(-1px); }
+  .nav-contact:hover { background: var(--accent); color: #fff; transform: translateY(-1px); }
 
   nav a {
     display: inline-flex;
@@ -282,6 +288,36 @@
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
+  }
+
+  /* Language switcher — same text-button voice as the nav links themselves
+     (no filled pill), just compact enough to sit inline in the GNB. */
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    font-family: var(--font-display);
+  }
+  .lang-switch button {
+    font-family: inherit;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 6px;
+    border-radius: 4px;
+    transition: color var(--duration) var(--ease), background var(--duration) var(--ease);
+  }
+  .lang-switch button:hover { color: var(--text); }
+  .lang-switch button.active { color: var(--text); background: var(--card-border); }
+  .lang-switch .sep { color: var(--card-border); font-size: 0.7rem; }
+
+  @media (max-width: 720px) {
+    .lang-switch button { padding: 6px 5px; font-size: 0.7rem; }
   }
 
   /* Circular icon-only action buttons — used by the nav's Email/LinkedIn
@@ -2911,7 +2947,7 @@
 
 <nav>
   <div class="wrap">
-    <span class="brand">Handeul Kim</span>
+    <a href="#" class="brand" id="navBrand">Handeul Kim</a>
     <div class="nav-right">
       <ul id="navList">
         <li><a href="#projects" data-nav>Work</a></li>
@@ -2919,6 +2955,7 @@
         <li><a href="#experience" data-nav>Experience</a></li>
         <li><a href="#skills" data-nav>Skills</a></li>
       </ul>
+      <div class="lang-switch" id="langSwitch" role="group"></div>
       <div class="nav-icon-group" id="navIconGroup"></div>
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="메뉴 열기">
         <span></span><span></span><span></span>
@@ -2936,7 +2973,7 @@
     </h1>
     <div class="hero-lower">
       <div class="hero-lead-col">
-        <p class="hero-sub reveal" style="--i:2">
+        <p class="hero-sub reveal" style="--i:2" id="heroSub">
           복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·검증·운영을
           하나의 제품 흐름으로 잇는 기획자 <span class="hero-name">김한들</span>입니다.
         </p>
@@ -2945,10 +2982,10 @@
       <dl class="hero-meta reveal" style="--i:4">
         <div><dt>Role</dt><dd>Service Planner · Project Manager · Product Owner</dd></div>
         <div><dt>Based in</dt><dd>Seoul, South Korea</dd></div>
-        <div><dt>Status</dt><dd><span class="hero-status">새로운 기회에 열려 있습니다</span></dd></div>
+        <div><dt>Status</dt><dd><span class="hero-status" id="heroStatus">새로운 기회에 열려 있습니다</span></dd></div>
       </dl>
     </div>
-    <a href="#projects" class="hero-scrolldown" aria-label="프로젝트 섹션으로 스크롤">Scroll</a>
+    <a href="#projects" class="hero-scrolldown" id="heroScrolldown" aria-label="프로젝트 섹션으로 스크롤">Scroll</a>
   </div>
 </header>
 
@@ -2958,7 +2995,7 @@
       <div class="section-eyebrow">
         <span class="num title-reveal" style="--i:0">01</span><span class="code title-reveal" style="--i:1">WORK</span>
       </div>
-      <h2 class="title-reveal" style="--i:2">주요 프로젝트</h2>
+      <h2 class="title-reveal" style="--i:2" id="workSectionTitle">주요 프로젝트</h2>
     </div>
     <div class="work-list" id="workList"></div>
     <div class="more-work">
@@ -2986,8 +3023,8 @@
       <div class="ticker-viewport">
         <div class="capability-grid" id="capabilityList"></div>
       </div>
-      <button type="button" class="ticker-nav prev" aria-label="이전 카드">‹</button>
-      <button type="button" class="ticker-nav next" aria-label="다음 카드">›</button>
+      <button type="button" class="ticker-nav prev" id="tickerPrevBtn" aria-label="이전 카드">‹</button>
+      <button type="button" class="ticker-nav next" id="tickerNextBtn" aria-label="다음 카드">›</button>
     </div>
     <div class="about-compact-grid" id="aboutCompactGrid"></div>
   </div>
@@ -3002,7 +3039,7 @@
             <span class="num title-reveal" style="--i:0">03</span><span class="code title-reveal" style="--i:1">EXPERIENCE</span>
           </div>
         </div>
-        <p class="exp-rail-note reveal" style="--i:2">제품 기획부터 검증·운영까지, 도메인 중심 B2B 제품을 6년째 만들고 있습니다.</p>
+        <p class="exp-rail-note reveal" style="--i:2" id="expRailNote">제품 기획부터 검증·운영까지, 도메인 중심 B2B 제품을 6년째 만들고 있습니다.</p>
       </div>
       <div class="timeline" id="experienceList"></div>
     </div>
@@ -3024,7 +3061,7 @@
   </div>
 </section>
 
-<footer>
+<footer id="contact">
   <div class="wrap footer-grid">
     <div>
       <div class="footer-eyebrow">Contact</div>
@@ -10426,62 +10463,170 @@ renderHome();
   const aboutHeadline = 'Designing <span class="accent">Impactful</span> Digital Products';
   const aboutProfileImage = img("assets/images/profile.png");
 
-  const aboutStatement =
-    "복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·개발·검증·운영을 하나로 잇고, 실제로 쓰이는 제품으로 만듭니다.";
+  // ==== I18N =================================================================
+  // Three-language support (ko default / en / ja). Structural/chrome UI text
+  // (nav items, section eyebrows, ROLE/SCOPE/Based in/Status labels, detail
+  // section headers, footer, hero stat labels, tags/tools/scope chips) stays
+  // English in every language — that's already this site's existing voice
+  // (Korean mode already shows "ROLE", "WORK", etc. in English). Only the
+  // actual narrative/content fields below are translated per language.
+  // `tr(ko, en, ja)` tags a field as translatable; `t(x)` resolves it against
+  // the current LANG at render time and passes plain (untranslated) strings
+  // through unchanged, so call sites can wrap every interpolated field with
+  // `t(...)` regardless of whether that particular field was translated.
+  function tr(ko, en, ja) { return { ko: ko, en: en, ja: ja }; }
+  function t(x) {
+    if (x == null) return x;
+    if (typeof x === 'string') return x;
+    return x[LANG] || x.ko || x.en || '';
+  }
+  var LANG_STORAGE_KEY = 'portfolioLang';
+  var LANG = (function () {
+    try {
+      var saved = localStorage.getItem(LANG_STORAGE_KEY);
+      if (saved === 'ko' || saved === 'en' || saved === 'ja') return saved;
+    } catch (e) { /* private mode / storage blocked — fall through to default */ }
+    return 'ko';
+  })();
+
+  // A few short static UI strings that DO need translation (hero intro,
+  // status line, section heading, a11y labels) — everything else in the
+  // page chrome intentionally stays English across all three languages.
+  const UI = {
+    heroSub: tr(
+      "복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·검증·운영을 하나의 제품 흐름으로 잇는 기획자 김한들입니다.",
+      "I'm Handeul Kim, a product planner who untangles complex domain processes and connects requirements, design, validation, and operations into one coherent product flow.",
+      "複雑に絡み合ったドメインプロセスを分析し、要求事項・設計・検証・運用をひとつのプロダクトの流れへとつなぐプランナー、キム・ハンドゥルです。"
+    ),
+    heroStatus: tr("새로운 기회에 열려 있습니다", "Open to new opportunities", "新しい機会にオープンです"),
+    heroScrollAria: tr("프로젝트 섹션으로 스크롤", "Scroll to projects section", "プロジェクトセクションへスクロール"),
+    scrollLabel: tr("Scroll", "Scroll", "スクロール"),
+    menuOpenAria: tr("메뉴 열기", "Open menu", "メニューを開く"),
+    workSectionTitle: tr("주요 프로젝트", "Selected Work", "主なプロジェクト"),
+    tickerPrevAria: tr("이전 카드", "Previous card", "前のカード"),
+    tickerNextAria: tr("다음 카드", "Next card", "次のカード"),
+    lightboxCloseAria: tr("닫기", "Close", "閉じる"),
+    langSwitchAria: tr("언어 선택", "Language", "言語選択")
+  };
+
+  const aboutStatement = tr(
+    "복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·개발·검증·운영을 하나로 잇고, 실제로 쓰이는 제품으로 만듭니다.",
+    "I analyze tangled domain processes and connect requirements, design, development, validation, and operations into a single flow — turning it into a product people actually use.",
+    "複雑に絡み合ったドメインプロセスを分析し、要求事項・設計・開発・検証・運用をひとつにつなげ、実際に使われるプロダクトへと仕上げます。"
+  );
 
   // "My Specialties" — per user-provided reference content. `icon` is a
   // small hand-drawn line icon (currentColor stroke) so the card doesn't
-  // need any external icon asset.
+  // need any external icon asset. `title` stays English (skill-category
+  // naming convention); `desc` is translated.
   const capabilities = [
     {
       num: "01", title: "Stakeholder Communication",
-      desc: "다양한 이해관계자(개발, 사용자, 외주 등)와 협업하며 프로젝트 목표를 일관되게 조율하고 이끌어 갑니다.",
+      desc: tr(
+        "다양한 이해관계자(개발, 사용자, 외주 등)와 협업하며 프로젝트 목표를 일관되게 조율하고 이끌어 갑니다.",
+        "I work with diverse stakeholders — developers, end users, external vendors — keeping project goals aligned and moving the work forward.",
+        "開発者・ユーザー・外部パートナーなど多様な関係者と協働し、プロジェクトの目標を一貫して調整・推進します。"
+      ),
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c0-3 2.5-5.2 5.5-5.2s5.5 2.2 5.5 5.2"/><circle cx="17.5" cy="7.8" r="2.3"/><path d="M15.8 14c2.3.5 3.7 2.3 3.7 5"/></svg>'
     },
     {
       num: "02", title: "Documentation & Traceability",
-      desc: "Jira, Confluence, MS DevOps 등 다양한 협업 툴을 활용해 산출물을 표준화하고, 요구사항부터 테스트까지 전 과정을 추적 가능한 형태로 문서화합니다.",
+      desc: tr(
+        "Jira, Confluence, MS DevOps 등 다양한 협업 툴을 활용해 산출물을 표준화하고, 요구사항부터 테스트까지 전 과정을 추적 가능한 형태로 문서화합니다.",
+        "Using tools like Jira, Confluence, and MS DevOps, I standardize deliverables and document the full process — from requirements to testing — so it stays traceable end to end.",
+        "Jira、Confluence、MS DevOpsなど各種コラボレーションツールを活用し、成果物を標準化。要求事項からテストまで全工程をトレーサブルな形で文書化します。"
+      ),
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3.2h6v2.4H9z"/><path d="M8.3 11h7.4M8.3 14.3h7.4M8.3 17.6h4.5"/></svg>'
     },
     {
       num: "03", title: "END-TO-END",
-      desc: "사용자 요구 분석부터 화면 설계, 기능 정의, QA, 릴리즈까지 전 과정에 관여합니다.",
+      desc: tr(
+        "사용자 요구 분석부터 화면 설계, 기능 정의, QA, 릴리즈까지 전 과정에 관여합니다.",
+        "I'm involved across the full lifecycle — from user needs analysis to screen design, feature definition, QA, and release.",
+        "ユーザー要求分析から画面設計、機能定義、QA、リリースまで全工程に関わります。"
+      ),
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.5" cy="12" r="2.1"/><circle cx="19.5" cy="12" r="2.1"/><path d="M6.6 12h10.8"/><path d="M14.3 8.2 18.1 12l-3.8 3.8"/></svg>'
     },
     {
       num: "04", title: "VOC-Driven Improvement",
-      desc: "사용자 피드백을 분석해 문제의 원인을 파악하고, 개선 및 기능 재설계를 통해 사용자 만족도를 향상시킵니다.",
+      desc: tr(
+        "사용자 피드백을 분석해 문제의 원인을 파악하고, 개선 및 기능 재설계를 통해 사용자 만족도를 향상시킵니다.",
+        "I analyze user feedback to identify root causes, then improve or redesign features to raise user satisfaction.",
+        "ユーザーフィードバックを分析して問題の根本原因を特定し、改善や機能の再設計を通じてユーザー満足度を高めます。"
+      ),
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.8h16v9.4H9.5L5 19v-3.8H4z"/><path d="M8 10.3h.01M12 10.3h.01M16 10.3h.01"/></svg>'
     }
   ];
 
   // Compact subset only — full history lives in each project's case study.
   const careerSummary = [
-    "씨젠 · 전략기획2팀 (2020 – 현재)",
-    "유바이오로직스 · R&D (2020)"
+    tr("씨젠 · 전략기획2팀 (2020 – 현재)", "Seegene · Strategic Planning Team 2 (2020 – Present)", "Seegene・戦略企画2チーム（2020年 – 現在）"),
+    tr("유바이오로직스 · R&D (2020)", "EuBiologics · R&D (2020)", "EuBiologics・R&D（2020年）")
   ];
-  const educationCompact = ["전북대학교 분자생물학 학사 / 컴퓨터공학 복수전공"];
-  const certificationsCompact = ["PMP", "정보처리기사", "컴퓨터활용능력 1급", "화학분석기사"];
-  const languagesCompact = ["영어 · OPIC IH (2025.09.01)", "일본어 · JLPT N2 (2026.01.19)"];
+  const educationCompact = [
+    tr(
+      "전북대학교 분자생물학 학사 / 컴퓨터공학 복수전공",
+      "Jeonbuk National University — B.S. in Molecular Biology / Double Major in Computer Science",
+      "全北大学校 分子生物学 学士 / コンピュータ工学 副専攻"
+    )
+  ];
+  const certificationsCompact = [
+    tr("PMP", "PMP", "PMP"),
+    tr("정보처리기사", "Engineer Information Processing", "情報処理技士"),
+    tr("컴퓨터활용능력 1급", "Computer Proficiency Certificate, Level 1", "コンピュータ活用能力1級"),
+    tr("화학분석기사", "Chemical Analysis Engineer", "化学分析技士")
+  ];
+  // Structured (not pre-formatted strings) so the language name can be
+  // translated while the certification name and date stay as-is.
+  const languagesCompact = [
+    { lang: tr("영어", "English", "英語"), cert: "OPIC IH", date: "2025.09.01" },
+    { lang: tr("일본어", "Japanese", "日本語"), cert: "JLPT N2", date: "2026.01.19" }
+  ];
 
   // ==== EXPERIENCE ============================================================
   // Same two roles as before, reframed as "selected experience" tags instead
   // of full sentence bullets — every tag is a compression of the corresponding
   // original bullet, not a new claim. `summary` (added per user request) is
-  // the categorized breakdown of actual duties at each company.
+  // the categorized breakdown of actual duties at each company. `tags` stay
+  // English (resume-keyword convention, kept universal across languages).
   const experience = [
     {
       period: "2020 — PRESENT",
       domain: "Seegene Inc.",
       focus: "System Planning · Project Manager · Product Owner",
-      role: "전략기획2팀 · 대리",
+      role: tr("전략기획2팀 · 대리", "Strategic Planning Team 2 · Assistant Manager", "戦略企画2チーム・代理"),
       summary: [
-        { category: "서비스 기획/설계", items: ["제품 개발 자동화 SW 기획/설계", "사내 연구 활동 및 문서 양식 표준화", "User Story 작성"] },
-        { category: "UI/UX 디자인", items: ["전자랩노트, 장비제어 SW 인터페이스 설계", "스타일 가이드 수립", "사용성 개선을 위한 UX 디자인"] },
-        { category: "QA", items: ["Test case 작성", "사용자 시나리오 작성", "테스트 진행 및 리포트 작성", "이슈 트래킹 및 오류 개선"] },
-        { category: "SW 출시 및 운영", items: ["SW 배포", "사용자 피드백 반영 및 지속 개선"] },
-        { category: "자동화 장비 연구", items: ["자동화 시스템 교육", "자동화 장비 관리 및 세팅", "신규 자동화 장비 적용 및 매뉴얼 제작"] },
-        { category: "분자진단 제품 개발", items: ["올리고디자인", "Feasibility", "시작품 생산 및 이관", "Verification & Validation"] }
+        { category: tr("서비스 기획/설계", "Service Planning & Design", "サービス企画・設計"), items: [
+          tr("제품 개발 자동화 SW 기획/설계", "Planning & design of product-development automation software", "製品開発自動化SWの企画・設計"),
+          tr("사내 연구 활동 및 문서 양식 표준화", "Standardized in-house research activities and document formats", "社内研究活動および文書様式の標準化"),
+          tr("User Story 작성", "Authored user stories", "ユーザーストーリー作成")
+        ] },
+        { category: tr("UI/UX 디자인", "UI/UX Design", "UI/UXデザイン"), items: [
+          tr("전자랩노트, 장비제어 SW 인터페이스 설계", "Interface design for electronic lab notebook and equipment-control software", "電子ラボノート、機器制御SWのインターフェース設計"),
+          tr("스타일 가이드 수립", "Established a style guide", "スタイルガイドの策定"),
+          tr("사용성 개선을 위한 UX 디자인", "UX design for usability improvements", "使いやすさ向上のためのUXデザイン")
+        ] },
+        { category: "QA", items: [
+          tr("Test case 작성", "Wrote test cases", "テストケース作成"),
+          tr("사용자 시나리오 작성", "Wrote user scenarios", "ユーザーシナリオ作成"),
+          tr("테스트 진행 및 리포트 작성", "Conducted testing and wrote reports", "テスト実施およびレポート作成"),
+          tr("이슈 트래킹 및 오류 개선", "Issue tracking and defect resolution", "課題トラッキングおよび不具合改善")
+        ] },
+        { category: tr("SW 출시 및 운영", "SW Release & Operations", "SWリリース・運用"), items: [
+          tr("SW 배포", "Software deployment", "SW配布"),
+          tr("사용자 피드백 반영 및 지속 개선", "Incorporated user feedback for continuous improvement", "ユーザーフィードバックの反映と継続的改善")
+        ] },
+        { category: tr("자동화 장비 연구", "Automation Equipment R&D", "自動化装置研究"), items: [
+          tr("자동화 시스템 교육", "Automation system training", "自動化システム教育"),
+          tr("자동화 장비 관리 및 세팅", "Automation equipment management & setup", "自動化装置の管理・セッティング"),
+          tr("신규 자동화 장비 적용 및 매뉴얼 제작", "Deployed new automation equipment and authored manuals", "新規自動化装置の導入およびマニュアル作成")
+        ] },
+        { category: tr("분자진단 제품 개발", "Molecular Diagnostics Product Development", "分子診断製品開発"), items: [
+          tr("올리고디자인", "Oligo design", "オリゴデザイン"),
+          "Feasibility",
+          tr("시작품 생산 및 이관", "Prototype production and technology transfer", "試作品生産および移管"),
+          "Verification & Validation"
+        ] }
       ],
       tags: [
         "R&D Workflow Analysis", "Experiment Planning Automation", "Equipment Automation Workflow",
@@ -10492,19 +10637,36 @@ renderHome();
       period: "2020.01 — 2020.05",
       domain: "EuBiologics Co., LTD",
       focus: "R&D · Lab QA",
-      role: "분석연구팀 · 사원",
+      role: tr("분석연구팀 · 사원", "Analytical Research Team · Associate", "分析研究チーム・社員"),
       summary: [
-        { category: "안정성 시험", items: ["생화학 시험", "이화학 시험"] },
-        { category: "시험법 개발 및 밸리데이션", items: ["시험법 개발 밸리데이션", "백신 항체가분석 시험법 개발"] },
-        { category: "연구소 QA", items: ["연구소 SOP 제정 및 개정", "임상시험검체 분석기관 지정 관련 문서 관리", "시험일지 작성"] }
+        { category: tr("안정성 시험", "Stability Testing", "安定性試験"), items: [
+          tr("생화학 시험", "Biochemical testing", "生化学試験"),
+          tr("이화학 시험", "Physicochemical testing", "理化学試験")
+        ] },
+        { category: tr("시험법 개발 및 밸리데이션", "Test Method Development & Validation", "試験法開発およびバリデーション"), items: [
+          tr("시험법 개발 밸리데이션", "Test method development validation", "試験法開発バリデーション"),
+          tr("백신 항체가분석 시험법 개발", "Developed vaccine antibody-titer assay methods", "ワクチン抗体価分析の試験法開発")
+        ] },
+        { category: tr("연구소 QA", "Lab QA", "研究所QA"), items: [
+          tr("연구소 SOP 제정 및 개정", "Established and revised lab SOPs", "研究所SOPの制定・改定"),
+          tr("임상시험검체 분석기관 지정 관련 문서 관리", "Managed documentation for clinical-trial sample analysis institution designation", "臨床試験検体分析機関指定に関する文書管理"),
+          tr("시험일지 작성", "Kept test logs", "試験日誌作成")
+        ] }
       ],
       tags: ["Test Method Development", "Stability Testing", "SOP Documentation", "Tech Transfer Support"]
     }
   ];
+  const expRailNote = tr(
+    "제품 기획부터 검증·운영까지, 도메인 중심 B2B 제품을 6년째 만들고 있습니다.",
+    "From planning to validation and operations, I've spent six years building domain-driven B2B products.",
+    "企画から検証・運用まで、ドメイン中心のB2Bプロダクトづくりに6年間携わっています。"
+  );
 
   // ==== SKILLS ================================================================
   // Category structure as specified for this redesign; each item maps back to
-  // skills already listed in this site's prior "핵심 역량" content.
+  // skills already listed in this site's prior "핵심 역량" content. Kept
+  // English across languages — skill/category names read as universal
+  // resume terms regardless of locale.
   const coreCapabilities = [
     { num: "01", title: "Product Strategy", items: ["Domain Analysis", "Product Definition", "Product Planning"] },
     { num: "02", title: "System Design", items: ["Workflow", "Information Architecture", "UX / UI", "System Architecture"] },
@@ -10540,25 +10702,57 @@ renderHome();
   // Every field is either verbatim from, or a direct paraphrase of, this
   // site's prior project data. Fields with no prior source are left as
   // literal [TODO: ...] markers rather than invented (see item 10 of the brief).
+  // Narrative fields are `tr(ko, en, ja)`; structural fields (scope chips,
+  // process stage names, English stakeholder role labels, tools, oneLiner
+  // taglines) stay plain strings, consistent with the rest of the site's
+  // English-chrome convention.
   const caseStudies = [
     {
       major: true,
       slug: "automation-experiment-planning",
       caseStudyRoute: "#/work/automation-experiment-planning",
       num: "01", year: "2025.11-Present",
-      name: "제품개발 자동화 장비 및 실험계획 모듈 개발",
+      name: tr(
+        "제품개발 자동화 장비 및 실험계획 모듈 개발",
+        "Product-Development Automation Equipment & Experiment-Planning Module",
+        "製品開発自動化装置および実験計画モジュール開発"
+      ),
       oneLiner: "Complex R&D workflows → Digital Product System",
-      heroMetric: { value: "1", unit: "", label: "통합 제품 시스템", sub: "6단계 R&D 흐름 · 자동화 장비 연계" },
-      role: "실험계획 모듈 분석·설계, 자동화 장비 워크플로 설계, 외주 SI 협업",
+      heroMetric: {
+        value: "1", unit: "",
+        label: tr("통합 제품 시스템", "Unified Product System", "統合プロダクトシステム"),
+        sub: tr("6단계 R&D 흐름 · 자동화 장비 연계", "6-stage R&D flow · Linked to automation equipment", "6段階のR&Dフロー・自動化装置連携")
+      },
+      role: tr(
+        "실험계획 모듈 분석·설계, 자동화 장비 워크플로 설계, 외주 SI 협업",
+        "Analysis & design of the experiment-planning module, automation-equipment workflow design, collaboration with an external SI vendor",
+        "実験計画モジュールの分析・設計、自動化装置ワークフロー設計、外部SIベンダーとの協業"
+      ),
       scope: "Workflow · Requirement · Device Integration",
       context: null,
-      problem: "제품개발 실험계획 업무가 표준화된 시스템 없이 개별적으로 처리되고 있었고, 자동화 장비와 연계된 일관된 workflow가 없었습니다.",
+      problem: tr(
+        "제품개발 실험계획 업무가 표준화된 시스템 없이 개별적으로 처리되고 있었고, 자동화 장비와 연계된 일관된 workflow가 없었습니다.",
+        "Product-development experiment planning was handled case by case with no standardized system, and there was no consistent workflow linking it to automation equipment.",
+        "製品開発の実験計画業務は標準化されたシステムがないまま個別に処理されており、自動化装置と連携した一貫したワークフローも存在しませんでした。"
+      ),
       beforeAfter: {
-        before: ["실험계획 정보가 개인·부서별로 분산 관리", "자동화 장비가 실험계획과 별도로 운영", "화면·데이터 표준 없이 건별 대응"],
-        after: ["실험계획 모듈에서 조건·기준정보·업무 규칙을 통합 관리", "자동화 장비 workflow와 실험계획 데이터 연계", "요구사항 기준선 기반의 공통 구조"]
+        before: [
+          tr("실험계획 정보가 개인·부서별로 분산 관리", "Experiment-planning information scattered across individuals and teams", "実験計画情報が個人・部署ごとに分散管理"),
+          tr("자동화 장비가 실험계획과 별도로 운영", "Automation equipment operated separately from experiment planning", "自動化装置が実験計画と切り離して運用"),
+          tr("화면·데이터 표준 없이 건별 대응", "Handled case-by-case with no screen or data standards", "画面・データの標準がなく案件ごとに対応")
+        ],
+        after: [
+          tr("실험계획 모듈에서 조건·기준정보·업무 규칙을 통합 관리", "Conditions, reference data, and business rules unified in the experiment-planning module", "実験計画モジュールで条件・基準情報・業務ルールを統合管理"),
+          tr("자동화 장비 workflow와 실험계획 데이터 연계", "Automation-equipment workflow linked to experiment-planning data", "自動化装置ワークフローと実験計画データを連携"),
+          tr("요구사항 기준선 기반의 공통 구조", "A common structure built on a requirements baseline", "要求事項ベースラインに基づく共通構造")
+        ]
       },
       goal: null,
-      myRole: "실험계획 모듈의 분석/설계를 주도하고, 자동화 장비의 운영 workflow·조작 시나리오·예외 처리 로직을 설계했습니다. 외주 SI 업체와 화면 요구사항, 개발 범위, 구현 이슈, 일정을 직접 조율했습니다.",
+      myRole: tr(
+        "실험계획 모듈의 분석/설계를 주도하고, 자동화 장비의 운영 workflow·조작 시나리오·예외 처리 로직을 설계했습니다. 외주 SI 업체와 화면 요구사항, 개발 범위, 구현 이슈, 일정을 직접 조율했습니다.",
+        "I led the analysis and design of the experiment-planning module, and designed the automation equipment's operating workflow, operation scenarios, and exception-handling logic. I coordinated directly with the external SI vendor on screen requirements, development scope, implementation issues, and schedule.",
+        "実験計画モジュールの分析・設計を主導し、自動化装置の運用ワークフロー・操作シナリオ・例外処理ロジックを設計しました。外部SIベンダーと画面要求事項、開発範囲、実装課題、スケジュールを直接調整しました。"
+      ),
       // Draft estimate — placeholder percentages pending the candidate's own
       // review; adjust to match actual participation before publishing.
       contribution: [
@@ -10574,43 +10768,67 @@ renderHome();
       // (Researcher / Developer·SI Vendor / QA / Operation), mapped onto
       // this project. Wording/specifics pending the candidate's review.
       stakeholders: [
-        { role: "Researcher", interaction: "실험계획 업무 현황 파악을 위한 인터뷰, 요구사항 구조화" },
-        { role: "Developer · SI Vendor", interaction: "화면 요구사항 전달, 개발 범위·일정·구현 이슈 조율" },
-        { role: "QA", interaction: "자동화 장비 조작 시나리오·예외 처리 검증 기준 수립" }
+        { role: "Researcher", interaction: tr("실험계획 업무 현황 파악을 위한 인터뷰, 요구사항 구조화", "Interviews to understand current experiment-planning practices; structured the requirements", "実験計画業務の現状把握のためのインタビュー、要求事項の構造化") },
+        { role: "Developer · SI Vendor", interaction: tr("화면 요구사항 전달, 개발 범위·일정·구현 이슈 조율", "Communicated screen requirements; coordinated development scope, schedule, and implementation issues", "画面要求事項の伝達、開発範囲・スケジュール・実装課題の調整") },
+        { role: "QA", interaction: tr("자동화 장비 조작 시나리오·예외 처리 검증 기준 수립", "Established verification criteria for automation-equipment operation scenarios and exception handling", "自動化装置の操作シナリオ・例外処理の検証基準を策定") }
       ],
-      conflictNote: "연구원이 요청하는 실험 조건의 세부 항목과 외주 SI가 구현 가능하다고 본 화면 범위가 달랐던 지점에서는, 실험 도메인상 반드시 필요한 정보와 구현 난이도를 함께 놓고 우선순위를 조율했습니다.",
+      conflictNote: tr(
+        "연구원이 요청하는 실험 조건의 세부 항목과 외주 SI가 구현 가능하다고 본 화면 범위가 달랐던 지점에서는, 실험 도메인상 반드시 필요한 정보와 구현 난이도를 함께 놓고 우선순위를 조율했습니다.",
+        "Where the detailed experiment conditions researchers requested didn't match what the SI vendor considered feasible on screen, I weighed what was truly necessary from a domain standpoint against implementation difficulty to set priorities.",
+        "研究員が求める実験条件の詳細項目と、外部SIが実装可能と見なした画面範囲が食い違う場面では、実験ドメイン上必須の情報と実装難易度を突き合わせて優先順位を調整しました。"
+      ),
       process: [
-        { stage: "Domain", desc: "제품개발 실험계획 업무 관찰" },
-        { stage: "Workflow", desc: "자동화 대상 범위 정의" },
-        { stage: "Requirement", desc: "실험 조건·기준정보·업무 규칙·사용자 흐름 정의" },
-        { stage: "Design", desc: "화면 요구사항을 외주 SI와 조율" },
-        { stage: "Development", desc: "SI 구현 이슈·일정 조율" },
-        { stage: "Validation", desc: "자동화 장비 조작 시나리오·예외 처리 검증" }
+        { stage: "Domain", desc: tr("제품개발 실험계획 업무 관찰", "Observed product-development experiment-planning work", "製品開発の実験計画業務を観察") },
+        { stage: "Workflow", desc: tr("자동화 대상 범위 정의", "Defined the scope for automation", "自動化対象範囲を定義") },
+        { stage: "Requirement", desc: tr("실험 조건·기준정보·업무 규칙·사용자 흐름 정의", "Defined experiment conditions, reference data, business rules, and user flow", "実験条件・基準情報・業務ルール・ユーザーフローを定義") },
+        { stage: "Design", desc: tr("화면 요구사항을 외주 SI와 조율", "Aligned screen requirements with the external SI vendor", "画面要求事項を外部SIと調整") },
+        { stage: "Development", desc: tr("SI 구현 이슈·일정 조율", "Coordinated SI implementation issues and schedule", "SI実装課題・スケジュールを調整") },
+        { stage: "Validation", desc: tr("자동화 장비 조작 시나리오·예외 처리 검증", "Verified automation-equipment operation scenarios and exception handling", "自動化装置の操作シナリオ・例外処理を検証") }
       ],
       keyDecisions: [
         {
           options: [
-            { label: "화면 단위로 요구사항 개별 정의" },
-            { label: "조건·기준정보·업무 규칙 통합 구조", chosen: true }
+            { label: tr("화면 단위로 요구사항 개별 정의", "Define requirements screen by screen", "画面単位で要求事項を個別に定義") },
+            { label: tr("조건·기준정보·업무 규칙 통합 구조", "Unified structure for conditions, reference data, and business rules", "条件・基準情報・業務ルールを統合した構造"), chosen: true }
           ],
-          decision: "실험 조건 입력부터 기준정보·업무 규칙까지를 하나의 요구사항 구조로 정의",
-          why: "화면 단위로 흩어진 요구사항을 하나의 기준으로 묶어야 외주 SI와 개발 범위·일정을 같은 기준으로 논의할 수 있다고 판단했습니다."
+          decision: tr(
+            "실험 조건 입력부터 기준정보·업무 규칙까지를 하나의 요구사항 구조로 정의",
+            "Defined everything from experiment-condition input to reference data and business rules as a single requirements structure",
+            "実験条件の入力から基準情報・業務ルールまでをひとつの要求事項構造として定義"
+          ),
+          why: tr(
+            "화면 단위로 흩어진 요구사항을 하나의 기준으로 묶어야 외주 SI와 개발 범위·일정을 같은 기준으로 논의할 수 있다고 판단했습니다.",
+            "I judged that requirements scattered across individual screens needed to be unified under one standard so the SI vendor and I could discuss development scope and schedule on the same basis.",
+            "画面ごとに散らばった要求事項をひとつの基準にまとめてこそ、外部SIと開発範囲・スケジュールを同じ基準で議論できると判断しました。"
+          )
         },
         {
           options: [
-            { label: "정상 흐름 안에 예외 처리 포함" },
-            { label: "예외 처리를 별도 레이어로 분리", chosen: true }
+            { label: tr("정상 흐름 안에 예외 처리 포함", "Handle exceptions within the normal flow", "正常フローの中に例外処理を含める") },
+            { label: tr("예외 처리를 별도 레이어로 분리", "Separate exception handling into its own layer", "例外処理を別レイヤーとして分離"), chosen: true }
           ],
-          decision: "장비 운영 workflow에 예외 처리 로직을 별도 레이어로 분리 설계",
-          why: "정상 동작 흐름만 정의하면 실제 운영 중 오류 상황에서 장비가 불확실한 상태로 남을 위험이 있어, 예외 상황별 대응을 workflow 설계 단계에서부터 명시적으로 분리했습니다."
+          decision: tr(
+            "장비 운영 workflow에 예외 처리 로직을 별도 레이어로 분리 설계",
+            "Designed exception-handling logic in the equipment operation workflow as a separate layer",
+            "装置運用ワークフローにおいて、例外処理ロジックを別レイヤーとして分離設計"
+          ),
+          why: tr(
+            "정상 동작 흐름만 정의하면 실제 운영 중 오류 상황에서 장비가 불확실한 상태로 남을 위험이 있어, 예외 상황별 대응을 workflow 설계 단계에서부터 명시적으로 분리했습니다.",
+            "Defining only the normal operating flow risked leaving equipment in an uncertain state during real-world errors, so I explicitly separated exception handling by scenario from the workflow design stage onward.",
+            "正常動作フローのみを定義すると、実運用中のエラー発生時に装置が不確実な状態に陥るリスクがあるため、ワークフロー設計の段階から例外状況ごとの対応を明示的に分離しました。"
+          )
         }
       ],
       result: [
-        "실험계획 모듈의 요구사항 기준선과 개발 범위 수립",
-        "외주 SI와 협업 가능한 분석/설계 산출물 체계 마련",
-        "자동화 장비와 실험계획 workflow 연계 기반 설계"
+        tr("실험계획 모듈의 요구사항 기준선과 개발 범위 수립", "Established the requirements baseline and development scope for the experiment-planning module", "実験計画モジュールの要求事項ベースラインと開発範囲を策定"),
+        tr("외주 SI와 협업 가능한 분석/설계 산출물 체계 마련", "Built an analysis/design deliverable framework the external SI vendor could work from", "外部SIと協業可能な分析・設計成果物の体系を整備"),
+        tr("자동화 장비와 실험계획 workflow 연계 기반 설계", "Designed the foundation linking automation-equipment and experiment-planning workflows", "自動化装置と実験計画ワークフローを連携する基盤を設計")
       ],
-      validation: "자동화 장비 조작 시나리오·예외 처리 검증",
+      validation: tr(
+        "자동화 장비 조작 시나리오·예외 처리 검증",
+        "Verified automation-equipment operation scenarios and exception handling",
+        "自動化装置の操作シナリオ・例外処理を検証"
+      ),
       tools: null,
       // Work-list card: one art-directed frame — a single legible product
       // moment on a consistent paper frame (see assets/.../card.svg).
@@ -10628,19 +10846,48 @@ renderHome();
       slug: "feasibility-automation-sw",
       caseStudyRoute: "#/work/feasibility-automation-sw",
       num: "02", year: "2023.06-2025.07",
-      name: "분자진단 제품개발 타당성 단계 자동화 소프트웨어",
+      name: tr(
+        "분자진단 제품개발 타당성 단계 자동화 소프트웨어",
+        "Feasibility-Stage Automation Software for Molecular-Diagnostics Product Development",
+        "分子診断製品開発 Feasibility段階自動化ソフトウェア"
+      ),
       oneLiner: "Manual Excel/NAS workflow → End-to-end digital workflow",
-      heroMetric: { value: "−50", unit: "%", label: "제품개발 시간", sub: "오류율 −80% · 자동화 30 → 80%" },
-      role: "시스템 기획, 워크플로 분석, 화면·기능 설계, QA 리드",
+      heroMetric: {
+        value: "−50", unit: "%",
+        label: tr("제품개발 시간", "Product-development time", "製品開発時間"),
+        sub: tr("오류율 −80% · 자동화 30 → 80%", "Error rate −80% · Automation 30 → 80%", "エラー率−80%・自動化率30→80%")
+      },
+      role: tr(
+        "시스템 기획, 워크플로 분석, 화면·기능 설계, QA 리드",
+        "System planning, workflow analysis, screen & feature design, QA lead",
+        "システム企画、ワークフロー分析、画面・機能設計、QAリード"
+      ),
       scope: "Workflow · Requirement · UX · Validation",
       context: null,
-      problem: "실험계획·결과정리 업무가 Excel/NAS 기반 수작업으로 처리되어 제품개발 단계별로 반복적인 비효율이 발생하고 있었습니다.",
+      problem: tr(
+        "실험계획·결과정리 업무가 Excel/NAS 기반 수작업으로 처리되어 제품개발 단계별로 반복적인 비효율이 발생하고 있었습니다.",
+        "Experiment planning and result compilation were handled manually via Excel and NAS shared folders, creating repeated inefficiencies at every stage of product development.",
+        "実験計画・結果整理業務がExcel/NASベースの手作業で処理されており、製品開発の各段階で繰り返し非効率が発生していました。"
+      ),
       beforeAfter: {
-        before: ["Excel 파일로 실험계획 관리", "NAS 공유 폴더로 결과 공유", "수작업으로 데이터 정리·계산", "개별 문서로 산출물 작성"],
-        after: ["웹 기반 화면에서 실험계획 입력", "End-to-End workflow로 단계 간 데이터 연계", "표준 정책서·양식 기반 문서 자동 산출"]
+        before: [
+          tr("Excel 파일로 실험계획 관리", "Experiment plans managed in Excel files", "Excelファイルで実験計画を管理"),
+          tr("NAS 공유 폴더로 결과 공유", "Results shared via NAS shared folders", "NAS共有フォルダで結果を共有"),
+          tr("수작업으로 데이터 정리·계산", "Data organized and calculated by hand", "手作業でデータ整理・計算"),
+          tr("개별 문서로 산출물 작성", "Deliverables written up as separate documents", "個別文書として成果物を作成")
+        ],
+        after: [
+          tr("웹 기반 화면에서 실험계획 입력", "Experiment plans entered through a web-based screen", "Webベースの画面で実験計画を入力"),
+          tr("End-to-End workflow로 단계 간 데이터 연계", "Data connected across stages via an end-to-end workflow", "エンドツーエンドのワークフローで段階間のデータを連携"),
+          tr("표준 정책서·양식 기반 문서 자동 산출", "Documents auto-generated from standard policy documents and templates", "標準ポリシー文書・フォーマットに基づき文書を自動生成")
+        ]
       },
       goal: null,
-      myRole: "시스템 기획과 workflow 분석을 주도하고, 화면/기능 설계와 QA를 리드했습니다. 연구원 업무 관찰을 통해 AS-IS/TO-BE 프로세스를 직접 정의했습니다.",
+      myRole: tr(
+        "시스템 기획과 workflow 분석을 주도하고, 화면/기능 설계와 QA를 리드했습니다. 연구원 업무 관찰을 통해 AS-IS/TO-BE 프로세스를 직접 정의했습니다.",
+        "I led system planning and workflow analysis, and drove screen/feature design and QA. Through direct observation of researchers' work, I defined the AS-IS/TO-BE processes myself.",
+        "システム企画とワークフロー分析を主導し、画面・機能設計とQAをリードしました。研究員の業務観察を通じてAS-IS/TO-BEプロセスを自ら定義しました。"
+      ),
       // Draft estimate — placeholder percentages pending the candidate's own
       // review; adjust to match actual participation before publishing.
       contribution: [
@@ -10654,45 +10901,65 @@ renderHome();
       ],
       // Draft — see automation-experiment-planning's stakeholders comment.
       stakeholders: [
-        { role: "Researcher", interaction: "업무 관찰, AS-IS/TO-BE 프로세스 정의를 위한 인터뷰" },
-        { role: "Developer", interaction: "WBS 기반 개발 우선순위 운영, 스프린트 단위 검증" },
-        { role: "QA", interaction: "테스트 시나리오 작성, 검증 기준 수립" },
-        { role: "Operation", interaction: "사용자 설명회·VOC 수집, 개선 backlog 반영" }
+        { role: "Researcher", interaction: tr("업무 관찰, AS-IS/TO-BE 프로세스 정의를 위한 인터뷰", "Observed their work and conducted interviews to define the AS-IS/TO-BE processes", "業務観察、AS-IS/TO-BEプロセス定義のためのインタビュー") },
+        { role: "Developer", interaction: tr("WBS 기반 개발 우선순위 운영, 스프린트 단위 검증", "Managed development priorities via WBS and verified progress sprint by sprint", "WBSベースの開発優先順位運用、スプリント単位の検証") },
+        { role: "QA", interaction: tr("테스트 시나리오 작성, 검증 기준 수립", "Wrote test scenarios and established verification criteria", "テストシナリオ作成、検証基準の策定") },
+        { role: "Operation", interaction: tr("사용자 설명회·VOC 수집, 개선 backlog 반영", "Ran user briefings, collected VOC, and fed it into the improvement backlog", "ユーザー説明会・VOC収集、改善バックログへの反映") }
       ],
       process: [
-        { stage: "Domain", desc: "연구원 업무 관찰" },
-        { stage: "Workflow", desc: "AS-IS/TO-BE 프로세스 정의" },
-        { stage: "Requirement", desc: "사용자 흐름·기능 요구사항·정책서 작성" },
-        { stage: "Design", desc: "실험계획~문서화 흐름을 End-to-End로 설계" },
-        { stage: "Development", desc: "WBS 기반 개발 우선순위 운영" },
-        { stage: "Validation", desc: "테스트 시나리오 작성 및 QA 리드" }
+        { stage: "Domain", desc: tr("연구원 업무 관찰", "Observed researchers' work", "研究員の業務を観察") },
+        { stage: "Workflow", desc: tr("AS-IS/TO-BE 프로세스 정의", "Defined the AS-IS/TO-BE processes", "AS-IS/TO-BEプロセスを定義") },
+        { stage: "Requirement", desc: tr("사용자 흐름·기능 요구사항·정책서 작성", "Wrote user flows, functional requirements, and policy documents", "ユーザーフロー・機能要求事項・ポリシー文書を作成") },
+        { stage: "Design", desc: tr("실험계획~문서화 흐름을 End-to-End로 설계", "Designed an end-to-end flow from experiment planning through documentation", "実験計画から文書化までをエンドツーエンドで設計") },
+        { stage: "Development", desc: tr("WBS 기반 개발 우선순위 운영", "Managed development priorities based on a WBS", "WBSに基づき開発優先順位を運用") },
+        { stage: "Validation", desc: tr("테스트 시나리오 작성 및 QA 리드", "Wrote test scenarios and led QA", "テストシナリオ作成およびQAをリード") }
       ],
       keyDecisions: [
         {
           options: [
-            { label: "단계별 도구를 그대로 시스템화" },
-            { label: "End-to-End 단일 workflow로 재설계", chosen: true }
+            { label: tr("단계별 도구를 그대로 시스템화", "Systematize each stage's existing tool as-is", "段階ごとの既存ツールをそのままシステム化") },
+            { label: tr("End-to-End 단일 workflow로 재설계", "Redesign as a single end-to-end workflow", "エンドツーエンドの単一ワークフローとして再設計"), chosen: true }
           ],
-          decision: "실험계획부터 문서화까지를 하나의 End-to-End workflow로 설계",
-          why: "단계별로 분리된 도구(Excel/NAS/개별 문서)를 그대로 시스템화하면 동일한 정보를 여러 번 재입력하는 비효율이 반복된다고 판단해, 데이터가 한 번 입력되면 다음 단계까지 이어지도록 구조를 통일했습니다."
+          decision: tr(
+            "실험계획부터 문서화까지를 하나의 End-to-End workflow로 설계",
+            "Designed everything from experiment planning to documentation as a single end-to-end workflow",
+            "実験計画から文書化までをひとつのエンドツーエンドワークフローとして設計"
+          ),
+          why: tr(
+            "단계별로 분리된 도구(Excel/NAS/개별 문서)를 그대로 시스템화하면 동일한 정보를 여러 번 재입력하는 비효율이 반복된다고 판단해, 데이터가 한 번 입력되면 다음 단계까지 이어지도록 구조를 통일했습니다.",
+            "I judged that simply systematizing the separate tools at each stage (Excel/NAS/individual documents) would just repeat the inefficiency of re-entering the same information multiple times, so I unified the structure so data entered once carries through to the next stage.",
+            "段階ごとに分離したツール（Excel/NAS/個別文書）をそのままシステム化すると、同じ情報を何度も再入力する非効率が繰り返されると判断し、一度入力したデータが次の段階まで引き継がれるよう構造を統一しました。"
+          )
         },
         {
           options: [
-            { label: "전체 업무를 한 번에 자동화" },
-            { label: "30% → 80% 단계적 로드맵", chosen: true }
+            { label: tr("전체 업무를 한 번에 자동화", "Automate the entire workflow all at once", "業務全体を一度に自動化") },
+            { label: tr("30% → 80% 단계적 로드맵", "A phased roadmap from 30% → 80%", "30%→80%の段階的ロードマップ"), chosen: true }
           ],
-          decision: "자동화 범위를 한 번에 확대하지 않고 약 30% → 80% 목표의 단계적 로드맵으로 설계",
-          why: "연구원 업무 전체를 한 번에 자동화하면 검증 범위와 현업 적응 부담이 커진다고 판단해, WBS·유저스토리 기반으로 우선순위를 나눠 단계적으로 확대했습니다."
+          decision: tr(
+            "자동화 범위를 한 번에 확대하지 않고 약 30% → 80% 목표의 단계적 로드맵으로 설계",
+            "Rather than expanding automation scope all at once, I designed a phased roadmap targeting roughly 30% → 80%",
+            "自動化範囲を一度に拡大せず、約30%→80%を目標とする段階的ロードマップとして設計"
+          ),
+          why: tr(
+            "연구원 업무 전체를 한 번에 자동화하면 검증 범위와 현업 적응 부담이 커진다고 판단해, WBS·유저스토리 기반으로 우선순위를 나눠 단계적으로 확대했습니다.",
+            "Automating researchers' entire workload at once would have expanded both verification scope and the burden of adapting on the ground, so I split priorities based on the WBS and user stories and expanded in stages.",
+            "研究員の業務全体を一度に自動化すると検証範囲や現場の適応負荷が大きくなると判断し、WBS・ユーザーストーリーに基づいて優先順位を分け、段階的に拡大しました。"
+          )
         }
       ],
       result: [
-        "제품개발 시간 약 50% 단축에 기여",
-        "수작업 대비 업무 효율 약 40% 개선",
-        "실험 항목 작성 시간 약 50% 단축, 오류율 약 80% 감소",
-        "자동화 범위를 약 30% → 80% 수준으로 확대하는 로드맵 수립"
+        tr("제품개발 시간 약 50% 단축에 기여", "Contributed to roughly a 50% reduction in product-development time", "製品開発時間を約50%短縮することに貢献"),
+        tr("수작업 대비 업무 효율 약 40% 개선", "Improved work efficiency by roughly 40% versus manual work", "手作業比で業務効率を約40%改善"),
+        tr("실험 항목 작성 시간 약 50% 단축, 오류율 약 80% 감소", "Cut experiment-item entry time by roughly 50% and reduced the error rate by roughly 80%", "実験項目の作成時間を約50%短縮し、エラー率を約80%削減"),
+        tr("자동화 범위를 약 30% → 80% 수준으로 확대하는 로드맵 수립", "Established a roadmap expanding automation coverage from roughly 30% to 80%", "自動化範囲を約30%→80%水準に拡大するロードマップを策定")
       ],
-      resultNote: "측정 기준: 도입 전 유사 프로젝트 평균 대비, 적용 후 프로젝트 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
-      validation: "테스트 시나리오 작성 및 QA 리드",
+      resultNote: tr(
+        "측정 기준: 도입 전 유사 프로젝트 평균 대비, 적용 후 프로젝트 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
+        "Measurement basis: comparison of pre-adoption averages from similar projects against post-adoption measured results (specific comparison method and sample size to be documented after data review)",
+        "測定基準：導入前の類似プロジェクト平均と、導入後の実測値との比較（具体的な比較方法・サンプルはデータ確認後に明記予定）"
+      ),
+      validation: tr("테스트 시나리오 작성 및 QA 리드", "Wrote test scenarios and led QA", "テストシナリオ作成およびQAをリード"),
       tools: null,
       thumbnail: imgReady("assets/projects/feasibility-automation-sw/shot-1.png"),
       thumbnails: [
@@ -10711,19 +10978,41 @@ renderHome();
       slug: "prototype-doc-automation",
       caseStudyRoute: "#/work/prototype-doc-automation",
       num: "04", year: "2024.03-2024.08",
-      name: "프로토타입 단계 제품개발 문서 자동화",
+      name: tr(
+        "프로토타입 단계 제품개발 문서 자동화",
+        "Prototype-Stage Product-Development Documentation Automation",
+        "プロトタイプ段階 製品開発文書自動化"
+      ),
       oneLiner: "Feasibility-stage automation → Prototype-stage docs",
-      heroMetric: { value: "−70", unit: "%", label: "문서 작성 시간 (기대)", sub: "제품개발 문서 품질 일관성 확보" },
-      role: "워크플로 분석, 기능 설계, QA 담당",
+      heroMetric: {
+        value: "−70", unit: "%",
+        label: tr("문서 작성 시간 (기대)", "Document-writing time (expected)", "文書作成時間（想定）"),
+        sub: tr("제품개발 문서 품질 일관성 확보", "Consistent quality across product-development documents", "製品開発文書の品質一貫性を確保")
+      },
+      role: tr("워크플로 분석, 기능 설계, QA 담당", "Workflow analysis, feature design, QA", "ワークフロー分析、機能設計、QA担当"),
       scope: null,
       context: null,
-      problem: "Feasibility 단계 자동화 구조가 Prototype 단계까지 이어지지 않아, 다음 단계에서는 다시 수작업 문서화로 되돌아가고 있었습니다.",
+      problem: tr(
+        "Feasibility 단계 자동화 구조가 Prototype 단계까지 이어지지 않아, 다음 단계에서는 다시 수작업 문서화로 되돌아가고 있었습니다.",
+        "The automation built for the Feasibility stage didn't carry over into the Prototype stage, so teams reverted to manual documentation at the next stage.",
+        "Feasibility段階の自動化構造がPrototype段階まで引き継がれず、次の段階では再び手作業による文書化に戻ってしまっていました。"
+      ),
       beforeAfter: {
-        before: ["Feasibility 단계만 자동화 구조 적용", "Prototype 단계는 별도 수작업 문서화"],
-        after: ["Prototype 단계까지 자동화 구조 확장", "단계별 입력 데이터·산출 문서·검토 흐름 정의"]
+        before: [
+          tr("Feasibility 단계만 자동화 구조 적용", "Automation applied only to the Feasibility stage", "Feasibility段階のみ自動化構造を適用"),
+          tr("Prototype 단계는 별도 수작업 문서화", "Prototype stage handled separately via manual documentation", "Prototype段階は別途手作業で文書化")
+        ],
+        after: [
+          tr("Prototype 단계까지 자동화 구조 확장", "Extended the automation structure to the Prototype stage", "Prototype段階まで自動化構造を拡張"),
+          tr("단계별 입력 데이터·산출 문서·검토 흐름 정의", "Defined per-stage input data, output documents, and review flow", "段階ごとの入力データ・成果文書・レビューフローを定義")
+        ]
       },
       goal: null,
-      myRole: "workflow 분석, 기능 설계, QA를 담당했습니다. Feasibility 단계 자동화 구조를 Prototype 단계로 확장하며 단계별 입력 데이터, 산출 문서, 검토 흐름을 정의했습니다.",
+      myRole: tr(
+        "workflow 분석, 기능 설계, QA를 담당했습니다. Feasibility 단계 자동화 구조를 Prototype 단계로 확장하며 단계별 입력 데이터, 산출 문서, 검토 흐름을 정의했습니다.",
+        "I handled workflow analysis, feature design, and QA. Extending the Feasibility-stage automation structure to the Prototype stage, I defined the input data, output documents, and review flow for each step.",
+        "ワークフロー分析、機能設計、QAを担当しました。Feasibility段階の自動化構造をPrototype段階へ拡張し、段階ごとの入力データ・成果文書・レビューフローを定義しました。"
+      ),
       // Draft estimate — placeholder percentages pending the candidate's own
       // review; adjust to match actual participation before publishing.
       contribution: [
@@ -10736,17 +11025,21 @@ renderHome();
         { label: "Stakeholder Management", pct: 40 }
       ],
       process: [
-        "Feasibility 단계 자동화 구조를 Prototype 단계로 확장",
-        "단계별 입력 데이터, 산출 문서, 검토 흐름 정의",
-        "제품개발 단계별 공통 업무와 차이점을 기능 요구사항으로 전환"
+        tr("Feasibility 단계 자동화 구조를 Prototype 단계로 확장", "Extended the Feasibility-stage automation structure to the Prototype stage", "Feasibility段階の自動化構造をPrototype段階へ拡張"),
+        tr("단계별 입력 데이터, 산출 문서, 검토 흐름 정의", "Defined the input data, output documents, and review flow for each stage", "段階ごとの入力データ、成果文書、レビューフローを定義"),
+        tr("제품개발 단계별 공통 업무와 차이점을 기능 요구사항으로 전환", "Translated the shared work and differences across product-development stages into functional requirements", "製品開発の段階ごとの共通業務と差異を機能要求事項へ変換")
       ],
       keyDecisions: [],
       result: [
-        "Prototype 단계 문서 자동화 범위 확장",
-        "문서 작성시간 약 70% 단축을 기대할 수 있는 구조 설계",
-        "제품개발 문서 품질 일관성 확보 기반 마련"
+        tr("Prototype 단계 문서 자동화 범위 확장", "Expanded document-automation coverage to the Prototype stage", "Prototype段階の文書自動化範囲を拡張"),
+        tr("문서 작성시간 약 70% 단축을 기대할 수 있는 구조 설계", "Designed a structure expected to cut document-writing time by roughly 70%", "文書作成時間を約70%短縮できる構造を設計"),
+        tr("제품개발 문서 품질 일관성 확보 기반 마련", "Laid the groundwork for consistent quality across product-development documents", "製品開発文書の品質一貫性を確保する基盤を整備")
       ],
-      resultNote: "\"기대\" 수치는 설계 단계에서의 추정치이며, 실측 데이터로 교체 예정입니다.",
+      resultNote: tr(
+        "\"기대\" 수치는 설계 단계에서의 추정치이며, 실측 데이터로 교체 예정입니다.",
+        "The \"expected\" figure is a design-stage estimate and will be replaced with measured data.",
+        "「想定」の数値は設計段階での見積もりであり、今後実測データに置き換える予定です。"
+      ),
       validation: null,
       tools: null,
       thumbnail: imgReady("assets/projects/prototype-doc-automation/shot-1.png"),
@@ -10763,19 +11056,41 @@ renderHome();
       slug: "qc-report-automation",
       caseStudyRoute: "#/work/qc-report-automation",
       num: "05", year: "2020.08-2022.12",
-      name: "QC 리포트·문서 자동화",
+      name: tr("QC 리포트·문서 자동화", "QC Report & Documentation Automation", "QCレポート・文書自動化"),
       oneLiner: "Repeated report work → Defined automation",
-      heroMetric: { value: "−40", unit: "%", label: "문서 작성 시간 (최대)", sub: "R&D · 품질 문서 재현성 개선" },
-      role: "시스템 기획, 문서 표준화, QA, 운영 개선",
+      heroMetric: {
+        value: "−40", unit: "%",
+        label: tr("문서 작성 시간 (최대)", "Document-writing time (max)", "文書作成時間（最大）"),
+        sub: tr("R&D · 품질 문서 재현성 개선", "Improved reproducibility of R&D & quality documents", "R&D・品質文書の再現性を改善")
+      },
+      role: tr(
+        "시스템 기획, 문서 표준화, QA, 운영 개선",
+        "System planning, document standardization, QA, operational improvement",
+        "システム企画、文書標準化、QA、運用改善"
+      ),
       scope: null,
       context: null,
-      problem: "QC 리포트·관련 문서가 담당자별로 반복 작성되며 형식과 품질이 제각각이었고, 표준화된 workflow가 없었습니다.",
+      problem: tr(
+        "QC 리포트·관련 문서가 담당자별로 반복 작성되며 형식과 품질이 제각각이었고, 표준화된 workflow가 없었습니다.",
+        "QC reports and related documents were repeatedly written by each person in charge, with inconsistent format and quality, and no standardized workflow.",
+        "QCレポートおよび関連文書は担当者ごとに繰り返し作成され、形式と品質がまちまちで、標準化されたワークフローもありませんでした。"
+      ),
       beforeAfter: {
-        before: ["담당자별 반복 수작업 문서 작성", "산출물 형식·품질이 담당자마다 상이"],
-        after: ["표준 출력 양식과 QA 기준 정립", "재사용 가능한 표준 문서 workflow"]
+        before: [
+          tr("담당자별 반복 수작업 문서 작성", "Repeated manual document writing by each person in charge", "担当者ごとに繰り返し手作業で文書を作成"),
+          tr("산출물 형식·품질이 담당자마다 상이", "Deliverable format and quality varied by person", "成果物の形式・品質が担当者によって異なる")
+        ],
+        after: [
+          tr("표준 출력 양식과 QA 기준 정립", "Established a standard output template and QA criteria", "標準出力フォーマットとQA基準を確立"),
+          tr("재사용 가능한 표준 문서 workflow", "A reusable, standardized document workflow", "再利用可能な標準文書ワークフロー")
+        ]
       },
       goal: null,
-      myRole: "시스템 기획, 문서 표준화, QA, 운영 개선을 담당했습니다. 반복 문서 작성 workflow를 분석해 자동화 대상을 정의하고, 출력 양식·기능 요구사항·QA 기준을 설계했습니다.",
+      myRole: tr(
+        "시스템 기획, 문서 표준화, QA, 운영 개선을 담당했습니다. 반복 문서 작성 workflow를 분석해 자동화 대상을 정의하고, 출력 양식·기능 요구사항·QA 기준을 설계했습니다.",
+        "I handled system planning, document standardization, QA, and operational improvement. I analyzed the repetitive document-writing workflow to define what to automate, and designed the output template, functional requirements, and QA criteria.",
+        "システム企画、文書標準化、QA、運用改善を担当しました。繰り返される文書作成ワークフローを分析して自動化対象を定義し、出力フォーマット・機能要求事項・QA基準を設計しました。"
+      ),
       // Draft estimate — placeholder percentages pending the candidate's own
       // review; adjust to match actual participation before publishing.
       contribution: [
@@ -10788,18 +11103,22 @@ renderHome();
         { label: "Stakeholder Management", pct: 60 }
       ],
       process: [
-        "반복 문서 작성 workflow를 분석하고 자동화 대상 정의",
-        "출력 양식, 기능 요구사항, QA 기준 설계",
-        "Jira, Confluence, Slack을 활용한 외주/내부 협업",
-        "출시 후 사용자 문의와 개선사항 관리"
+        tr("반복 문서 작성 workflow를 분석하고 자동화 대상 정의", "Analyzed the repetitive document-writing workflow and defined what to automate", "繰り返し文書作成ワークフローを分析し自動化対象を定義"),
+        tr("출력 양식, 기능 요구사항, QA 기준 설계", "Designed the output template, functional requirements, and QA criteria", "出力フォーマット、機能要求事項、QA基準を設計"),
+        tr("Jira, Confluence, Slack을 활용한 외주/내부 협업", "Collaborated with vendors and internal teams using Jira, Confluence, and Slack", "Jira、Confluence、Slackを活用した外部・社内協業"),
+        tr("출시 후 사용자 문의와 개선사항 관리", "Managed post-launch user inquiries and improvement requests", "リリース後のユーザー問い合わせと改善事項を管理")
       ],
       keyDecisions: [],
       result: [
-        "문서 작성시간 최대 약 40% 단축",
-        "R&D 및 품질 문서의 일관성과 재현성 개선",
-        "반복 사용 가능한 표준 문서 workflow 구축"
+        tr("문서 작성시간 최대 약 40% 단축", "Cut document-writing time by up to roughly 40%", "文書作成時間を最大約40%短縮"),
+        tr("R&D 및 품질 문서의 일관성과 재현성 개선", "Improved consistency and reproducibility of R&D and quality documents", "R&Dおよび品質文書の一貫性と再現性を改善"),
+        tr("반복 사용 가능한 표준 문서 workflow 구축", "Built a reusable standard document workflow", "再利用可能な標準文書ワークフローを構築")
       ],
-      resultNote: "측정 기준: 표준화 이전 문서 작성 시간 대비, 적용 후 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
+      resultNote: tr(
+        "측정 기준: 표준화 이전 문서 작성 시간 대비, 적용 후 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
+        "Measurement basis: pre-standardization document-writing time versus post-adoption measured results (specific comparison method and sample size to be documented after data review)",
+        "測定基準：標準化以前の文書作成時間と、導入後の実測値との比較（具体的な比較方法・サンプルはデータ確認後に明記予定）"
+      ),
       validation: null,
       tools: ["Jira", "Confluence", "Slack"],
       thumbnail: imgReady("assets/projects/qc-report-automation/shot-1.png"),
@@ -10824,19 +11143,47 @@ renderHome();
       slug: "liquid-handler-workflow",
       caseStudyRoute: "#/work/liquid-handler-workflow",
       num: "03", year: "2021.10-2022.03",
-      name: "리퀴드 핸들러 장비 운영 흐름 개선",
+      name: tr(
+        "리퀴드 핸들러 장비 운영 흐름 개선",
+        "Liquid Handler Equipment Operation Flow Improvement",
+        "リキッドハンドラー装置運用フロー改善"
+      ),
       oneLiner: "Complex device operation → Simplified, validated workflow",
-      heroMetric: { value: "−30", unit: "%", label: "장비 setup + 실행 시간", sub: "수동 입력 오류 −50%+ · 비전문가 운영 가능" },
-      role: "장비 운영 워크플로 분석, 사용성 개선, 검증",
+      heroMetric: {
+        value: "−30", unit: "%",
+        label: tr("장비 setup + 실행 시간", "Equipment setup + run time", "装置セットアップ＋実行時間"),
+        sub: tr("수동 입력 오류 −50%+ · 비전문가 운영 가능", "Manual-entry errors −50%+ · Operable by non-experts", "手動入力エラー−50%以上・非専門家でも運用可能")
+      },
+      role: tr(
+        "장비 운영 워크플로 분석, 사용성 개선, 검증",
+        "Equipment-operation workflow analysis, usability improvement, validation",
+        "装置運用ワークフロー分析、ユーザビリティ改善、検証"
+      ),
       scope: "Device Workflow · Usability · Validation",
       context: null,
-      problem: "Liquid Handler 장비의 구동 절차가 복잡해 비전문 사용자가 운영하기 어려웠고, 수동 입력 단계에서 오류가 자주 발생했습니다.",
+      problem: tr(
+        "Liquid Handler 장비의 구동 절차가 복잡해 비전문 사용자가 운영하기 어려웠고, 수동 입력 단계에서 오류가 자주 발생했습니다.",
+        "The Liquid Handler's operating procedure was complex enough that non-expert users struggled to run it, and errors frequently occurred at manual-entry steps.",
+        "Liquid Handler装置の操作手順が複雑で非専門ユーザーには運用が難しく、手動入力の段階で頻繁にエラーが発生していました。"
+      ),
       beforeAfter: {
-        before: ["복잡한 다단계 구동 절차", "수동 파라미터 입력에 크게 의존", "비전문 사용자의 단독 운영이 어려움"],
-        after: ["비전문 사용자 기준으로 단순화된 조작 흐름", "오류 발생 지점 우선 제거", "실제 사용자 테스트로 검증된 workflow"]
+        before: [
+          tr("복잡한 다단계 구동 절차", "A complex, multi-step operating procedure", "複雑な多段階の操作手順"),
+          tr("수동 파라미터 입력에 크게 의존", "Heavy reliance on manual parameter entry", "手動パラメータ入力への強い依存"),
+          tr("비전문 사용자의 단독 운영이 어려움", "Difficult for non-expert users to operate on their own", "非専門ユーザーが単独で運用するのが困難")
+        ],
+        after: [
+          tr("비전문 사용자 기준으로 단순화된 조작 흐름", "An operating flow simplified for non-expert users", "非専門ユーザー基準で簡素化した操作フロー"),
+          tr("오류 발생 지점 우선 제거", "Error-prone points removed first", "エラー発生ポイントを優先的に排除"),
+          tr("실제 사용자 테스트로 검증된 workflow", "A workflow verified through real user testing", "実際のユーザーテストで検証されたワークフロー")
+        ]
       },
       goal: null,
-      myRole: "장비 운영 workflow를 분석하고 사용성 개선안을 설계했으며, 실제 사용자 테스트를 통해 개선된 흐름을 직접 검증했습니다.",
+      myRole: tr(
+        "장비 운영 workflow를 분석하고 사용성 개선안을 설계했으며, 실제 사용자 테스트를 통해 개선된 흐름을 직접 검증했습니다.",
+        "I analyzed the equipment-operation workflow, designed usability improvements, and personally verified the improved flow through real user testing.",
+        "装置運用ワークフローを分析し、ユーザビリティ改善案を設計、実際のユーザーテストを通じて改善後のフローを自ら検証しました。"
+      ),
       // Draft estimate — placeholder percentages pending the candidate's own
       // review; adjust to match actual participation before publishing.
       contribution: [
@@ -10850,40 +11197,64 @@ renderHome();
       ],
       // Draft — see automation-experiment-planning's stakeholders comment.
       stakeholders: [
-        { role: "Researcher (사용자)", interaction: "장비 조작 흐름 관찰, 사용자 테스트 참여" },
-        { role: "QA", interaction: "개선된 흐름 검증" }
+        { role: tr("Researcher (사용자)", "Researcher (User)", "研究員（ユーザー）"), interaction: tr("장비 조작 흐름 관찰, 사용자 테스트 참여", "Observed the equipment-operation flow and participated in user testing", "装置操作フローの観察、ユーザーテストへの参加") },
+        { role: "QA", interaction: tr("개선된 흐름 검증", "Verified the improved flow", "改善後のフローを検証") }
       ],
       process: [
-        { stage: "Domain", desc: "장비 구동 절차·사용자 조작 흐름 분석" },
-        { stage: "Requirement", desc: "수동 입력 단계·오류 발생 지점 식별" },
-        { stage: "Design", desc: "비전문 사용자 기준으로 workflow 단순화" },
-        { stage: "Validation", desc: "실제 사용자 테스트로 개선 흐름 검증" }
+        { stage: "Domain", desc: tr("장비 구동 절차·사용자 조작 흐름 분석", "Analyzed the equipment's operating procedure and user-operation flow", "装置の操作手順・ユーザー操作フローを分析") },
+        { stage: "Requirement", desc: tr("수동 입력 단계·오류 발생 지점 식별", "Identified manual-entry steps and error-prone points", "手動入力段階・エラー発生ポイントを特定") },
+        { stage: "Design", desc: tr("비전문 사용자 기준으로 workflow 단순화", "Simplified the workflow for non-expert users", "非専門ユーザー基準でワークフローを簡素化") },
+        { stage: "Validation", desc: tr("실제 사용자 테스트로 개선 흐름 검증", "Verified the improved flow through real user testing", "実際のユーザーテストで改善フローを検証") }
       ],
       keyDecisions: [
         {
           options: [
-            { label: "전체 절차를 한 번에 재설계" },
-            { label: "오류 집중 지점부터 좁혀서 개선", chosen: true }
+            { label: tr("전체 절차를 한 번에 재설계", "Redesign the entire procedure at once", "手順全体を一度に再設計") },
+            { label: tr("오류 집중 지점부터 좁혀서 개선", "Narrow in on error-prone points first", "エラーが集中するポイントから絞り込んで改善"), chosen: true }
           ],
-          decision: "오류 발생 가능성이 높은 수동 입력 지점을 먼저 식별해 단순화 범위를 좁게 설정",
-          why: "전체 절차를 한 번에 뜯어고치기보다 오류가 실제로 몰리는 지점부터 좁혀서 개선해야 비전문 사용자 기준의 체감 효과가 빠르게 나온다고 판단했습니다."
+          decision: tr(
+            "오류 발생 가능성이 높은 수동 입력 지점을 먼저 식별해 단순화 범위를 좁게 설정",
+            "Identified the manual-entry points most prone to error first, and scoped the simplification narrowly around them",
+            "エラー発生可能性が高い手動入力ポイントを先に特定し、簡素化の範囲を絞って設定"
+          ),
+          why: tr(
+            "전체 절차를 한 번에 뜯어고치기보다 오류가 실제로 몰리는 지점부터 좁혀서 개선해야 비전문 사용자 기준의 체감 효과가 빠르게 나온다고 판단했습니다.",
+            "Rather than overhauling the entire procedure at once, I judged that narrowing in on where errors actually clustered would deliver a faster, more noticeable improvement for non-expert users.",
+            "手順全体を一度に作り替えるより、実際にエラーが集中するポイントから絞って改善する方が、非専門ユーザー基準での体感効果が早く現れると判断しました。"
+          )
         },
         {
           options: [
-            { label: "설계자 판단만으로 확정" },
-            { label: "사용자 테스트 검증 단계 포함", chosen: true }
+            { label: tr("설계자 판단만으로 확정", "Finalize based on designer judgment alone", "設計者の判断のみで確定") },
+            { label: tr("사용자 테스트 검증 단계 포함", "Include a user-testing verification step", "ユーザーテスト検証ステップを含める"), chosen: true }
           ],
-          decision: "설계 프로세스 안에 실제 사용자 테스트 검증 단계를 포함",
-          why: "장비 조작 흐름은 설계자의 직관과 실제 사용자의 체감이 다를 수 있어, 개선안을 확정하기 전 사용자 테스트로 직접 확인하는 단계를 두었습니다."
+          decision: tr(
+            "설계 프로세스 안에 실제 사용자 테스트 검증 단계를 포함",
+            "Built a real user-testing verification step into the design process",
+            "設計プロセスの中に実際のユーザーテスト検証ステップを組み込み"
+          ),
+          why: tr(
+            "장비 조작 흐름은 설계자의 직관과 실제 사용자의 체감이 다를 수 있어, 개선안을 확정하기 전 사용자 테스트로 직접 확인하는 단계를 두었습니다.",
+            "Because a designer's intuition about equipment-operation flow can differ from what real users actually feel, I added a step to confirm improvements directly through user testing before finalizing them.",
+            "装置操作フローは設計者の直感と実際のユーザーの体感が異なる場合があるため、改善案を確定する前にユーザーテストで直接確認する段階を設けました。"
+          )
         }
       ],
       result: [
-        "장비 setup 및 실행 시간 약 30% 단축",
-        "비프로그래머 사용자의 장비 운영 가능성 제고",
-        "수동 입력 오류 50% 이상 감소"
+        tr("장비 setup 및 실행 시간 약 30% 단축", "Cut equipment setup and run time by roughly 30%", "装置のセットアップおよび実行時間を約30%短縮"),
+        tr("비프로그래머 사용자의 장비 운영 가능성 제고", "Made it feasible for non-programmer users to operate the equipment", "非プログラマーユーザーによる装置運用の実現性を向上"),
+        tr("수동 입력 오류 50% 이상 감소", "Reduced manual-entry errors by more than 50%", "手動入力エラーを50%以上削減")
       ],
-      resultNote: "측정 기준: 개선 전/후 동일 장비·동일 작업 기준 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
-      validation: "실제 사용자 테스트로 개선 흐름 검증",
+      resultNote: tr(
+        "측정 기준: 개선 전/후 동일 장비·동일 작업 기준 실측 비교치 (자료 확인 후 구체적 비교 방식·표본 명시 예정)",
+        "Measurement basis: measured comparison on the same equipment and same task, before and after the improvement (specific comparison method and sample size to be documented after data review)",
+        "測定基準：改善前後で同一装置・同一作業を基準とした実測比較（具体的な比較方法・サンプルはデータ確認後に明記予定）"
+      ),
+      validation: tr(
+        "실제 사용자 테스트로 개선 흐름 검증",
+        "Verified the improved flow through real user testing",
+        "実際のユーザーテストで改善フローを検証"
+      ),
       tools: null,
       thumbnail: imgReady("assets/projects/liquid-handler-workflow/shot.png"),
       thumbnails: [
@@ -10916,11 +11287,12 @@ renderHome();
   // (CSS-only, see .thumb-stack). Falls back to a single imgPlaceholder when a
   // project has 0–1 thumbnails.
   function workThumbHtml(cs) {
-    var t = cs.thumbnails && cs.thumbnails.length > 1 ? cs.thumbnails : null;
-    if (!t) return imgPlaceholder(cs.thumbnail, cs.name);
+    var imgs = cs.thumbnails && cs.thumbnails.length > 1 ? cs.thumbnails : null;
+    var name = t(cs.name);
+    if (!imgs) return imgPlaceholder(cs.thumbnail, name);
     var ar = cs.thumbAspect ? `;--ar:${cs.thumbAspect}` : '';
-    return `<div class="thumb-stack" style="--n:${t.length}${ar}" data-lightbox-label="${cs.name}">
-      ${t.map((im, i) => `<img src="${im.realSrc}" alt="${cs.name} — screen ${i + 1}" loading="lazy">`).join('')}
+    return `<div class="thumb-stack" style="--n:${imgs.length}${ar}" data-lightbox-label="${name}">
+      ${imgs.map((im, i) => `<img src="${im.realSrc}" alt="${name} — screen ${i + 1}" loading="lazy">`).join('')}
     </div>`;
   }
 
@@ -11153,17 +11525,17 @@ renderHome();
 
   function renderProcess(process) {
     if (!process || !process.length) return '';
-    if (typeof process[0] === "string") {
-      return `<ul>${process.map(p => `<li>${p}</li>`).join('')}</ul>`;
+    if (typeof process[0] === "string" || (process[0] && process[0].ko !== undefined)) {
+      return `<ul>${process.map(p => `<li>${t(p)}</li>`).join('')}</ul>`;
     }
     return `<div class="process-flow">${process.map(s => `
-      <div class="step"><div class="stage">${s.stage}</div><div class="stage-desc">${s.desc}</div></div>
+      <div class="step"><div class="stage">${s.stage}</div><div class="stage-desc">${t(s.desc)}</div></div>
     `).join('')}</div>`;
   }
 
   function renderList(items) {
     if (!items || !items.length) return '';
-    return `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    return `<ul>${items.map(i => `<li>${t(i)}</li>`).join('')}</ul>`;
   }
 
   // Key decisions as a decision log. Accepts either a plain string (legacy
@@ -11179,9 +11551,9 @@ renderHome();
       const why = isObj ? d.why : null;
       const options = isObj ? d.options : null;
       return `<div class="decision-card">
-        ${options && options.length ? `<div class="dc-options">${options.map(o => `<span class="dc-option${o.chosen ? ' chosen' : ''}">${o.label}</span>`).join('')}</div>` : ''}
-        <div class="dc-decision">${decision}</div>
-        ${why ? `<div class="dc-why">${why}</div>` : ''}
+        ${options && options.length ? `<div class="dc-options">${options.map(o => `<span class="dc-option${o.chosen ? ' chosen' : ''}">${t(o.label)}</span>`).join('')}</div>` : ''}
+        <div class="dc-decision">${t(decision)}</div>
+        ${why ? `<div class="dc-why">${t(why)}</div>` : ''}
       </div>`;
     }).join('')}</div>`;
   }
@@ -11192,11 +11564,11 @@ renderHome();
     if (!items || !items.length) return '';
     const rows = items.map(s => `
       <div class="stakeholder-row">
-        <div class="sh-role">${s.role}</div>
-        <div class="sh-interaction">${s.interaction}</div>
+        <div class="sh-role">${t(s.role)}</div>
+        <div class="sh-interaction">${t(s.interaction)}</div>
       </div>
     `).join('');
-    return `<div class="stakeholder-list">${rows}</div>${note ? `<p class="conflict-note">${note}</p>` : ''}`;
+    return `<div class="stakeholder-list">${rows}</div>${note ? `<p class="conflict-note">${t(note)}</p>` : ''}`;
   }
 
   // Bold the metric token itself ("-50%", "80%") inside an Impact bullet so
@@ -11206,7 +11578,7 @@ renderHome();
   }
   function renderImpactList(items) {
     if (!items || !items.length) return '';
-    return `<ul>${items.map(i => `<li>${boldMetrics(i)}</li>`).join('')}</ul>`;
+    return `<ul>${items.map(i => `<li>${boldMetrics(t(i))}</li>`).join('')}</ul>`;
   }
 
   // My contribution: `items` is [{label, pct}] — pct is 0-100.
@@ -11228,7 +11600,7 @@ renderHome();
     const col = (label, steps, cls) => `
       <div class="ba-col ${cls}">
         <div class="ba-col-label">${label}</div>
-        <div class="ba-steps">${steps.map(s => `<div class="ba-step">${s}</div>`).join('')}</div>
+        <div class="ba-steps">${steps.map(s => `<div class="ba-step">${t(s)}</div>`).join('')}</div>
       </div>`;
     return `<div class="before-after">
       ${col('Before', ba.before, 'before')}
@@ -11238,7 +11610,7 @@ renderHome();
   }
 
   function renderParagraph(text) {
-    return text ? `<p>${text}</p>` : '';
+    return text ? `<p>${t(text)}</p>` : '';
   }
 
   // Major-first, then More Work — this single ordering drives the Work
@@ -11257,6 +11629,9 @@ renderHome();
   // AOS-style: each project alternates slide direction — thumbnail enters from
   // one side, the text column from the other — so scrolling the list reads as
   // a left/right zig-zag rather than everything rising uniformly.
+  // Re-runnable (also called from setLang() on a language switch) — see
+  // the two innerHTML assignments below for workList and moreWorkGrid.
+  function renderWorkLists() {
   document.getElementById('workList').innerHTML = majorCaseStudies.map((cs, i) => {
     const thumbSide = i % 2 === 0 ? 'left' : 'right';
     const textSide = i % 2 === 0 ? 'right' : 'left';
@@ -11271,10 +11646,10 @@ renderHome();
         <span class="thumb-view" aria-hidden="true">View case</span>
       </div>
       <div class="work-meta">
-        <h3 class="work-title reveal reveal--${textSide}" style="--i:2">${cs.name}</h3>
+        <h3 class="work-title reveal reveal--${textSide}" style="--i:2">${t(cs.name)}</h3>
         <p class="work-transform reveal reveal--${textSide}" style="--i:3">${transformPair(cs.oneLiner)}</p>
         <div class="work-role-scope reveal reveal--${textSide}" style="--i:4">
-          ${cs.role ? `<div class="rs-line"><strong>ROLE</strong><span>${cs.role}</span></div>` : ''}
+          ${cs.role ? `<div class="rs-line"><strong>ROLE</strong><span>${t(cs.role)}</span></div>` : ''}
           ${cs.scope ? `<div class="rs-line"><strong>SCOPE</strong><span class="scope-chips">${scopeChips(cs.scope)}</span></div>` : ''}
         </div>
         <span class="case-cta reveal reveal--${textSide}" style="--i:5">Case study</span>
@@ -11294,11 +11669,13 @@ renderHome();
         ${workThumbHtml(cs)}
         <span class="thumb-view" aria-hidden="true">View case</span>
       </div>
-      <h3 class="more-work-title">${cs.name}</h3>
+      <h3 class="more-work-title">${t(cs.name)}</h3>
       <p class="more-work-desc work-transform">${transformPair(cs.oneLiner)}</p>
       <span class="case-cta">Case study</span>
     </a>
   `).join('');
+  }
+  renderWorkLists();
 
   // ==== HERO: stat counters (count-up on scroll into view) =====================
   (function initHeroCounters() {
@@ -11359,12 +11736,14 @@ renderHome();
       if (top) top.classList.add('about-top--no-photo');
     }
   })();
-  document.getElementById('aboutStatement').textContent = aboutStatement;
+  document.getElementById('aboutStatement').textContent = t(aboutStatement);
 
   // Auto-scrolling marquee (right → left), pausing on hover. The track is
   // the card list rendered twice back-to-back so the loop point (translateX
   // 0 → -50%) lands on identical content and reads as seamless.
-  (function renderCapabilityMarquee() {
+  // Re-runnable (also called from setLang()) — the ticker's own measure()
+  // re-runs afterwards via a dispatched 'resize' event, see setLang().
+  function renderCapabilityCards() {
     const cardHtml = (c) => `
       <div class="capability-card interactive-card">
         <div class="capability-card-head">
@@ -11372,12 +11751,13 @@ renderHome();
           <span class="num">${c.num}</span>
         </div>
         <h3>${c.title}</h3>
-        <p>${c.desc}</p>
+        <p>${t(c.desc)}</p>
       </div>
     `;
     document.getElementById('capabilityList').innerHTML =
       capabilities.map(cardHtml).join('') + capabilities.map(cardHtml).join('');
-  })();
+  }
+  renderCapabilityCards();
 
   // Drives the marquee from JS (not @keyframes) so hover-pause and the
   // prev/next buttons can all move the same transform without fighting an
@@ -11445,24 +11825,27 @@ renderHome();
     requestAnimationFrame(tick);
   })();
 
+  function renderAboutCompact() {
   document.getElementById('aboutCompactGrid').innerHTML = `
     <div class="about-compact-block reveal" style="--i:0">
       <h3>Career Summary</h3>
-      <ul>${careerSummary.map(i => `<li>${i}</li>`).join('')}</ul>
+      <ul>${careerSummary.map(i => `<li>${t(i)}</li>`).join('')}</ul>
     </div>
     <div class="about-compact-block reveal" style="--i:1">
       <h3>Education</h3>
-      <ul>${educationCompact.map(i => `<li>${i}</li>`).join('')}</ul>
+      <ul>${educationCompact.map(i => `<li>${t(i)}</li>`).join('')}</ul>
     </div>
     <div class="about-compact-block reveal" style="--i:2">
       <h3>Certifications</h3>
-      <ul>${certificationsCompact.map(i => `<li>${i}</li>`).join('')}</ul>
+      <ul>${certificationsCompact.map(i => `<li>${t(i)}</li>`).join('')}</ul>
     </div>
     <div class="about-compact-block reveal" style="--i:3">
       <h3>Language</h3>
-      <ul>${languagesCompact.map(i => `<li>${i}</li>`).join('')}</ul>
+      <ul>${languagesCompact.map(l => `<li>${t(l.lang)} · ${l.cert} (${l.date})</li>`).join('')}</ul>
     </div>
   `;
+  }
+  renderAboutCompact();
 
   // ==== EXPERIENCE =============================================================
   // Company mark: a plain initial-letter badge (no logo assets on file) —
@@ -11471,28 +11854,35 @@ renderHome();
   function companyLogo(name) {
     return `<span class="company-logo" aria-hidden="true">${name.trim().charAt(0)}</span>`;
   }
+  function renderExperienceList() {
   document.getElementById('experienceList').innerHTML = experience.map((e, idx) => `
     <div class="timeline-item interactive-card reveal" style="--i:${idx}">
       <div class="role-row">
         <span class="role">${companyLogo(e.domain)}${e.domain}</span>
         <span class="period">${e.period}</span>
       </div>
-      <div class="focus">${e.focus} · ${e.role}</div>
+      <div class="focus">${e.focus} · ${t(e.role)}</div>
       <div class="career-summary">
         ${e.summary.map(g => `
           <div class="career-summary-group">
-            <h4>${g.category}</h4>
-            <ul>${g.items.map(i => `<li>${i}</li>`).join('')}</ul>
+            <h4>${t(g.category)}</h4>
+            <ul>${g.items.map(i => `<li>${t(i)}</li>`).join('')}</ul>
           </div>
         `).join('')}
       </div>
-      <div class="tag-row">${e.tags.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>
+      <div class="tag-row">${e.tags.map(tag => `<span class="skill-tag">${tag}</span>`).join('')}</div>
     </div>
   `).join('');
+  }
+  renderExperienceList();
 
   // Highlight whichever card is centered in view so the timeline's target
-  // dots read as dynamic while scrolling instead of staying static.
-  (function initExperienceInView() {
+  // dots read as dynamic while scrolling instead of staying static. Re-run
+  // after every renderExperienceList() call (including language switches) —
+  // the old observer only ever watched the now-replaced elements, so a
+  // fresh one is needed each time; cheap, and the previous instance is
+  // simply garbage-collected once its targets are gone.
+  function initExperienceInView() {
     const items = Array.prototype.slice.call(document.querySelectorAll('#experienceList .timeline-item'));
     if (!items.length || typeof IntersectionObserver === 'undefined') return;
 
@@ -11503,7 +11893,8 @@ renderHome();
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
 
     items.forEach(item => expObserver.observe(item));
-  })();
+  }
+  initExperienceInView();
 
   // ==== SKILLS =================================================================
   // A plain string ("Domain Analysis") or a {name, icon} tool object both
@@ -11555,9 +11946,32 @@ renderHome();
   const emailIcon = `<svg class="footer-link-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>`;
   const resumeIcon = `<svg class="footer-link-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M280 0c13.3 0 24 10.7 24 24V269.5l63-63c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-104 104c-9.4 9.4-24.6 9.4-33.9 0l-104-104c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l63 63V24c0-13.3 10.7-24 24-24zM64 352c17.7 0 32 14.3 32 32v64c0 17.7 14.3 32 32 32H384c17.7 0 32-14.3 32-32V384c0-17.7 14.3-32 32-32s32 14.3 32 32v64c0 53-43 96-96 96H128c-53 0-96-43-96-96V384c0-17.7 14.3-32 32-32z"/></svg>`;
 
-  // Nav: a single plain text contact link, sitting inline with the nav items.
+  // Nav: brand/logo — closes any open case-study detail and scrolls back
+  // up to the hero, same as clicking any other in-page nav link.
+  document.getElementById('navBrand').addEventListener('click', function (e) {
+    e.preventDefault();
+    var hero = document.getElementById('hero');
+    closeMobileNav();
+    closeCaseStudy(false);
+    if (hero) smoothScrollTo(hero); else window.scrollTo(0, 0);
+    if (history.pushState) history.pushState(null, '', location.pathname + location.search);
+  });
+
+  // Nav: a single plain text contact button, sitting inline with the nav
+  // items. Scrolls down to the footer's "Get in touch" block (id="contact")
+  // rather than opening a mail client — the footer's own Email link is
+  // still the mailto: action.
   document.getElementById('navIconGroup').innerHTML =
-    `<a class="nav-contact" href="mailto:${contactEmail}${emailSubject}">Contact</a>`;
+    `<a class="nav-contact" href="#contact" id="navContactBtn">Contact</a>`;
+  document.getElementById('navContactBtn').addEventListener('click', function (e) {
+    var target = document.getElementById('contact');
+    if (!target) return;
+    e.preventDefault();
+    closeMobileNav();
+    closeCaseStudy(false);
+    smoothScrollTo(target);
+    if (history.pushState) history.pushState(null, '', '#contact');
+  });
 
   // Footer: LinkedIn / Email / Resume download, same footer-link treatment
   // (and same inert-until-set pattern) across all three.
@@ -11588,16 +12002,16 @@ renderHome();
         <span class="detail-num">${cs.num}</span>
         <span class="detail-year">${cs.year}</span>
       </div>
-      <h1 class="detail-title">${cs.name}</h1>
+      <h1 class="detail-title">${t(cs.name)}</h1>
       <p class="detail-desc work-transform">${transformPair(cs.oneLiner)}</p>
       <div class="detail-meta-row">
-        <div><strong>Role</strong><span class="dm-value">${cs.role}</span></div>
+        <div><strong>Role</strong><span class="dm-value">${t(cs.role)}</span></div>
         ${cs.scope ? `<div><strong>Scope</strong><span class="scope-chips">${scopeChips(cs.scope)}</span></div>` : ''}
       </div>
       <div class="detail-hero-image">${
-        PROTOTYPE_EMBED_SLUGS.has(cs.slug) ? prototypeEmbedHtml(cs.slug, cs.name)
-        : cs.figmaEmbed ? figmaEmbedHtml(cs.figmaEmbed, cs.name)
-        : imgPlaceholder(cs.thumbnail, cs.name)
+        PROTOTYPE_EMBED_SLUGS.has(cs.slug) ? prototypeEmbedHtml(cs.slug, t(cs.name))
+        : cs.figmaEmbed ? figmaEmbedHtml(cs.figmaEmbed, t(cs.name))
+        : imgPlaceholder(cs.thumbnail, t(cs.name))
       }</div>
       ${detailSection('Context', renderParagraph(cs.context))}
       ${detailSection('Problem', renderParagraph(cs.problem))}
@@ -11608,14 +12022,14 @@ renderHome();
       ${detailSection('Collaboration &amp; stakeholders', renderStakeholders(cs.stakeholders, cs.conflictNote))}
       ${detailSection('Process', renderProcess(cs.process))}
       ${detailSection('Key decisions', renderDecisions(cs.keyDecisions))}
-      ${detailSection('Impact', renderImpactList(cs.result) + (cs.resultNote ? `<p class="detail-note">${cs.resultNote}</p>` : ''))}
+      ${detailSection('Impact', renderImpactList(cs.result) + (cs.resultNote ? `<p class="detail-note">${t(cs.resultNote)}</p>` : ''))}
       ${detailSection('Validation', renderParagraph(cs.validation))}
-      ${detailSection('Tools &amp; techniques', cs.tools && cs.tools.length ? `<div class="skills">${cs.tools.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>` : '')}
-      <div class="detail-image-row">${cs.detailImages.map(i => imgPlaceholder(i, cs.name + ' detail')).join('')}</div>
-      <div class="detail-image-row">${cs.workflowImages.map(i => imgPlaceholder(i, cs.name + ' workflow')).join('')}</div>
+      ${detailSection('Tools &amp; techniques', cs.tools && cs.tools.length ? `<div class="skills">${cs.tools.map(tool => `<span class="skill-tag">${tool}</span>`).join('')}</div>` : '')}
+      <div class="detail-image-row">${cs.detailImages.map(i => imgPlaceholder(i, t(cs.name) + ' detail')).join('')}</div>
+      <div class="detail-image-row">${cs.workflowImages.map(i => imgPlaceholder(i, t(cs.name) + ' workflow')).join('')}</div>
       <div class="detail-nav-row">
-        ${prev ? `<button class="detail-nav-link prev" data-slug="${prev.slug}"><span class="dir">← Previous project</span>${prev.name}</button>` : '<span></span>'}
-        ${next ? `<button class="detail-nav-link next" data-slug="${next.slug}"><span class="dir">Next project →</span>${next.name}</button>` : '<span></span>'}
+        ${prev ? `<button class="detail-nav-link prev" data-slug="${prev.slug}"><span class="dir">← Previous project</span>${t(prev.name)}</button>` : '<span></span>'}
+        ${next ? `<button class="detail-nav-link next" data-slug="${next.slug}"><span class="dir">Next project →</span>${t(next.name)}</button>` : '<span></span>'}
       </div>
     `;
     document.getElementById('detailBackBtn').addEventListener('click', () => closeCaseStudy(true));
@@ -11626,9 +12040,14 @@ renderHome();
     hydratePrototypeEmbeds(workDetailContent);
   }
 
+  // Tracked so a language switch while a case study is open can re-render
+  // that same detail view in the new language (see setLang()).
+  let currentDetailSlug = null;
+
   function openCaseStudy(slug, push) {
     const index = orderedCaseStudies.findIndex(c => c.slug === slug);
     if (index === -1) return;
+    currentDetailSlug = slug;
     renderCaseStudyDetail(orderedCaseStudies[index], index);
     workDetailOverlay.hidden = false;
     document.body.classList.add('detail-open');
@@ -11637,6 +12056,7 @@ renderHome();
   }
 
   function closeCaseStudy(push) {
+    currentDetailSlug = null;
     workDetailOverlay.hidden = true;
     document.body.classList.remove('detail-open');
     if (push) history.pushState({ view: 'main' }, '', '#projects');
@@ -11850,6 +12270,99 @@ renderHome();
     });
   }, { threshold: 0, rootMargin: '-45% 0px -50% 0px' });
   navSections.forEach(sec => navObserver.observe(sec));
+
+  // ==== LANGUAGE SWITCH =========================================================
+  // Static markup nodes whose text isn't produced by one of the
+  // innerHTML-building render functions above (hero intro, a couple of
+  // section labels, a11y labels) — updated directly by id on every call.
+  function applyStaticLabels() {
+    document.documentElement.lang = LANG;
+
+    var heroSub = document.getElementById('heroSub');
+    if (heroSub) {
+      if (LANG === 'ko') {
+        // Restores the original markup exactly (accent-styled name span);
+        // the EN/JA translations already weave the name into the sentence,
+        // so they render as plain text below instead.
+        heroSub.innerHTML = '복잡하게 얽힌 도메인 프로세스를 분석해 요구사항·설계·검증·운영을 하나의 제품 흐름으로 잇는 기획자 <span class="hero-name">김한들</span>입니다.';
+      } else {
+        heroSub.textContent = t(UI.heroSub);
+      }
+    }
+    var heroStatus = document.getElementById('heroStatus');
+    if (heroStatus) heroStatus.textContent = t(UI.heroStatus);
+    var heroScroll = document.getElementById('heroScrolldown');
+    if (heroScroll) {
+      heroScroll.setAttribute('aria-label', t(UI.heroScrollAria));
+      heroScroll.textContent = t(UI.scrollLabel);
+    }
+    var navToggleBtn = document.getElementById('navToggle');
+    if (navToggleBtn) navToggleBtn.setAttribute('aria-label', t(UI.menuOpenAria));
+    var workTitle = document.getElementById('workSectionTitle');
+    if (workTitle) workTitle.textContent = t(UI.workSectionTitle);
+    var tickerPrev = document.getElementById('tickerPrevBtn');
+    if (tickerPrev) tickerPrev.setAttribute('aria-label', t(UI.tickerPrevAria));
+    var tickerNext = document.getElementById('tickerNextBtn');
+    if (tickerNext) tickerNext.setAttribute('aria-label', t(UI.tickerNextAria));
+    var lbClose = document.getElementById('lightboxClose');
+    if (lbClose) lbClose.setAttribute('aria-label', t(UI.lightboxCloseAria));
+    var railNote = document.getElementById('expRailNote');
+    if (railNote) railNote.textContent = t(expRailNote);
+  }
+
+  const LANG_OPTIONS = [
+    { code: 'ko', label: '한국어' },
+    { code: 'en', label: 'EN' },
+    { code: 'ja', label: '日本語' }
+  ];
+  function renderLangSwitch() {
+    var el = document.getElementById('langSwitch');
+    if (!el) return;
+    el.setAttribute('aria-label', t(UI.langSwitchAria));
+    el.innerHTML = LANG_OPTIONS.map(function (o, i) {
+      return (i > 0 ? '<span class="sep" aria-hidden="true">/</span>' : '')
+        + `<button type="button" data-lang="${o.code}" class="${o.code === LANG ? 'active' : ''}" aria-pressed="${o.code === LANG}">${o.label}</button>`;
+    }).join('');
+    el.querySelectorAll('button[data-lang]').forEach(function (btn) {
+      btn.addEventListener('click', function () { setLang(btn.dataset.lang); });
+    });
+  }
+
+  // Re-renders every language-dependent piece of the page in place — safe
+  // to call repeatedly (each render function above fully replaces its own
+  // container's innerHTML, and delegated click handlers live on the
+  // containers themselves, not their children, so nothing needs rebinding).
+  function setLang(lang) {
+    if (lang !== 'ko' && lang !== 'en' && lang !== 'ja') return;
+    if (lang === LANG) return;
+    LANG = lang;
+    try { localStorage.setItem(LANG_STORAGE_KEY, lang); } catch (e) { /* private mode / storage blocked */ }
+
+    applyStaticLabels();
+    renderLangSwitch();
+    document.getElementById('aboutStatement').textContent = t(aboutStatement);
+    renderCapabilityCards();
+    window.dispatchEvent(new Event('resize')); // re-measures the capability ticker (see initCapabilityMarquee)
+    renderAboutCompact();
+    renderWorkLists();
+    renderExperienceList();
+    initExperienceInView();
+    if (currentDetailSlug) {
+      var openIdx = orderedCaseStudies.findIndex(c => c.slug === currentDetailSlug);
+      if (openIdx !== -1) renderCaseStudyDetail(orderedCaseStudies[openIdx], openIdx);
+    }
+
+    // A manual switch, not the first paint — show the freshly re-rendered
+    // text immediately rather than waiting for the scroll-in
+    // IntersectionObserver to notice it (which would otherwise leave
+    // already-on-screen content invisible until the next scroll).
+    document.querySelectorAll('.reveal, .title-reveal, .work-thumb-reveal').forEach(function (el) {
+      el.classList.add('revealed');
+    });
+  }
+
+  applyStaticLabels();
+  renderLangSwitch();
 
   // On a fresh load: open a case study directly if the URL deep-links to one
   // (#/work/<slug>), otherwise guarantee we start at the very top
