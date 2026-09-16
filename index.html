@@ -716,7 +716,7 @@
   }
 
   @media (min-width: 700px) {
-    .about-compact-grid { grid-template-columns: repeat(3, 1fr); }
+    .about-compact-grid { grid-template-columns: repeat(4, 1fr); }
   }
 
   .about-compact-block {
@@ -10458,6 +10458,7 @@ renderHome();
   ];
   const educationCompact = ["전북대학교 분자생물학 학사 / 컴퓨터공학 복수전공"];
   const certificationsCompact = ["PMP", "정보처리기사", "컴퓨터활용능력 1급", "화학분석기사"];
+  const languagesCompact = ["영어 · OPIC IH (2025.09.01)", "일본어 · JLPT N2 (2026.01.19)"];
 
   // ==== EXPERIENCE ============================================================
   // Same two roles as before, reframed as "selected experience" tags instead
@@ -11452,6 +11453,10 @@ renderHome();
     <div class="about-compact-block reveal" style="--i:2">
       <h3>Certifications</h3>
       <ul>${certificationsCompact.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>
+    <div class="about-compact-block reveal" style="--i:3">
+      <h3>Language</h3>
+      <ul>${languagesCompact.map(i => `<li>${i}</li>`).join('')}</ul>
     </div>
   `;
 
