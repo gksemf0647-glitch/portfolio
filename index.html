@@ -1581,8 +1581,12 @@
     gap: clamp(40px, 5vw, 56px);
   }
 
-  @media (min-width: 800px) {
-    .more-work-grid { grid-template-columns: 1fr 1fr; gap: clamp(48px, 5vw, 64px) clamp(32px, 3vw, 44px); }
+  /* 4·5·6번을 한 줄 3열로 — 카드 크기를 줄여 나란히 배치 (좁은 화면은 2열 → 1열) */
+  @media (min-width: 700px) {
+    .more-work-grid { grid-template-columns: 1fr 1fr; gap: clamp(40px, 5vw, 56px) clamp(24px, 3vw, 36px); }
+  }
+  @media (min-width: 1040px) {
+    .more-work-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(40px, 4vw, 52px) clamp(24px, 2.4vw, 32px); }
   }
 
   .more-work-item {
@@ -2694,7 +2698,7 @@
 
   /* Work-row hierarchy: widen the step between title and metadata */
   .work-title { font-size: clamp(1.35rem, 2.2vw, 1.85rem); margin-bottom: 20px; line-height: 1.12; }
-  .more-work-title { font-size: clamp(1.2rem, 1.9vw, 1.5rem); }
+  .more-work-title { font-size: clamp(1.02rem, 1.35vw, 1.2rem); line-height: 1.3; word-break: keep-all; }
   .work-transform { margin-bottom: 26px; }
   .work-role-scope { margin-top: 6px; margin-bottom: 26px; gap: 14px; }
 
@@ -10596,6 +10600,870 @@ renderHome();
 
 
 
+<!-- ┌────────────────────────────────────────────────────────────────
+     │ [프로젝트 05]  데이터 피팅 및 결과 정리 자동화  │
+     │ slug: analysis-automation-sw                                            │
+     └────────────────────────────────────────────────────────────────
+     ※ 원본: DDS CORE 1.0.html (CurveDesk). 임베드용으로 <style> 한 블록만 추가함. -->
+<template id="prototype-embed--analysis-automation-sw">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CurveDesk — Experiment Data Analysis Workspace</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<style>
+@font-face { font-family:'Pretendard'; src:url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'); font-weight:45 920; }
+@font-face { font-family:'IBM Plex Mono'; src:url('https://cdn.jsdelivr.net/gh/dharmatype/IBM-Plex@master/IBM-Plex-Mono/fonts/complete/woff2/IBMPlexMono-Medium.woff2') format('woff2'); font-weight:500; }
+@font-face { font-family:'IBM Plex Mono'; src:url('https://cdn.jsdelivr.net/gh/dharmatype/IBM-Plex@master/IBM-Plex-Mono/fonts/complete/woff2/IBMPlexMono-Regular.woff2') format('woff2'); font-weight:400; }
+
+:root{
+  --bg-outer:#E7EAEF; --surface:#FFFFFF; --surface-alt:#F4F6F9; --surface-sunken:#EEF1F5;
+  --border:#DFE3EA; --border-soft:#EAEDF1; --ink:#101828; --ink-soft:#5B6472; --ink-faint:#95A0AC;
+  --rail-bg:#11161D; --rail-ink:#8A94A3; --rail-ink-active:#F3F5F7;
+  --accent:#0E7C86; --accent-ink:#075055; --accent-soft:#E1F1F1; --accent-line:#BFE0DF;
+  --danger:#D6503F; --warn:#C7871F; --ok:#2FAE60;
+  --well-pos:#DCEFE3; --well-neg:#EEF1F5; --well-invalid:#F6DCD6;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{ background:var(--bg-outer); font-family:'Pretendard', -apple-system, sans-serif; color:var(--ink); display:flex; align-items:center; justify-content:center; padding:1.6vw; min-height:100vh; }
+.stage-wrap{ width:100%; max-width:1520px; aspect-ratio:16/9; container-type:inline-size; border-radius:14px; overflow:hidden; box-shadow:0 1px 2px rgba(16,24,40,.06), 0 18px 40px -14px rgba(16,24,40,.28); border:1px solid #D6DBE3; opacity:0; animation:stageIn .5s ease-out .05s forwards; }
+@keyframes stageIn{ to{ opacity:1; } }
+.stage{ width:100%;height:100%; font-size:clamp(9px, 1.02cqi, 15px); display:flex; background:var(--surface-sunken); overflow:hidden; position:relative; }
+
+.rail{ width:4.6em; flex:0 0 auto; background:var(--rail-bg); display:flex; flex-direction:column; align-items:center; padding:1em 0; gap:.3em; }
+.rail-logo{ width:2.3em;height:2.3em; border-radius:.55em; background:linear-gradient(155deg,var(--accent),#0A5D64); display:flex;align-items:center;justify-content:center; margin-bottom:1.1em; }
+.rail-logo svg{width:1.3em;height:1.3em;}
+.rail-item{ width:2.6em;height:2.6em; border-radius:.6em; display:flex;align-items:center;justify-content:center; color:var(--rail-ink); cursor:pointer; position:relative; }
+.rail-item svg{width:1.25em;height:1.25em;}
+.rail-item.active{ background:#1C2530; color:var(--rail-ink-active); }
+.rail-item.active::before{ content:''; position:absolute; left:-.9em; top:50%; transform:translateY(-50%); width:.28em; height:1.3em; border-radius:0 .2em .2em 0; background:var(--accent); }
+.rail-item:hover{ color:var(--rail-ink-active); }
+.rail-spacer{ flex:1; }
+.rail-user{ width:2.1em;height:2.1em;border-radius:50%; background:#28313D; color:#C6CDD6; display:flex;align-items:center;justify-content:center; font-size:.72em; font-weight:600; }
+
+.app-body{ flex:1; display:flex; flex-direction:column; min-width:0; }
+.topbar{ height:3.4em; flex:0 0 auto; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 1.1em; gap:.7em; }
+.crumb{ display:flex; align-items:center; gap:.5em; font-size:1em; color:var(--ink-soft); min-width:0; }
+.crumb b{ color:var(--ink); font-weight:600; }
+.crumb .sep{ color:var(--ink-faint); }
+.crumb-current{ color:var(--ink); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.back-btn{ display:flex; align-items:center; gap:.35em; border:1px solid var(--border); background:var(--surface); border-radius:.5em; padding:.45em .7em; font-size:.86em; color:var(--ink-soft); cursor:pointer; }
+.back-btn:hover{ background:var(--surface-alt); color:var(--ink); }
+.back-btn svg{width:1em;height:1em;}
+.topbar-spacer{ flex:1; }
+.btn{ border-radius:.5em; border:1px solid var(--border); background:var(--surface); color:var(--ink); font-size:.86em; font-weight:500; padding:.5em .85em; cursor:pointer; display:flex; align-items:center; gap:.4em; white-space:nowrap; }
+.btn:hover{ background:var(--surface-alt); }
+.btn:disabled{ opacity:.45; cursor:not-allowed; }
+.btn-primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.btn-primary:hover{ background:var(--accent-ink); }
+.btn-primary:disabled:hover{ background:var(--accent); }
+.btn svg{ width:1em; height:1em; }
+
+.screen{ flex:1; display:flex; flex-direction:column; min-height:0; }
+.screen[hidden]{ display:none; }
+.list-header{ padding:1.2em 1.6em .15em; }
+.list-header h1{ font-size:1.28em; margin:0 0 .15em; font-weight:600; letter-spacing:-.01em; }
+.list-header p{ margin:0; font-size:.92em; color:var(--ink-soft); }
+.list-body{ flex:1; overflow-y:auto; padding:1em 1.6em 1.6em; }
+.product-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:.85em; }
+.product-card{ background:var(--surface); border:1px solid var(--border); border-left:3px solid transparent; border-radius:.55em; padding:.95em 1.05em 1em; cursor:pointer; transition:border-color .12s ease; display:flex; flex-direction:column; }
+.product-card:hover{ border-color:#C9D0DA; }
+.pc-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:.5em;}
+.pc-name{ font-size:1.02em; font-weight:600; line-height:1.35; }
+.pc-status{ font-size:.72em; padding:.22em .5em; border-radius:.35em; background:var(--surface-alt); color:var(--ink-soft); white-space:nowrap; border:1px solid var(--border-soft); flex:0 0 auto; }
+.pc-status.ing{ background:var(--accent-soft); color:var(--accent-ink); border-color:var(--accent-line); }
+.pc-code{ font-family:'IBM Plex Mono',monospace; font-size:.74em; color:var(--ink-faint); margin-top:.35em; }
+.pc-desc{ font-size:.8em; color:var(--ink-soft); line-height:1.5; margin-top:.55em; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.4em; }
+.pc-progress{ margin-top:.7em; }
+.pc-progress-label{ display:flex; justify-content:space-between; font-size:.72em; color:var(--ink-faint); margin-bottom:.3em; }
+.pc-progress-label b{ color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; font-weight:600; }
+.pc-track{ height:.35em; border-radius:.2em; background:var(--surface-alt); overflow:hidden; border:1px solid var(--border-soft); }
+.pc-fill{ height:100%; border-radius:.2em; background:var(--accent); }
+.pc-footer{ margin-top:.8em; padding-top:.65em; border-top:1px solid var(--border-soft); display:flex; justify-content:space-between; align-items:center; gap:.5em; }
+.pc-person{ display:flex; align-items:center; gap:.4em; min-width:0; }
+.pc-avatar{ width:1.5em; height:1.5em; border-radius:50%; flex:0 0 auto; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; font-size:.66em; font-weight:700; }
+.pc-person-text{ display:flex; flex-direction:column; line-height:1.25; min-width:0; }
+.pc-person-text .role{ font-size:.66em; color:var(--ink-faint); }
+.pc-person-text .name{ font-size:.76em; color:var(--ink-soft); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pc-updated{ font-size:.7em; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; text-align:right; flex:0 0 auto; }
+
+.exp-select{ background:var(--surface); border-bottom:1px solid var(--border); padding:.85em 1.4em .95em; flex:0 0 auto; }
+.exp-tabs{ display:flex; gap:.5em; margin-bottom:.7em; }
+.exp-tab{ border:1px solid var(--border); background:var(--surface-alt); border-radius:2em; padding:.38em .85em .38em .95em; font-size:.82em; font-weight:500; color:var(--ink-soft); cursor:pointer; display:flex; align-items:center; gap:.4em; }
+.exp-tab .count{ font-family:'IBM Plex Mono',monospace; font-size:.82em; color:var(--ink-faint); background:var(--surface); border-radius:1em; padding:.03em .48em; }
+.exp-tab.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.exp-tab.active .count{ background:rgba(255,255,255,.22); color:#fff; }
+.exp-tab:hover:not(.active){ border-color:#C9D0DA; color:var(--ink); }
+.exp-cards{ display:flex; gap:.65em; overflow-x:auto; padding-bottom:.15em; }
+.exp-card{ flex:0 0 auto; width:12.2em; border:1px solid var(--border); border-radius:.55em; padding:.7em .8em; cursor:pointer; background:var(--surface-alt); }
+.exp-card.selected{ border-color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent-line); }
+.exp-card .ec-name{ font-weight:600; font-size:.9em; line-height:1.3; }
+.exp-card .ec-meta{ display:flex; align-items:center; gap:.4em; font-size:.72em; color:var(--ink-soft); margin-top:.5em; }
+.ec-dot{ width:.5em; height:.5em; border-radius:50%; flex:0 0 auto; }
+.exp-add-card{ flex:0 0 auto; width:8.5em; border:1.5px dashed #C7CEDA; border-radius:.55em; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.3em; color:var(--ink-faint); cursor:pointer; font-size:.8em; }
+.exp-add-card svg{ width:1.3em; height:1.3em; }
+.exp-add-card:hover{ border-color:var(--accent); color:var(--accent-ink); background:var(--accent-soft); }
+
+.exp-empty{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.6em; color:var(--ink-faint); text-align:center; padding:2em; }
+.exp-empty[hidden]{ display:none; }
+.exp-empty svg{ width:2.6em; height:2.6em; color:#C4CBD5; }
+.exp-empty .t1{ font-size:1em; font-weight:600; color:var(--ink-soft); }
+.exp-empty .t2{ font-size:.84em; }
+
+.workspace-body{ flex:1; display:flex; min-height:0; }
+.workspace-body[hidden]{ display:none; }
+.upload-col{ width:20.5em; flex:0 0 auto; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; min-height:0; }
+.upload-head{ padding:1em 1.1em .3em; font-size:.94em; font-weight:600; }
+.dropzone{ margin:.7em 1.1em 1em; border:1.5px dashed #C7CEDA; border-radius:.6em; padding:1em .8em; text-align:center; color:var(--ink-soft); font-size:.82em; cursor:pointer; }
+.dropzone:hover{ border-color:var(--accent); color:var(--accent-ink); background:var(--accent-soft); }
+.dropzone svg{ width:1.5em; height:1.5em; margin-bottom:.35em; color:var(--ink-faint); }
+.dropzone:hover svg{ color:var(--accent); }
+.dz-types{ display:flex; flex-wrap:wrap; gap:.3em; justify-content:center; margin-top:.55em; }
+.dz-type{ font-size:.66em; padding:.15em .42em; border-radius:.3em; background:var(--surface-alt); color:var(--ink-soft); border:1px solid var(--border-soft); font-family:'IBM Plex Mono',monospace; }
+.upload-list-head{ display:flex; justify-content:space-between; align-items:center; padding:.7em 1.1em .5em; font-size:.76em; color:var(--ink-faint); border-top:1px solid var(--border-soft); margin-top:.2em; }
+.select-all{ display:flex; align-items:center; gap:.45em; cursor:pointer; }
+.select-all input{ width:.95em; height:.95em; accent-color:var(--accent); cursor:pointer; }
+.upload-list{ flex:1; overflow-y:auto; padding:0 .8em .8em; display:flex; flex-direction:column; gap:.45em; }
+.file-row{ border-radius:.5em; border:1px solid var(--border-soft); background:var(--surface-alt); padding:.55em .6em .6em; cursor:pointer; }
+.file-row.active{ border-color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent-line); }
+.file-row.new{ animation:rowIn .35s ease-out; }
+@keyframes rowIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
+.fr-top{ display:flex; align-items:flex-start; gap:.55em; }
+.fr-check{ width:1em; height:1em; margin-top:.15em; accent-color:var(--accent); cursor:pointer; flex:0 0 auto; }
+.fr-info{ min-width:0; flex:1; }
+.fr-name{ font-size:.83em; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fr-meta{ font-size:.68em; color:var(--ink-faint); margin-top:.1em; font-family:'IBM Plex Mono',monospace; }
+.fr-types{ display:flex; flex-wrap:wrap; gap:.3em; margin-top:.5em; }
+.fr-type{ font-size:.63em; padding:.16em .4em; border-radius:.3em; font-weight:600; border:1px solid transparent; display:flex; align-items:center; gap:.25em; }
+.fr-type.off{ background:var(--surface-sunken); color:var(--ink-faint); border-color:var(--border-soft); }
+.fr-type svg{ width:.75em; height:.75em; }
+
+.main-col{ flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--surface-sunken); }
+.tabs{ display:flex; gap:1.3em; padding:0 1.4em; height:2.9em; flex:0 0 auto; background:var(--surface); border-bottom:1px solid var(--border); overflow-x:auto; }
+.tab{ border:none; background:none; cursor:pointer; font-size:.88em; color:var(--ink-soft); font-weight:500; height:100%; position:relative; padding:0; white-space:nowrap; }
+.tab.active{ color:var(--ink); font-weight:600; }
+.tab.active::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--accent); }
+.tab:hover{ color:var(--ink); }
+.tab-panels{ flex:1; min-height:0; overflow-y:auto; padding:1.2em 1.5em; }
+.tab-panel[hidden]{ display:none; }
+
+.param-card{ background:var(--surface); border:1px solid var(--border); border-radius:.7em; padding:1.1em 1.3em; max-width:56em; margin-bottom:1.1em; }
+.param-card-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:1em; margin-bottom:.85em; }
+.param-card-head h3{ margin:0; font-size:.98em; font-weight:600; }
+.param-card-head p{ margin:.3em 0 0; font-size:.78em; color:var(--ink-soft); max-width:38em; line-height:1.5; }
+.param-table{ width:100%; border-collapse:collapse; font-size:.85em; }
+.param-table th{ text-align:left; color:var(--ink-faint); font-weight:500; font-size:.82em; padding:.4em .5em; border-bottom:1px solid var(--border-soft); }
+.param-table td{ padding:.4em .5em; border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+.param-table td.ptch{ display:flex; align-items:center; gap:.5em; font-weight:600; }
+.param-table input{ width:100%; max-width:6.4em; border:1px solid var(--border); border-radius:.4em; padding:.4em .5em; font-family:'IBM Plex Mono',monospace; font-size:.88em; background:var(--surface-alt); }
+.param-table input:disabled{ color:var(--ink-faint); background:var(--surface-sunken); }
+.param-table input:focus{ outline:2px solid var(--accent-line); border-color:var(--accent); background:var(--surface); }
+.result-heading{ font-size:.86em; font-weight:600; color:var(--ink-soft); margin:0 0 .6em; }
+.apply-row{ display:flex; justify-content:flex-end; align-items:center; gap:.6em; max-width:56em; margin-bottom:1.3em; }
+.apply-row .hint{ font-size:.76em; color:var(--ink-faint); margin-right:auto; }
+.apply-row.sticky-actions{
+  position:sticky; top:-1.2em; z-index:5; max-width:none;
+  margin:-1.2em -1.5em 1.1em; padding:.85em 1.5em;
+  background:var(--surface-sunken); border-bottom:1px solid var(--border);
+}
+.result-note{ font-size:.78em; color:var(--ink-soft); margin:0 0 .8em; }
+
+.curve-layout{ display:flex; gap:1em; align-items:flex-start; }
+.well-panel{ width:14.5em; flex:0 0 auto; background:var(--surface); border:1px solid var(--border); border-radius:.7em; padding:.9em; }
+.well-panel-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:.65em; }
+.well-panel-head h3{ margin:0; font-size:.92em; font-weight:600; }
+.well-panel-head span{ font-size:.7em; color:var(--ink-faint); }
+.well-grid{ display:grid; grid-template-columns:repeat(12, 1fr); gap:.22em; }
+.well-cell{ aspect-ratio:1; border-radius:.22em; cursor:pointer; border:1.4px solid transparent; background:var(--well-neg); }
+.well-cell.pos{ background:var(--well-pos); }
+.well-cell.invalid{ background:var(--well-invalid); }
+.well-cell.selected{ border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-line); }
+.well-legend{ display:flex; flex-direction:column; gap:.3em; margin-top:.75em; font-size:.7em; color:var(--ink-soft); }
+.well-legend-item{ display:flex; align-items:center; gap:.4em; }
+.well-legend-dot{ width:.65em; height:.65em; border-radius:.2em; flex:0 0 auto; }
+.well-selected-info{ margin-top:.8em; padding-top:.7em; border-top:1px solid var(--border-soft); }
+.well-selected-info .wid{ font-weight:700; font-family:'IBM Plex Mono',monospace; font-size:1.15em; }
+.well-selected-info .wcall{ margin-top:.25em; font-size:.78em; color:var(--ink-soft); display:flex; align-items:center; gap:.4em; }
+
+.curve-main{ flex:1; min-width:0; }
+.curve-card{ background:var(--surface); border:1px solid var(--border); border-radius:.7em; padding:1.1em 1.3em 1.3em; }
+.curve-card-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.6em; }
+.curve-card-head h3{ margin:0; font-size:.95em; font-weight:600; }
+.curve-card-head p{ margin:.25em 0 0; font-size:.76em; color:var(--ink-soft); }
+.legend{ display:flex; gap:.9em; flex-wrap:wrap; }
+.legend-item{ display:flex; align-items:center; gap:.35em; font-size:.76em; color:var(--ink-soft); }
+.legend-swatch{ width:.65em; height:.12em; border-radius:.1em; }
+.ct-table{ width:100%; border-collapse:collapse; margin-top:1em; font-size:.8em; }
+.ct-table th{ text-align:left; color:var(--ink-faint); font-weight:500; font-size:.85em; padding:.4em .55em; border-bottom:1px solid var(--border-soft); }
+.ct-table td{ padding:.45em .55em; border-bottom:1px solid var(--border-soft); font-family:'IBM Plex Mono',monospace; }
+.ct-table td.ch{ font-family:'Pretendard'; display:flex; align-items:center; gap:.5em; font-weight:500;}
+.chdot{ width:.6em; height:.6em; border-radius:50%; flex:0 0 auto; }
+
+.toast{ position:absolute; left:50%; bottom:1.6em; transform:translateX(-50%) translateY(.4em); background:#1B2430; color:#EDEFF2; padding:.65em 1em; border-radius:.5em; font-size:.86em; display:flex; align-items:center; gap:.55em; box-shadow:0 10px 30px rgba(0,0,0,.28); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; z-index:20; }
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+.toast svg{ width:1.05em; height:1.05em; color:#2FAE60; flex:0 0 auto; }
+</style>
+<style>
+/* ---- 포트폴리오 임베드용 : 스테이지를 캔버스 폭에 꽉 채우고 카드 테두리/그림자 제거 ---- */
+#__embedCanvas .stage-wrap{max-width:none;border:0;border-radius:0;box-shadow:none;opacity:1;animation:none;}
+</style>
+</head>
+<body>
+
+<div class="stage-wrap">
+  <div class="stage">
+
+    <nav class="rail">
+      <div class="rail-logo"><svg viewBox="0 0 24 24" fill="none"><path d="M3 16c2.5 0 3-9 5-9s2 12 4 12 1.5-7 3-7 2 4 3 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="rail-item active" title="Products"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.6"/></svg></div>
+      <div class="rail-item" title="Archive"><svg viewBox="0 0 24 24" fill="none"><path d="M4 8h16M4 8l1.4 10.2A2 2 0 0 0 7.4 20h9.2a2 2 0 0 0 2-1.8L20 8M4 8l1.6-3.4A1.6 1.6 0 0 1 7 3.6h10a1.6 1.6 0 0 1 1.4 1L20 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="rail-spacer"></div>
+      <div class="rail-item" title="Settings"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2.4M12 18.6V21M4.2 12H6.6M17.4 12h2.4M6 6l1.6 1.6M16.4 16.4 18 18M18 6l-1.6 1.6M7.6 16.4 6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <div class="rail-user">A</div>
+    </nav>
+
+    <div class="app-body">
+
+      <section class="screen" id="screenList">
+        <div class="list-header">
+          <h1>Product List</h1>
+          <p>Select a product to view its experiment items and uploaded data together.</p>
+        </div>
+        <div class="list-body"><div class="product-grid" id="productGrid"></div></div>
+      </section>
+
+      <section class="screen" id="screenWorkspace" hidden>
+        <div class="topbar">
+          <button class="back-btn" id="backToList"><svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Products</button>
+          <div class="crumb"><b id="crumbProduct">-</b><span class="sep">/</span><span class="crumb-current" id="crumbTest">Select an experiment item</span></div>
+          <div class="topbar-spacer"></div>
+          <button class="btn" id="saveBtn"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Save Draft</button>
+          <button class="btn btn-primary" id="exportBtn" disabled><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0-3.5-3.5M12 14l3.5-3.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 16.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>Export Selected Data to Excel</button>
+        </div>
+
+        <div class="exp-select">
+          <div class="exp-tabs" id="expTabs"></div>
+          <div class="exp-cards" id="expCards"></div>
+        </div>
+
+        <div class="exp-empty" id="expEmpty">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/></svg>
+          <div class="t1">Select an experiment item</div>
+          <div class="t2">Choose an experiment item above to see data upload and analysis</div>
+        </div>
+
+        <div class="workspace-body" id="workspaceBody" hidden>
+          <aside class="upload-col">
+            <div class="upload-head">Upload Raw Data</div>
+            <div class="dropzone" id="dropzone">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 15V4m0 0-3.5 3.5M12 4l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <div>Drag and drop files, or click to upload</div>
+              <div class="dz-types">
+                <span class="dz-type">Raw Signal</span><span class="dz-type">Corrected Signal</span><span class="dz-type">Reaction Manager</span><span class="dz-type">Script Log</span><span class="dz-type">Instrument Viewer</span>
+              </div>
+            </div>
+            <div class="upload-list-head">
+              <label class="select-all"><input type="checkbox" id="selectAllChk" />Select All</label>
+              <span id="selectedCount">0/0 selected</span>
+            </div>
+            <div class="upload-list" id="uploadList"></div>
+          </aside>
+
+          <div class="main-col">
+            <div class="tabs">
+              <button class="tab active" data-tab="curve">Amplification Curve Viewer</button>
+              <button class="tab" data-tab="fitparams">Fitting Parameter Settings</button>
+              <button class="tab" data-tab="sigmoid">Curve Fitting Analysis</button>
+            </div>
+
+            <div class="tab-panels">
+
+              <!-- TAB 1: Amplification Curve Viewer -->
+              <div class="tab-panel" data-tab="curve">
+                <div class="curve-layout">
+                  <div class="well-panel">
+                    <div class="well-panel-head"><h3>Well info</h3><span>96 wells</span></div>
+                    <div class="well-grid" id="wellGrid1"></div>
+                    <div class="well-legend">
+                      <div class="well-legend-item"><span class="well-legend-dot" style="background:var(--well-pos)"></span>Positive</div>
+                      <div class="well-legend-item"><span class="well-legend-dot" style="background:var(--well-neg); border:1px solid var(--border-soft)"></span>Negative</div>
+                      <div class="well-legend-item"><span class="well-legend-dot" style="background:var(--well-invalid)"></span>Invalid</div>
+                    </div>
+                    <div class="well-selected-info">
+                      <div class="wid" id="wellSelId1">A1</div>
+                      <div class="wcall"><span class="well-legend-dot" id="wellSelDot1" style="background:var(--well-pos)"></span><span id="wellSelCall1">Positive</span></div>
+                    </div>
+                  </div>
+                  <div class="curve-main">
+                    <div class="curve-card">
+                      <div class="curve-card-head">
+                        <div><h3 id="curveTitle1">Amplification Curve by Channel</h3><p>Channel-wise fluorescence amplification curves for the selected well</p></div>
+                        <div class="legend">
+                          <div class="legend-item"><span class="legend-swatch" style="background:#2FAE60"></span>FAM</div>
+                          <div class="legend-item"><span class="legend-swatch" style="background:#DDA02A"></span>HEX</div>
+                          <div class="legend-item"><span class="legend-swatch" style="background:#DE5246"></span>ROX</div>
+                          <div class="legend-item"><span class="legend-swatch" style="background:#7C5CD1"></span>Cy5</div>
+                        </div>
+                      </div>
+                      <svg id="curveChart1" viewBox="0 0 620 260" style="width:100%; height:auto; display:block;"></svg>
+                      <table class="ct-table">
+                        <thead><tr><th>Channel</th><th>Ct</th><th>Tm(℃)</th><th>Baseline RFU</th><th>End RFU</th><th>Call</th></tr></thead>
+                        <tbody id="ctTableBody1"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 2: Fitting Parameter Settings (merged reaction conditions + channel correction, committed via Apply) -->
+              <div class="tab-panel" data-tab="fitparams" hidden>
+                <div class="apply-row sticky-actions">
+                  <span class="hint">Click Apply to reflect changes in the Curve Fitting Analysis results</span>
+                  <button class="btn" id="resetFitParams">Reset to Recommended</button>
+                  <button class="btn btn-primary" id="applyFitParams">Apply</button>
+                </div>
+                <div class="param-card">
+                  <div class="param-card-head">
+                    <div><h3>Recommended Reaction Conditions by Channel</h3><p>Recommended values were automatically calculated per channel based on the uploaded data's Ct, RFU, and Melt values. You can edit them directly.</p></div>
+                  </div>
+                  <div id="reactionTable"></div>
+                </div>
+                <div class="param-card">
+                  <div class="param-card-head">
+                    <div><h3>Recommended Correction Coefficients by Channel</h3><p>Recommended values were automatically calculated for cross-channel interference correction based on the uploaded data's Ct, RFU, and Melt values. You can edit them directly.</p></div>
+                  </div>
+                  <table class="param-table" id="crosstalkTable"></table>
+                </div>
+              </div>
+
+              <!-- TAB 3: Curve Fitting Analysis (result only) -->
+              <div class="tab-panel" data-tab="sigmoid" hidden>
+                <p class="result-note">Results are calculated based on the reaction conditions and correction coefficients applied in the Fitting Parameter Settings tab.</p>
+                <div class="curve-layout">
+                  <div class="well-panel">
+                    <div class="well-panel-head"><h3>Well info</h3><span>96 wells</span></div>
+                    <div class="well-grid" id="wellGrid4"></div>
+                    <div class="well-legend">
+                      <div class="well-legend-item"><span class="well-legend-dot" style="background:var(--well-pos)"></span>Positive</div>
+                      <div class="well-legend-item"><span class="well-legend-dot" style="background:var(--well-neg); border:1px solid var(--border-soft)"></span>Negative</div>
+                      <div class="well-legend-item"><span class="well-legend-dot" style="background:var(--well-invalid)"></span>Invalid</div>
+                    </div>
+                    <div class="well-selected-info">
+                      <div class="wid" id="wellSelId4">A1</div>
+                      <div class="wcall"><span class="well-legend-dot" id="wellSelDot4" style="background:var(--well-pos)"></span><span id="wellSelCall4">Positive</span></div>
+                    </div>
+                  </div>
+                  <div class="curve-main">
+                    <div class="curve-card">
+                      <div class="curve-card-head">
+                        <div><h3 id="curveTitle4">Curve Fitting Result</h3><p>Applied parameters are immediately reflected in the curve and call</p></div>
+                        <div class="legend">
+                          <div class="legend-item"><span class="legend-swatch" style="background:#2FAE60"></span>FAM</div>
+                          <div class="legend-item"><span class="legend-swatch" style="background:#DDA02A"></span>HEX</div>
+                          <div class="legend-item"><span class="legend-swatch" style="background:#DE5246"></span>ROX</div>
+                          <div class="legend-item"><span class="legend-swatch" style="background:#7C5CD1"></span>Cy5</div>
+                        </div>
+                      </div>
+                      <svg id="curveChart4" viewBox="0 0 620 260" style="width:100%; height:auto; display:block;"></svg>
+                      <table class="ct-table">
+                        <thead><tr><th>Channel</th><th>Ct</th><th>Tm(℃)</th><th>Baseline RFU</th><th>End RFU</th><th>Call</th></tr></thead>
+                        <tbody id="ctTableBody4"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="toast" id="toast">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="toastMsg">Exported to Excel</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ---------------- product data ---------------- */
+const products = [
+  { name:"Respiratory Virus Panel A", code:"RVP-A", status:"In Progress", progress:72,
+    description:"A multiplex real-time PCR panel that detects 12 upper respiratory viral pathogens simultaneously in a single tube",
+    author:"Jihyun Lee", modifiedBy:"Junseo Park", updated:"09.14",
+    tests:{
+      Feasibility:[ {name:"1st Screening Test", status:"In Progress"}, {name:"Primer Combination Screening Test", status:"Completed"} ],
+      Prototype:[ {name:"Quantitative Standard Curve Test", status:"In Progress"}, {name:"Temperature Condition Optimization Test", status:"Pending"} ],
+      Verification:[ {name:"Channel Correction Test", status:"In Progress"} ],
+    } },
+  { name:"Gastrointestinal Pathogen Panel", code:"GIP-02", status:"Pending Verification", progress:88,
+    description:"A screening panel that differentiates 8 causative agents of bacterial and viral gastroenteritis",
+    author:"Doyoon Kim", modifiedBy:"Doyoon Kim", updated:"09.11",
+    tests:{
+      Feasibility:[ {name:"Initial Target Selection Test", status:"Completed"} ],
+      Prototype:[ {name:"Reproducibility Test", status:"Completed"} ],
+      Verification:[ {name:"LOD Verification Test", status:"In Progress"}, {name:"Clinical Sample Cross-Validation", status:"Pending"} ],
+    } },
+  { name:"Sexually Transmitted Infection Panel", code:"STI-07", status:"In Progress", progress:54,
+    description:"A qualitative panel for the simultaneous detection of 6 sexually transmitted pathogens",
+    author:"Soyeon Han", modifiedBy:"Jihyun Lee", updated:"09.13",
+    tests:{
+      Feasibility:[ {name:"Cross-Reactivity Test", status:"In Progress"}, {name:"1st Screening Test", status:"Completed"} ],
+      Prototype:[ {name:"Quantitative Standard Curve Test", status:"In Progress"} ],
+      Verification:[],
+    } },
+  { name:"Antimicrobial Resistance Panel", code:"AMR-04", status:"On Hold", progress:21,
+    description:"A surveillance panel detecting 4 major antibiotic resistance genes (on hold due to delayed sample availability)",
+    author:"Junseo Park", modifiedBy:"Junseo Park", updated:"08.29",
+    tests:{ Feasibility:[ {name:"Reproducibility Test", status:"Pending"} ], Prototype:[], Verification:[] } },
+  { name:"Waterborne Pathogen Panel", code:"WBP-01", status:"Pending Verification", progress:80,
+    description:"An environmental monitoring panel for qualitative detection of 5 waterborne pathogenic microorganisms",
+    author:"Haeun Jung", modifiedBy:"Doyoon Kim", updated:"09.10",
+    tests:{
+      Feasibility:[ {name:"1st Screening Test", status:"Completed"} ],
+      Prototype:[ {name:"LOD Verification Test", status:"In Progress"} ],
+      Verification:[ {name:"Field Sample Verification", status:"Pending"} ],
+    } },
+  { name:"Respiratory Virus Panel B", code:"RVP-B", status:"In Progress", progress:63,
+    description:"An expanded panel targeting 6 lower respiratory viruses including seasonal influenza and RSV",
+    author:"Jihyun Lee", modifiedBy:"Soyeon Han", updated:"09.14",
+    tests:{ Feasibility:[], Prototype:[ {name:"Quantitative Standard Curve Test", status:"In Progress"}, {name:"Cross-Reactivity Test", status:"Pending"} ], Verification:[] } },
+  { name:"Tuberculosis Differentiation Panel", code:"TBP-03", status:"On Hold", progress:35,
+    description:"A molecular diagnostic panel that differentiates M. tuberculosis from non-tuberculous mycobacteria (on hold pending reagent renewal)",
+    author:"Doyoon Kim", modifiedBy:"Haeun Jung", updated:"08.20",
+    tests:{ Feasibility:[ {name:"Reproducibility Test", status:"Pending"} ], Prototype:[ {name:"LOD Verification Test", status:"Pending"} ], Verification:[] } },
+  { name:"HPV Genotyping Panel", code:"HPV-11", status:"Pending Verification", progress:91,
+    description:"A qualitative panel that individually resolves 14 high-risk HPV genotypes",
+    author:"Soyeon Han", modifiedBy:"Jihyun Lee", updated:"09.09",
+    tests:{
+      Feasibility:[ {name:"1st Screening Test", status:"Completed"} ],
+      Prototype:[ {name:"Genotype Specificity Test", status:"Completed"} ],
+      Verification:[ {name:"Cross-Reactivity Test", status:"In Progress"} ],
+    } },
+];
+
+const categories = ["Feasibility","Prototype","Verification"];
+const statusColor = { "In Progress":"var(--accent)", "Completed":"var(--ok)", "Pending":"var(--ink-faint)" };
+
+const dataTypes = [
+  { key:"raw",     label:"Raw Signal",         color:"#6B7684" },
+  { key:"corr",    label:"Corrected Signal",   color:"#0E7C86" },
+  { key:"mgr",     label:"Reaction Manager",   color:"#7C5CD1" },
+  { key:"script",  label:"Script Log",         color:"#2F6FED" },
+  { key:"viewer",  label:"Instrument Viewer",  color:"#C7871F" },
+];
+
+let selectedProduct = null;
+let selectedCategory = "Feasibility";
+let selectedExperiment = null;
+let uploadedFiles = [];
+let activeFileId = null;
+let fileCounter = 0;
+
+/* ---------------- product grid ---------------- */
+const grid = document.getElementById('productGrid');
+function initials(name){ return name.slice(0,1); }
+
+products.forEach((p) => {
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.innerHTML = `
+    <div class="pc-top"><div class="pc-name">${p.name}</div><div class="pc-status ${p.status==='In Progress' ? 'ing' : ''}">${p.status}</div></div>
+    <div class="pc-code">${p.code}</div>
+    <div class="pc-desc">${p.description}</div>
+    <div class="pc-progress"><div class="pc-progress-label"><span>Progress</span><b>${p.progress}%</b></div><div class="pc-track"><div class="pc-fill" style="width:${p.progress}%"></div></div></div>
+    <div class="pc-footer">
+      <div class="pc-person"><div class="pc-avatar">${initials(p.author)}</div><div class="pc-person-text"><span class="role">Author</span><span class="name">${p.author}</span></div></div>
+      <div class="pc-person"><div class="pc-avatar">${initials(p.modifiedBy)}</div><div class="pc-person-text"><span class="role">Modified by</span><span class="name">${p.modifiedBy}</span></div></div>
+      <div class="pc-updated">${p.updated}<br/>Updated</div>
+    </div>
+  `;
+  card.addEventListener('click', () => openWorkspace(p));
+  grid.appendChild(card);
+});
+
+/* ---------------- screen switching ---------------- */
+function openWorkspace(product){
+  selectedProduct = product;
+  selectedCategory = categories.find(c => (product.tests[c]||[]).length > 0) || "Feasibility";
+  selectedExperiment = null;
+  uploadedFiles = [];
+  activeFileId = null;
+
+  document.getElementById('screenList').hidden = true;
+  document.getElementById('screenWorkspace').hidden = false;
+  document.getElementById('crumbProduct').textContent = product.name;
+  document.getElementById('crumbTest').textContent = 'Select an experiment item';
+
+  showEmptyState();
+  renderExpTabs();
+  renderExpCards();
+}
+document.getElementById('backToList').addEventListener('click', () => {
+  document.getElementById('screenWorkspace').hidden = true;
+  document.getElementById('screenList').hidden = false;
+});
+function showEmptyState(){ document.getElementById('expEmpty').hidden=false; document.getElementById('workspaceBody').hidden=true; document.getElementById('exportBtn').disabled=true; }
+function showWorkspace(){ document.getElementById('expEmpty').hidden=true; document.getElementById('workspaceBody').hidden=false; }
+
+/* ---------------- experiment tabs / cards ---------------- */
+function renderExpTabs(){
+  const wrap = document.getElementById('expTabs');
+  wrap.innerHTML = '';
+  categories.forEach(cat => {
+    const count = (selectedProduct.tests[cat]||[]).length;
+    const el = document.createElement('div');
+    el.className = 'exp-tab' + (cat===selectedCategory ? ' active' : '');
+    el.innerHTML = `${cat} <span class="count">${count}</span>`;
+    el.addEventListener('click', () => { selectedCategory = cat; renderExpTabs(); renderExpCards(); });
+    wrap.appendChild(el);
+  });
+}
+function renderExpCards(){
+  const wrap = document.getElementById('expCards');
+  wrap.innerHTML = '';
+  const list = selectedProduct.tests[selectedCategory] || [];
+  list.forEach(exp => {
+    const el = document.createElement('div');
+    el.className = 'exp-card' + (exp===selectedExperiment ? ' selected' : '');
+    el.innerHTML = `<div class="ec-name">${exp.name}</div><div class="ec-meta"><span class="ec-dot" style="background:${statusColor[exp.status]}"></span>${exp.status}</div>`;
+    el.addEventListener('click', () => selectExperiment(exp));
+    wrap.appendChild(el);
+  });
+  const addCard = document.createElement('div');
+  addCard.className = 'exp-add-card';
+  addCard.innerHTML = `<svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Add Experiment`;
+  addCard.addEventListener('click', addExperiment);
+  wrap.appendChild(addCard);
+}
+let addSeq = 0;
+function addExperiment(){
+  addSeq++;
+  const newExp = { name:`New Experiment ${addSeq}`, status:"Pending" };
+  selectedProduct.tests[selectedCategory].push(newExp);
+  renderExpTabs(); renderExpCards(); selectExperiment(newExp);
+  showToast(`A new experiment was added to ${selectedCategory}`);
+}
+function selectExperiment(exp){
+  selectedExperiment = exp;
+  document.getElementById('crumbTest').textContent = `${selectedCategory} · ${exp.name}`;
+  renderExpCards();
+  showWorkspace();
+  if (uploadedFiles.length === 0){ seedUploads(); }
+}
+
+/* ---------------- analysis tabs ---------------- */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t===tab));
+    const key = tab.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p=>{ p.hidden = p.dataset.tab !== key; });
+  });
+});
+
+/* ---------------- uploaded data files ---------------- */
+function makeFile(name, typeKeys){
+  fileCounter++;
+  return { id:'f'+fileCounter, name, checked:false, types: typeKeys,
+    size:(Math.random()*3.4+0.6).toFixed(1),
+    time:`09.15 ${String(9+Math.floor(Math.random()*8)).padStart(2,'0')}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}` };
+}
+function seedUploads(){
+  uploadedFiles = [
+    makeFile('Well_Plate_96_Run01', ['raw','corr','script']),
+    makeFile('Well_Plate_96_Run02', ['corr','mgr','viewer']),
+    makeFile('Standard_Curve_Set_A', ['raw','corr']),
+    makeFile('QC_NTC_Run', ['script','viewer']),
+  ];
+  activeFileId = uploadedFiles[0].id;
+  renderUploadList();
+}
+function renderUploadList(){
+  const list = document.getElementById('uploadList');
+  list.innerHTML = '';
+  uploadedFiles.forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'file-row' + (f.id===activeFileId ? ' active' : '') + (f._new ? ' new' : '');
+    const typesHtml = dataTypes.map(dt => {
+      const on = f.types.includes(dt.key);
+      const style = on ? `background:${dt.color}22; color:${dt.color}` : '';
+      const icon = on ? `<svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>` : '';
+      return `<span class="fr-type ${on?'on':'off'}" style="${style}">${icon}${dt.label}</span>`;
+    }).join('');
+    row.innerHTML = `
+      <div class="fr-top">
+        <input type="checkbox" class="fr-check" ${f.checked?'checked':''} />
+        <div class="fr-info"><div class="fr-name">${f.name}</div><div class="fr-meta">${f.size}MB &nbsp;${f.time} &nbsp;${f.types.length}/5 data types uploaded</div></div>
+      </div>
+      <div class="fr-types">${typesHtml}</div>
+    `;
+    row.addEventListener('click', (e) => {
+      if (e.target.classList.contains('fr-check')) return;
+      activeFileId = f.id;
+      renderUploadList();
+      refreshAll();
+    });
+    row.querySelector('.fr-check').addEventListener('click', (e) => { e.stopPropagation(); f.checked = e.target.checked; updateSelectedCount(); });
+    list.appendChild(row);
+  });
+  updateSelectedCount();
+}
+function updateSelectedCount(){
+  const total = uploadedFiles.length;
+  const checked = uploadedFiles.filter(f=>f.checked).length;
+  document.getElementById('selectedCount').textContent = `${checked}/${total} selected`;
+  document.getElementById('selectAllChk').checked = total>0 && checked===total;
+  document.getElementById('exportBtn').disabled = checked===0;
+}
+document.getElementById('selectAllChk').addEventListener('change', (e) => { uploadedFiles.forEach(f => f.checked = e.target.checked); renderUploadList(); });
+let dzClicks = 0;
+document.getElementById('dropzone').addEventListener('click', () => {
+  dzClicks++;
+  const pool = ['raw','corr','mgr','script','viewer'];
+  const count = 2 + (dzClicks % 3);
+  const shuffled = [...pool].sort(()=>Math.random()-0.5).slice(0,count);
+  const f = makeFile(`Upload_${String(fileCounter+1).padStart(3,'0')}`, shuffled);
+  f._new = true;
+  uploadedFiles.unshift(f);
+  activeFileId = f.id;
+  renderUploadList();
+  refreshAll();
+});
+
+/* ---------------- toast ---------------- */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const n = uploadedFiles.filter(f=>f.checked).length;
+  if(n===0) return;
+  showToast(`Exported ${n} selected data file(s) to Excel — ready to paste into the lab notebook template`);
+});
+document.getElementById('saveBtn').addEventListener('click', () => showToast('Draft saved'));
+
+/* ---------------- wells ---------------- */
+const wellRows = ['A','B','C','D','E','F','G','H'];
+const wells = [];
+for(let r=0;r<8;r++){
+  for(let c=1;c<=12;c++){
+    const idx = r*12 + (c-1);
+    let call = 'Positive';
+    if (idx % 11 === 0) call = 'Invalid';
+    else if (idx % 4 === 0) call = 'Negative';
+    wells.push({ id: wellRows[r]+c, idx, call });
+  }
+}
+
+/* ---------------- channel parameter engine (applied state, shared across all views) ---------------- */
+const channels = ['FAM','HEX','ROX','Cy5'];
+const channelColor = { FAM:'#2FAE60', HEX:'#DDA02A', ROX:'#DE5246', Cy5:'#7C5CD1' };
+
+let channelParams = {
+  FAM:{ threshold:34, baseStart:3,  baseEnd:12, top:230, bottom:2, slope:0.55, x0:18, meltTm:82.3, crosstalk:{FAM:1.00,HEX:0.03,ROX:0.01,Cy5:0.00} },
+  HEX:{ threshold:30, baseStart:3,  baseEnd:14, top:200, bottom:3, slope:0.50, x0:23, meltTm:79.1, crosstalk:{FAM:0.04,HEX:1.00,ROX:0.02,Cy5:0.01} },
+  ROX:{ threshold:25, baseStart:3,  baseEnd:16, top:150, bottom:2, slope:0.45, x0:29, meltTm:85.6, crosstalk:{FAM:0.01,HEX:0.05,ROX:1.00,Cy5:0.02} },
+  Cy5:{ threshold:8,  baseStart:3,  baseEnd:18, top:6,   bottom:2, slope:0.40, x0:999,meltTm:76.4, crosstalk:{FAM:0.00,HEX:0.01,ROX:0.03,Cy5:1.00} },
+};
+const defaultChannelParams = JSON.parse(JSON.stringify(channelParams));
+/* draft state: edited in Fitting Parameter Settings tab, only merged into channelParams on Apply */
+let draftParams = JSON.parse(JSON.stringify(channelParams));
+
+function trueSignalAt(chKey, x, well){
+  const p = channelParams[chKey];
+  if (well.call !== 'Positive') return p.bottom;
+  const idx = well.idx;
+  const jit = (((idx*13 + chKey.charCodeAt(0)*7) % 11) - 5) / 10;
+  const x0 = p.x0 + jit*2;
+  const top = p.top + (((idx*9 + chKey.charCodeAt(1)*3) % 7) - 3) * 2;
+  const safeTop = Math.max(top, p.bottom + 0.5);
+  return p.bottom + (safeTop - p.bottom) / (1+Math.exp(-p.slope*(x - x0)));
+}
+function measuredSignalAt(chKey, x, well){
+  let sum = 0;
+  channels.forEach(other=>{
+    const coef = channelParams[chKey].crosstalk[other];
+    sum += (coef===undefined ? (other===chKey?1:0) : coef) * trueSignalAt(other, x, well);
+  });
+  return sum;
+}
+function computeChannelResult(chKey, well){
+  const p = channelParams[chKey];
+  let ct = null;
+  for(let x=0.5; x<=40; x+=0.25){
+    if (measuredSignalAt(chKey, x, well) >= p.threshold){ ct = x; break; }
+  }
+  const baseVal = measuredSignalAt(chKey, Math.min(p.baseStart+1, 39), well);
+  const endVal = measuredSignalAt(chKey, 40, well);
+  let call;
+  if (well.call !== 'Positive') call = well.call;
+  else call = ct!==null ? 'Positive' : 'Negative';
+  return { ch:chKey, color:channelColor[chKey], ct, base:baseVal, end:endVal, call, tm:p.meltTm };
+}
+
+/* ---------------- chart / table renderers ---------------- */
+function drawCurveChart(svgId, well){
+  const svg = document.getElementById(svgId);
+  const W=620, H=260, pad={l:44,r:10,t:14,b:26};
+  const plotW=W-pad.l-pad.r, plotH=H-pad.t-pad.b, xMax=40;
+  const samples = {}; let maxY = 10;
+  channels.forEach(ch=>{
+    const arr=[];
+    for(let x=0;x<=xMax;x+=0.5){ const y=measuredSignalAt(ch,x,well); arr.push(y); if(y>maxY) maxY=y; }
+    samples[ch]=arr;
+  });
+  const yMax = maxY*1.15;
+  const xTo = x=> pad.l+(x/xMax)*plotW;
+  const yTo = y=> pad.t+plotH-(y/yMax)*plotH;
+  let s='';
+  for(let gx=0; gx<=xMax; gx+=10){
+    s+=`<line x1="${xTo(gx)}" y1="${pad.t}" x2="${xTo(gx)}" y2="${H-pad.b}" stroke="#E4E8EE" stroke-width="1"/>`;
+    s+=`<text x="${xTo(gx)}" y="${H-pad.b+16}" font-size="10" fill="#98A2B3" text-anchor="middle">${gx}</text>`;
+  }
+  s+=`<line x1="${pad.l}" y1="${H-pad.b}" x2="${W-pad.r}" y2="${H-pad.b}" stroke="#C9D0DA" stroke-width="1.2"/>`;
+  s+=`<text x="${W-pad.r}" y="${H-4}" font-size="10" fill="#95A0AC" text-anchor="end">Cycle</text>`;
+  channels.forEach(ch=>{
+    const arr = samples[ch];
+    let d='';
+    arr.forEach((y,i)=>{ const x=i*0.5; d += (i===0?'M':'L')+xTo(x).toFixed(1)+','+yTo(y).toFixed(1)+' '; });
+    s+=`<path d="${d}" fill="none" stroke="${channelColor[ch]}" stroke-width="2.1"/>`;
+    const res = computeChannelResult(ch, well);
+    if(res.ct!==null){
+      s+=`<circle cx="${xTo(res.ct)}" cy="${yTo(measuredSignalAt(ch,res.ct,well))}" r="3.2" fill="${channelColor[ch]}" stroke="#fff" stroke-width="1"/>`;
+    }
+  });
+  svg.innerHTML = s;
+}
+function fillCtTable(bodyId, well){
+  const body = document.getElementById(bodyId);
+  body.innerHTML = channels.map(ch=>{
+    const r = computeChannelResult(ch, well);
+    return `<tr>
+      <td class="ch"><span class="chdot" style="background:${r.color}"></span>${r.ch}</td>
+      <td>${r.ct!==null? r.ct.toFixed(1) : '-'}</td>
+      <td>${r.tm.toFixed(1)}</td>
+      <td>${r.base.toFixed(1)}</td>
+      <td>${r.end.toFixed(1)}</td>
+      <td>${r.call}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ---------------- result view factory (well-selector + chart + table) ---------------- */
+const resultViews = [];
+function createResultView(cfg){
+  let well = wells[0];
+  function renderGrid(){
+    const wrap = document.getElementById(cfg.wellGrid);
+    wrap.innerHTML = '';
+    wells.forEach(w=>{
+      const el = document.createElement('div');
+      const cls = w.call==='Positive'?'pos':(w.call==='Invalid'?'invalid':'');
+      el.className = `well-cell ${cls} ${w.id===well.id?'selected':''}`;
+      el.title = `${w.id} · ${w.call}`;
+      el.addEventListener('click', ()=>{ well=w; renderGrid(); update(); });
+      wrap.appendChild(el);
+    });
+  }
+  function update(){
+    document.getElementById(cfg.wellSelId).textContent = well.id;
+    document.getElementById(cfg.wellSelCall).textContent = well.call;
+    const dot = document.getElementById(cfg.wellSelDot);
+    dot.style.background = well.call==='Positive' ? 'var(--well-pos)' : (well.call==='Invalid' ? 'var(--well-invalid)' : 'var(--well-neg)');
+    dot.style.border = well.call==='Negative' ? '1px solid var(--border-soft)' : 'none';
+    drawCurveChart(cfg.curveChart, well);
+    fillCtTable(cfg.ctBody, well);
+    const f = uploadedFiles.find(x=>x.id===activeFileId);
+    const filePart = f ? f.name+' · ' : '';
+    document.getElementById(cfg.curveTitle).textContent = `${cfg.titlePrefix} — ${filePart}Well ${well.id}`;
+  }
+  renderGrid();
+  update();
+  resultViews.push(update);
+}
+function refreshAll(){ resultViews.forEach(fn=>fn()); }
+
+createResultView({ wellGrid:'wellGrid1', curveChart:'curveChart1', ctBody:'ctTableBody1', curveTitle:'curveTitle1', wellSelId:'wellSelId1', wellSelCall:'wellSelCall1', wellSelDot:'wellSelDot1', titlePrefix:'Amplification Curve by Channel' });
+createResultView({ wellGrid:'wellGrid4', curveChart:'curveChart4', ctBody:'ctTableBody4', curveTitle:'curveTitle4', wellSelId:'wellSelId4', wellSelCall:'wellSelCall4', wellSelDot:'wellSelDot4', titlePrefix:'Curve Fitting Result' });
+
+/* ---------------- Fitting Parameter Settings tab: draft table (not applied until Apply) ---------------- */
+function bindDraftInputs(root){
+  root.querySelectorAll('input[data-ch]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      const ch = inp.dataset.ch, field = inp.dataset.field;
+      const val = parseFloat(inp.value);
+      if (inp.dataset.sub){ draftParams[ch][field][inp.dataset.sub] = isNaN(val)?0:val; }
+      else { draftParams[ch][field] = isNaN(val)?0:val; }
+    });
+  });
+}
+function buildReactionTable(){
+  const wrap = document.getElementById('reactionTable');
+  wrap.innerHTML = `<table class="param-table"><thead><tr><th>Channel</th><th>Recommended Threshold (RFU)</th><th>Baseline Start (Cycle)</th><th>Baseline End (Cycle)</th></tr></thead><tbody>` +
+    channels.map(ch=>`<tr>
+      <td class="ptch"><span class="chdot" style="background:${channelColor[ch]}"></span>${ch}</td>
+      <td><input type="number" step="0.1" data-ch="${ch}" data-field="threshold" value="${draftParams[ch].threshold}"/></td>
+      <td><input type="number" data-ch="${ch}" data-field="baseStart" value="${draftParams[ch].baseStart}"/></td>
+      <td><input type="number" data-ch="${ch}" data-field="baseEnd" value="${draftParams[ch].baseEnd}"/></td>
+    </tr>`).join('') + `</tbody></table>`;
+  bindDraftInputs(wrap);
+}
+function buildCrosstalkTable(){
+  const table = document.getElementById('crosstalkTable');
+  let html = '<tr><th></th>' + channels.map(c=>`<th>${c}</th>`).join('') + '</tr>';
+  channels.forEach(row=>{
+    html += `<tr><td class="ptch">${row}</td>` + channels.map(col=>{
+      const val = draftParams[row].crosstalk[col].toFixed(2);
+      const disabled = row===col ? 'disabled' : '';
+      return `<td><input type="number" step="0.01" data-ch="${row}" data-field="crosstalk" data-sub="${col}" value="${val}" ${disabled}/></td>`;
+    }).join('') + '</tr>';
+  });
+  table.innerHTML = html;
+  bindDraftInputs(table);
+}
+buildReactionTable();
+buildCrosstalkTable();
+
+document.getElementById('applyFitParams').addEventListener('click', ()=>{
+  channels.forEach(ch=>{
+    channelParams[ch].threshold = draftParams[ch].threshold;
+    channelParams[ch].baseStart = draftParams[ch].baseStart;
+    channelParams[ch].baseEnd   = draftParams[ch].baseEnd;
+    channelParams[ch].crosstalk = {...draftParams[ch].crosstalk};
+  });
+  refreshAll();
+  showToast('Fitting parameters applied — reflected in Curve Fitting Analysis');
+});
+document.getElementById('resetFitParams').addEventListener('click', ()=>{
+  channels.forEach(ch=>{
+    draftParams[ch].threshold = defaultChannelParams[ch].threshold;
+    draftParams[ch].baseStart = defaultChannelParams[ch].baseStart;
+    draftParams[ch].baseEnd   = defaultChannelParams[ch].baseEnd;
+    draftParams[ch].crosstalk = {...defaultChannelParams[ch].crosstalk};
+  });
+  buildReactionTable();
+  buildCrosstalkTable();
+  showToast('Reset to recommended values — click Apply to update the results');
+});
+</script>
+</body>
+</html>
+</template>
+<!-- ▲▲▲ [프로젝트 05] 끝 ▲▲▲ -->
+
+
+
+
 <!-- ┌─────────────────────────────────────────────────────────────────────────┐
      │ 복사용 빈 틀 — 다음 프로젝트 목업은 여기에 추가하세요.                    │
      │ 아래 5줄의 주석을 해제하고 slug 를 바꾼 뒤, 태그 사이에 목업 HTML 전체를 │
@@ -11223,9 +12091,133 @@ renderHome();
     },
     {
       major: false,
+      slug: "analysis-automation-sw",
+      caseStudyRoute: "#/work/analysis-automation-sw",
+      num: "05", year: "2020.12-2021.02",
+      name: tr(
+        "데이터 피팅 및 결과 정리 자동화",
+        "Data Fitting and Result Reporting Automation",
+        "データフィッティングおよび結果整理自動化"
+      ),
+      oneLiner: "Manual data cleanup → Automated analysis & Excel export",
+      heroMetric: {
+        value: "−50", unit: "%+",
+        label: tr("데이터 정리 소요 시간", "Data-cleanup time", "データ整理の所要時間"),
+        sub: tr("데이터 오류율 −70%+ · 랩노트 입력 자동화율 80%", "Data error rate −70%+ · Lab-notebook entry automation rate 80%", "データエラー率−70%以上・ラボノート入力自動化率80%")
+      },
+      role: tr(
+        "분석 자동화 기획, Figma UI/UX 설계, QA·개발 협업",
+        "Analysis-automation planning, Figma UI/UX design, QA and development collaboration",
+        "分析自動化の企画、Figma UI/UX設計、QA・開発協業"
+      ),
+      scope: "Analysis Automation · UI/UX · QA",
+      context: null,
+      problem: tr(
+        "실험 데이터의 정리와 포맷 변경, 랩노트 기록을 수작업으로 진행해 시간이 오래 걸렸고, 수동 입력 과정에서 데이터 오류가 발생했습니다.",
+        "Cleaning up experiment data, converting its format, and recording it in the lab notebook were all done by hand, which took a long time and introduced data errors during manual entry.",
+        "実験データの整理・フォーマット変更・ラボノートへの記録をすべて手作業で行っていたため時間がかかり、手動入力の過程でデータエラーが発生していました。"
+      ),
+      beforeAfter: {
+        before: [
+          tr("데이터 정리·포맷 변경을 수작업으로 처리", "Data cleanup and format conversion done by hand", "データ整理・フォーマット変更を手作業で処理"),
+          tr("수동 입력 과정에서 데이터 오류 발생", "Data errors introduced during manual entry", "手動入力の過程でデータエラーが発生"),
+          tr("실험 결과를 랩노트에 직접 옮겨 기록", "Results copied into the lab notebook manually", "実験結果をラボノートへ手作業で転記")
+        ],
+        after: [
+          tr("기획한 자동화로 데이터 정리·포맷 변경을 자동 처리", "Data cleanup and format conversion automated through the planned workflow", "企画した自動化でデータ整理・フォーマット変更を自動処理"),
+          tr("설정값 자동 산출 + 사용자 수정·적용 구조로 수동 입력 최소화", "Setting values calculated automatically, with user edit-and-apply, to minimize manual entry", "設定値の自動算出＋ユーザーによる修正・適用構造で手動入力を最小化"),
+          tr("랩노트 자동 입력으로 실험 기록 관리 자동화", "Lab-notebook auto-entry to automate experiment-record management", "ラボノート自動入力で実験記録管理を自動化")
+        ]
+      },
+      goal: null,
+      myRole: tr(
+        "수작업으로 진행되던 데이터 정리·포맷 변경을 자동화 기획으로 해결했습니다. Figma로 UI/UX를 직접 제작해 사용자 중심의 분석 환경을 제공했고, Jira·Confluence·TestRail로 QA와 개발 협업을 원활하게 이끌었습니다.",
+        "I solved the manual data cleanup and format conversion through automation planning. I built the UI/UX directly in Figma to give users a user-centered analysis environment, and kept QA and development collaboration running smoothly with Jira, Confluence, and TestRail.",
+        "手作業で行われていたデータ整理・フォーマット変更を自動化企画で解決しました。FigmaでUI/UXを自ら制作してユーザー中心の分析環境を提供し、Jira・Confluence・TestRailでQAと開発の協業を円滑に進めました。"
+      ),
+      // Draft estimate — placeholder percentages pending the candidate's own
+      // review; adjust to match actual participation before publishing.
+      contribution: [
+        { label: "Product Strategy", pct: 50 },
+        { label: "Workflow Design", pct: 100 },
+        { label: "Requirement", pct: 90 },
+        { label: "UX / UI", pct: 100 },
+        { label: "Development", pct: 10 },
+        { label: "QA / Validation", pct: 80 },
+        { label: "Stakeholder Management", pct: 40 }
+      ],
+      // Draft — see automation-experiment-planning's stakeholders comment.
+      stakeholders: [
+        { role: tr("Researcher (사용자)", "Researcher (User)", "研究員（ユーザー）"), interaction: tr("데이터 정리·분석 방식 확인, 사용성 피드백", "Confirmed how data is cleaned and analyzed; gave usability feedback", "データ整理・分析方法の確認、ユーザビリティへのフィードバック") },
+        { role: "Developer", interaction: tr("Jira 이슈·스프린트와 Confluence 문서로 요구사항 전달·구현 협업", "Passed requirements and collaborated on implementation via Jira issues/sprints and Confluence docs", "Jiraのイシュー・スプリントとConfluence文書で要件を伝達し実装を協業") },
+        { role: "QA", interaction: tr("TestRail 테스트 케이스 작성·수행", "Wrote and ran test cases in TestRail", "TestRailでテストケースを作成・実施") }
+      ],
+      process: [
+        { stage: "Requirement", desc: tr("Excel로 초기 기획과 요구사항 정리", "Drafted the initial plan and organized requirements in Excel", "Excelで初期企画と要件を整理") },
+        { stage: "Design", desc: tr("Figma로 분석 화면 UI/UX 직접 설계", "Designed the analysis-screen UI/UX directly in Figma", "Figmaで分析画面のUI/UXを自ら設計") },
+        { stage: "Development", desc: tr("Jira 이슈 트래킹·스프린트 관리, Confluence 설계·운영 문서 관리", "Managed issues and sprints in Jira, and design/operations docs in Confluence", "Jiraでイシュー追跡・スプリント管理、Confluenceで設計・運用文書を管理") },
+        { stage: "QA", desc: tr("TestRail로 테스트 케이스 작성·수행", "Wrote and ran test cases in TestRail", "TestRailでテストケースを作成・実施") }
+      ],
+      keyDecisions: [
+        {
+          options: [
+            { label: tr("입력값을 바로 분석 결과에 반영", "Reflect every input in the results immediately", "入力値を即座に分析結果へ反映") },
+            { label: tr("초안으로 편집하고 Apply 시에만 반영", "Edit as a draft and reflect only on Apply", "下書きとして編集し、Apply時のみ反映"), chosen: true }
+          ],
+          decision: tr(
+            "Fitting 설정값(임계값·베이스라인·보정 계수)을 초안으로 편집하고, Apply를 눌렀을 때만 분석 결과에 반영",
+            "Setting values (threshold, baseline, correction coefficients) are edited as a draft and only reflected in the results when Apply is pressed",
+            "Fitting設定値（しきい値・ベースライン・補正係数）を下書きとして編集し、Applyを押したときのみ分析結果へ反映"
+          ),
+          why: tr(
+            "입력 도중에 결과가 계속 바뀌면 어떤 값 때문에 결과가 달라졌는지 알기 어렵습니다. 확인 후 반영하는 구조로 하고, 추천값으로 되돌리는 Reset도 함께 두었습니다.",
+            "If results keep changing while values are being typed, it is hard to tell which value caused the change. I chose a confirm-then-apply structure and added a Reset that restores the recommended values.",
+            "入力の途中で結果が変わり続けると、どの値による変化か分かりにくくなります。確認してから反映する構造にし、推奨値に戻すResetも用意しました。"
+          )
+        },
+        {
+          options: [
+            { label: tr("파일별로 하나씩 내보내기", "Export one file at a time", "ファイルごとに1件ずつエクスポート") },
+            { label: tr("여러 파일을 선택해 Excel로 일괄 내보내기", "Select several files and export to Excel at once", "複数ファイルを選択してExcelへ一括エクスポート"), chosen: true }
+          ],
+          decision: tr(
+            "업로드한 데이터 파일을 다중 선택해 한 번에 Excel로 내보내는 구조",
+            "A structure that lets users multi-select uploaded data files and export them to Excel in one go",
+            "アップロードしたデータファイルを複数選択し、一度にExcelへエクスポートする構造"
+          ),
+          why: tr(
+            "랩노트에는 여러 실행 결과를 함께 정리해야 하므로, 파일마다 반복하지 않고 선택한 데이터를 한 번에 옮길 수 있게 했습니다.",
+            "The lab notebook needs several runs organized together, so I let users move the selected data in one step instead of repeating the work for each file.",
+            "ラボノートには複数の実行結果をまとめて記録する必要があるため、ファイルごとに繰り返さず、選択したデータを一度に移せるようにしました。"
+          )
+        }
+      ],
+      result: [
+        tr("데이터 정리 소요 시간 50% 이상 절감, 업무 처리 속도 향상", "Cut data-cleanup time by more than 50% and sped up day-to-day work", "データ整理の所要時間を50%以上削減し、業務処理速度を向上"),
+        tr("수동 입력 제거로 데이터 오류율 70% 이상 감소", "Reduced the data error rate by more than 70% by removing manual entry", "手動入力の排除によりデータエラー率を70%以上削減"),
+        tr("랩노트 자동 입력 기능 도입으로 실험 기록 관리 자동화율 80% 달성", "Reached an 80% automation rate in experiment-record management by introducing lab-notebook auto-entry", "ラボノート自動入力機能の導入により、実験記録管理の自動化率80%を達成")
+      ],
+      resultNote: null,
+      validation: tr(
+        "TestRail로 QA 테스트 케이스를 작성·수행해 검증",
+        "Verified by writing and running QA test cases in TestRail",
+        "TestRailでQAテストケースを作成・実施して検証"
+      ),
+      tools: ["Figma", "TestRail", "Jira", "Confluence", "Excel"],
+      thumbnail: imgReady("assets/projects/analysis-automation-sw/shot-1.png?v=20260919"),
+      thumbnails: [
+        imgReady("assets/projects/analysis-automation-sw/shot-1.png?v=20260919"),
+        imgReady("assets/projects/analysis-automation-sw/shot-2.png?v=20260919"),
+        imgReady("assets/projects/analysis-automation-sw/shot-3.png?v=20260919")
+      ],
+      detailImages: [imgDiagram("assets/projects/analysis-automation-sw/menu-structure.svg?v=20260919")],
+      workflowImages: [imgDiagram("assets/projects/analysis-automation-sw/user-scenario-flow.svg?v=20260919")]
+    },
+    {
+      major: false,
       slug: "qc-report-automation",
       caseStudyRoute: "#/work/qc-report-automation",
-      num: "05", year: "2020.08-2022.12",
+      num: "06", year: "2020.08-2022.12",
       name: tr("QC 리포트·문서 자동화", "QC Report & Documentation Automation", "QCレポート・文書自動化"),
       oneLiner: "Repeated report work → Defined automation",
       heroMetric: {

@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 744" width="1000" height="744" font-family="'Inter','Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9aa0aa"/>
+    </marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b26a00"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="744" fill="#ffffff"/>
+  <text x="40" y="44" font-size="21" font-weight="700" fill="#16181d">메뉴 구조도 · Menu Structure</text>
+  <text x="40" y="66" font-size="12.5" fill="#6b6f78">CurveDesk — 실험 데이터 분석 워크스페이스 화면 계층</text>
+  <line x1="40" y1="80" x2="960" y2="80" stroke="#e6e7eb"/>
+
+  <rect x="40" y="96" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+  <path d="M53 96 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+  <text x="66" y="121" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">GNB</text>
+  <text x="66" y="143" font-size="15" font-weight="700" fill="#16181d">Rail · 좌측 내비게이션</text>
+  <text x="66" y="162" font-size="10.5" fill="#6b6f78">전역 메뉴 · 제품 목록 진입</text>
+  <g>
+    <rect x="340" y="114" width="70" height="22" rx="11" fill="#e7ebfb" stroke="#2c4bd4"/>
+    <text x="374.8" y="128.70" font-size="10.5" font-weight="700" fill="#2c4bd4" text-anchor="middle">Products</text>
+  </g>
+  <g>
+    <rect x="418" y="114" width="64" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="449.6" y="128.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Archive</text>
+  </g>
+  <g>
+    <rect x="489" y="114" width="70" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="524.3" y="128.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Settings</text>
+  </g>
+  <path d="M100 180 V200" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+  <rect x="40" y="200" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+  <path d="M53 200 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+  <text x="66" y="225" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 1</text>
+  <text x="66" y="247" font-size="15" font-weight="700" fill="#16181d">Product List</text>
+  <text x="66" y="266" font-size="10.5" fill="#6b6f78">제품 목록 · 분석 진입점</text>
+  <g>
+    <rect x="340" y="218" width="162" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="421.1" y="232.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">제품 카드 클릭 → 제품 선택</text>
+  </g>
+  <g>
+    <rect x="510" y="218" width="92" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="556.4" y="232.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">상태 · 진행률</text>
+  </g>
+  <g>
+    <rect x="610" y="218" width="141" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="680.8" y="232.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Author · Modified by</text>
+  </g>
+  <g>
+    <rect x="759" y="218" width="91" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="804.6" y="232.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Updated 일자</text>
+  </g>
+  <path d="M100 284 V304" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+  <rect x="40" y="304" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+  <path d="M53 304 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+  <text x="66" y="329" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 2</text>
+  <text x="66" y="351" font-size="15" font-weight="700" fill="#16181d">실험 항목 선택</text>
+  <text x="66" y="370" font-size="10.5" fill="#6b6f78">구분 탭 · 실험 카드</text>
+  <g>
+    <rect x="340" y="322" width="87" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="383.7" y="336.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Feasibility</text>
+  </g>
+  <g>
+    <rect x="435" y="322" width="76" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="473.1" y="336.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Prototype</text>
+  </g>
+  <g>
+    <rect x="519" y="322" width="93" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="565.5" y="336.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Verification</text>
+  </g>
+  <g>
+    <rect x="620" y="322" width="97" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="668.4" y="336.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">실험 카드 선택</text>
+  </g>
+  <g>
+    <rect x="725" y="322" width="122" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="785.8" y="336.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">＋ Add Experiment</text>
+  </g>
+  <path d="M100 388 V408" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+  <rect x="40" y="408" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+  <path d="M53 408 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+  <text x="66" y="433" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 3</text>
+  <text x="66" y="455" font-size="15" font-weight="700" fill="#16181d">Upload Raw Data</text>
+  <text x="66" y="474" font-size="10.5" fill="#6b6f78">좌측 업로드 영역 · 파일 목록</text>
+  <g>
+    <rect x="340" y="426" width="125" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="402.7" y="440.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Drag &amp; Drop 업로드</text>
+  </g>
+  <g>
+    <rect x="473" y="426" width="82" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="514.4" y="440.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Raw Signal</text>
+  </g>
+  <g>
+    <rect x="563" y="426" width="117" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="622.0" y="440.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Corrected Signal</text>
+  </g>
+  <g>
+    <rect x="689" y="426" width="117" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="747.4" y="440.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Reaction Manager</text>
+  </g>
+  <g>
+    <rect x="814" y="426" width="82" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="855.1" y="440.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Script Log</text>
+  </g>
+  <g>
+    <rect x="340" y="456" width="123" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="401.6" y="470.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Instrument Viewer</text>
+  </g>
+  <g>
+    <rect x="471" y="456" width="148" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="545.0" y="470.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Select All · 파일 선택</text>
+  </g>
+  <path d="M100 492 V512" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+  <rect x="40" y="512" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+  <path d="M53 512 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+  <text x="66" y="537" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 4</text>
+  <text x="66" y="559" font-size="15" font-weight="700" fill="#16181d">분석 탭</text>
+  <text x="66" y="578" font-size="10.5" fill="#6b6f78">우측 분석 영역 · 3개 탭</text>
+  <g>
+    <rect x="340" y="530" width="177" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="428.4" y="544.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Amplification Curve Viewer</text>
+  </g>
+  <g>
+    <rect x="525" y="530" width="177" height="22" rx="11" fill="#e7ebfb" stroke="#2c4bd4"/>
+    <text x="613.2" y="544.70" font-size="10.5" font-weight="700" fill="#2c4bd4" text-anchor="middle">Fitting Parameter Settings</text>
+  </g>
+  <g>
+    <rect x="710" y="530" width="153" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="786.2" y="544.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Curve Fitting Analysis</text>
+  </g>
+  <g>
+    <rect x="340" y="560" width="140" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="410.1" y="574.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Well info (96 wells)</text>
+  </g>
+  <g>
+    <rect x="488" y="560" width="100" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="538.1" y="574.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Reset · Apply</text>
+  </g>
+  <path d="M100 596 V616" stroke="#9aa0aa" stroke-width="1.4" marker-end="url(#ar)"/>
+  <rect x="40" y="616" width="920" height="84" rx="13" fill="#f6f7f9" stroke="#e6e7eb"/>
+  <path d="M53 616 h-1 a12 12 0 0 0 -12 12 v60 a12 12 0 0 0 12 12 h1 z" fill="#2c4bd4"/>
+  <text x="66" y="641" font-size="10.5" font-weight="700" letter-spacing="0.6" fill="#2c4bd4">STEP 5</text>
+  <text x="66" y="663" font-size="15" font-weight="700" fill="#16181d">결과 내보내기</text>
+  <text x="66" y="682" font-size="10.5" fill="#6b6f78">상단 액션 바</text>
+  <g>
+    <rect x="340" y="634" width="82" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="381.0" y="648.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">Save Draft</text>
+  </g>
+  <g>
+    <rect x="430" y="634" width="195" height="22" rx="11" fill="#e7ebfb" stroke="#2c4bd4"/>
+    <text x="527.6" y="648.70" font-size="10.5" font-weight="700" fill="#2c4bd4" text-anchor="middle">Export Selected Data to Excel</text>
+  </g>
+  <g>
+    <rect x="633" y="634" width="128" height="22" rx="11" fill="#ffffff" stroke="#d7d9df"/>
+    <text x="697.2" y="648.70" font-size="10.5" font-weight="500" fill="#3f434c" text-anchor="middle">랩노트 템플릿에 반영</text>
+  </g>
+</svg>
