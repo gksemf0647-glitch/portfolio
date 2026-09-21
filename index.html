@@ -11654,12 +11654,12 @@ document.getElementById('resetFitParams').addEventListener('click', ()=>{
           tr("SW 배포", "Software deployment", "SW配布"),
           tr("사용자 피드백 반영 및 지속 개선", "Incorporated user feedback for continuous improvement", "ユーザーフィードバックの反映と継続的改善")
         ] },
-        { category: tr("자동화 장비 연구", "Automation Equipment R&D", "自動化装置研究"), items: [
+        { hidden: true, category: tr("자동화 장비 연구", "Automation Equipment R&D", "自動化装置研究"), items: [
           tr("자동화 시스템 교육", "Automation system training", "自動化システム教育"),
           tr("자동화 장비 관리 및 세팅", "Automation equipment management & setup", "自動化装置の管理・セッティング"),
           tr("신규 자동화 장비 적용 및 매뉴얼 제작", "Deployed new automation equipment and authored manuals", "新規自動化装置の導入およびマニュアル作成")
         ] },
-        { category: tr("분자진단 제품 개발", "Molecular Diagnostics Product Development", "分子診断製品開発"), items: [
+        { hidden: true, category: tr("분자진단 제품 개발", "Molecular Diagnostics Product Development", "分子診断製品開発"), items: [
           tr("올리고디자인", "Oligo design", "オリゴデザイン"),
           "Feasibility",
           tr("시작품 생산 및 이관", "Prototype production and technology transfer", "試作品生産および移管"),
@@ -13025,7 +13025,7 @@ document.getElementById('resetFitParams').addEventListener('click', ()=>{
       </div>
       <div class="focus">${e.focus} · ${t(e.role)}</div>
       <div class="career-summary">
-        ${e.summary.map(g => `
+        ${e.summary.filter(g => !g.hidden).map(g => `
           <div class="career-summary-group">
             <h4>${t(g.category)}</h4>
             <ul>${g.items.map(i => `<li>${t(i)}</li>`).join('')}</ul>
